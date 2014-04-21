@@ -7,31 +7,40 @@ package org.aksw.simba.semsrl.model;
 public class DataSource implements Comparable<DataSource> {
 	
 	private String namespace;
+	private String id;
 	private String storeType;
 	private String storePath;
 	
-	public DataSource(String namespace) {
-		this.namespace = namespace;
+	public DataSource(String id) {
+		this.id = id;
 	}
 
 	public String getNamespace() {
 		return namespace;
 	}
-	
+
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
+
+	public String getId() {
+		return id;
+	}
+
 	public boolean equals(Object o) {
 		if(o instanceof DataSource) {
 			DataSource ds = (DataSource) o;
-			return namespace.equals(ds.getNamespace());
+			return id.equals(ds.getId());
 		}
 		return false;
 	}
 	
 	public String toString() {
-		return namespace;
+		return id;
 	}
 	
 	public int hashCode() {
-		return namespace.hashCode();
+		return id.hashCode();
 	}
 
 	@Override

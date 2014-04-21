@@ -2,10 +2,9 @@ package org.aksw.simba.semsrl.model;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * All resources in this group are mutually connected within a transitive property linktype.
@@ -16,7 +15,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 public class ConnectedGroup implements Comparable<ConnectedGroup> {
 	
 	private Property linktype;
-	private HashMap<DataSource, Resource> content;
+	private HashMap<DataSource, String> content;
 
 	public ConnectedGroup(Property linktype) {
 		this.setLinktype(linktype);
@@ -31,19 +30,16 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 		this.linktype = linktype;
 	}
 	
-	public Resource getResource(DataSource ds) {
+	public String getResourceURI(DataSource ds) {
 		return content.get(ds);
 	}
 	
-	public void addResource(DataSource ds, Resource r) {
-		content.put(ds, r);
+	public void addResourceURI(DataSource ds, String uri) {
+//		content.put(ds, ds.getNamespace() + uri);
+		content.put(ds, uri);
 	}
 
-	public void addResource(DataSource ds, String uri) {
-		content.put(ds, ResourceFactory.createResource(uri));
-	}
-
-	public Collection<Resource> getResources() {
+	public Collection<String> getResourceURIs() {
 		return content.values();
 	}
 	
@@ -56,7 +52,7 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 		return this.hashCode() - o.hashCode();
 	}
 
-	public HashMap<DataSource, Resource> getMap() {
+	public Map<DataSource, String> getMap() {
 		return content;
 	}
 

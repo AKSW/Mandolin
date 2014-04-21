@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -29,13 +30,14 @@ public class Mapping {
 	}
 	
 	public void addGroup(ConnectedGroup gnew) {
-		for(Resource r : gnew.getResources())
+		for(String uri : gnew.getResourceURIs()) {
+			Resource r = ResourceFactory.createResource(uri);
 			for(ConnectedGroup g : groups)
-				if(g.getResources().contains(r)) {
+				if(g.getResourceURIs().contains(r)) {
 					g.merge(gnew);
 					return;
 				}
-		
+		}
 		this.groups.add(gnew);
 	}
 	

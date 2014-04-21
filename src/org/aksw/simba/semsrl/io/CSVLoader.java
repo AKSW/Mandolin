@@ -31,6 +31,7 @@ public class CSVLoader {
 		ArrayList<DataSource> dataSources = new ArrayList<>();
 		for(int i=0; i<nextLine.length; i++) {
 			DataSource ds = new DataSource(nextLine[i]);
+			ds.setNamespace(Bundle.getString(nextLine[i]+"_namespace"));
 			ds.setStoreType(Bundle.getString(nextLine[i]+"_store_type"));
 			ds.setStorePath(Bundle.getString(nextLine[i]+"_store_path"));
 			mapping.addDataSource(ds);
@@ -40,7 +41,7 @@ public class CSVLoader {
 		while ((nextLine = reader.readNext()) != null) {
 			ConnectedGroup cg = new ConnectedGroup(linktype);
 			for(int i=0; i<nextLine.length; i++) {
-				cg.addResource(dataSources.get(i), nextLine[i]);
+				cg.addResourceURI(dataSources.get(i), nextLine[i]);
 			}
 			mapping.addGroup(cg);
 		}
