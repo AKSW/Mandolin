@@ -20,6 +20,7 @@ public class MappingFactory {
 		Mapping mapping = new Mapping(propFile, mappingFiles);
 		
 		for(String fileName : mapping.getFileNames()) {
+			System.out.println("processing file: "+fileName);
 			String lwc = fileName.toLowerCase();
 			if(lwc.endsWith(".csv"))
 				CSVLoader.load(mapping, fileName);

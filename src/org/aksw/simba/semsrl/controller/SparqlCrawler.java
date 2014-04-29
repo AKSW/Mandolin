@@ -1,5 +1,6 @@
 package org.aksw.simba.semsrl.controller;
 
+import org.aksw.simba.semsrl.io.Bundle;
 import org.aksw.simba.semsrl.model.DataSource;
 import org.aksw.simba.semsrl.model.ResourceGraph;
 
@@ -21,12 +22,16 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  */
 public class SparqlCrawler implements Crawler {
 	
+	private int query_depth = Integer.parseInt(Bundle.getString("query_depth"));
+	
 	public ResourceGraph crawl(DataSource ds, String id) {
 		Resource r = ResourceFactory.createResource(ds.getNamespace() + id);
 		ResourceGraph graph = new ResourceGraph(r);
 		System.out.println("crawling: "+r);
 		
-		String query = "SELECT * WHERE { <"+ r.getURI() +"> ?p ?o }";
+		String query = query_depth == 1 ?
+				"SELECT * WHERE { <"+ r.getURI() +"> ?p ?o }"
+				: "SELECT * WHERE { <"+ r.getURI() +"> ?p ?o OPTIONAL { ?o ?p1 ?o1 } }";
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(
 				ds.getStorePath(), sparqlQuery);
@@ -36,6 +41,11 @@ public class SparqlCrawler implements Crawler {
 			Property p = ResourceFactory.createProperty(qs.getResource("p").getURI());
 			RDFNode o = qs.get("o");
 			graph.addLink(r, p, o);
+			if(query_depth == 2 && qs.getResource("p1") != null) {
+				Property p1 = ResourceFactory.createProperty(qs.getResource("p1").getURI());
+				RDFNode o1 = qs.get("o1");
+				graph.addLink(o.asResource(), p1, o1);
+			}
 		}
 		
 		return graph;

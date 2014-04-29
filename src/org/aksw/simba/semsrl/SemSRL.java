@@ -1,16 +1,26 @@
 package org.aksw.simba.semsrl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import netkit.classifiers.DataView;
+import netkit.classifiers.relational.WeightedVoteRelationalNeighbor;
+import netkit.graph.AttributeFixedCategorical;
+import netkit.graph.FixedTokenSet;
+import netkit.graph.Graph;
+
 import org.aksw.simba.semsrl.controller.CSVCrawler;
 import org.aksw.simba.semsrl.controller.Crawler;
+import org.aksw.simba.semsrl.controller.GraphTranslator;
 import org.aksw.simba.semsrl.controller.MappingFactory;
 import org.aksw.simba.semsrl.controller.SparqlCrawler;
+import org.aksw.simba.semsrl.controller.Translator;
 import org.aksw.simba.semsrl.model.ConnectedGroup;
 import org.aksw.simba.semsrl.model.DataSource;
 import org.aksw.simba.semsrl.model.Mapping;
 import org.aksw.simba.semsrl.model.ResourceGraph;
+import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Statement;
 
@@ -24,7 +34,14 @@ import com.hp.hpl.jena.rdf.model.Statement;
 public class SemSRL {
 
 	private String propFile;
-	
+
+//    private static Logger logger;
+//
+//    static {
+//        System.setProperty("java.util.logging.config.file","logging.properties");
+//        logger = Logger.getLogger("NetKit");
+//    }
+    
 	public String getArgs() {
 		return propFile;
 	}
@@ -38,6 +55,7 @@ public class SemSRL {
 	 * @throws IOException 
 	 */
 	public void learn() throws IOException {
+		System.out.println("SemSRL started");
 		Mapping mapping = MappingFactory.createMapping(propFile);
 		
 		for(ConnectedGroup cg : mapping.getGroups()) {
@@ -59,13 +77,15 @@ public class SemSRL {
 				}
 				ResourceGraph rg = crawler.crawl(ds, map.get(ds));
 				// TODO
-				for(Statement link : rg.getLinks())
-					System.out.println(link);
+				Translator gtran = new GraphTranslator(rg);
+				gtran.translate();
 			}
-			break;
+//			TODO remove me!
+//			if(map.keySet().contains(new DataSource("acm")))
+				break;
 		}
 	}
-	
+
 	/**
 	 * @param args The property file path.
 	 * @throws IOException 
