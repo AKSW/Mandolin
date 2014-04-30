@@ -1,28 +1,19 @@
 package org.aksw.simba.semsrl;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import netkit.classifiers.DataView;
-import netkit.classifiers.relational.WeightedVoteRelationalNeighbor;
-import netkit.graph.AttributeFixedCategorical;
-import netkit.graph.FixedTokenSet;
-import netkit.graph.Graph;
 
 import org.aksw.simba.semsrl.controller.CSVCrawler;
 import org.aksw.simba.semsrl.controller.Crawler;
 import org.aksw.simba.semsrl.controller.GraphTranslator;
 import org.aksw.simba.semsrl.controller.MappingFactory;
 import org.aksw.simba.semsrl.controller.SparqlCrawler;
-import org.aksw.simba.semsrl.controller.Translator;
 import org.aksw.simba.semsrl.model.ConnectedGroup;
 import org.aksw.simba.semsrl.model.DataSource;
 import org.aksw.simba.semsrl.model.Mapping;
 import org.aksw.simba.semsrl.model.ResourceGraph;
-import org.apache.log4j.Logger;
 
-import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 
 /**
@@ -58,12 +49,14 @@ public class SemSRL {
 		System.out.println("SemSRL started");
 		Mapping mapping = MappingFactory.createMapping(propFile);
 		
+		ResourceGraph graph = new ResourceGraph(ResourceFactory.createResource("http://aksw.org/Simba/SemSRL/alignment/"+propFile));
 		for(ConnectedGroup cg : mapping.getGroups()) {
 			Map<DataSource, String> map = cg.getMap();
 			System.out.println(map);
 			for(DataSource ds : map.keySet()) {
 				System.out.println("source: "+ds);
 				Crawler crawler = null;
+				// TODO use map instead of switch.
 				switch(ds.getStoreType()) {
 				case "sparql":
 					crawler = new SparqlCrawler();
@@ -76,14 +69,15 @@ public class SemSRL {
 					continue;
 				}
 				ResourceGraph rg = crawler.crawl(ds, map.get(ds));
-				// TODO
-				Translator gtran = new GraphTranslator(rg);
-				gtran.translate();
+				graph.merge(rg);
 			}
 //			TODO remove me!
 //			if(map.keySet().contains(new DataSource("acm")))
 				break;
 		}
+		GraphTranslator gtran = new GraphTranslator(graph);
+		gtran.translate();
+
 	}
 
 	/**

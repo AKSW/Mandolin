@@ -35,4 +35,9 @@ public class ResourceGraph {
 		return model.listStatements().toList();
 	}
 	
+	public void merge(ResourceGraph rg) {
+		for(Statement s : rg.getLinks())
+			model.add(s);
+	}
+	
 }

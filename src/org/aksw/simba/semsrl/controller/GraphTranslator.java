@@ -5,12 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import netkit.graph.Attributes;
-import netkit.graph.EdgeType;
-import netkit.graph.Graph;
-import netkit.graph.Node;
 
 import org.aksw.simba.semsrl.io.Bundle;
 import org.aksw.simba.semsrl.model.ResourceGraph;
@@ -26,7 +20,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class GraphTranslator implements Translator {
+public class GraphTranslator {
 
 	private String basepath;
 	private ResourceGraph graph;
@@ -41,10 +35,9 @@ public class GraphTranslator implements Translator {
 		return graph;
 	}
 
-	@Override
 	public void translate() throws IOException {
 		
-		CSVWriter writer = new CSVWriter(new FileWriter(basepath+"/nodefile"+System.currentTimeMillis()+".csv"), ',');
+		CSVWriter writer = new CSVWriter(new FileWriter(basepath+"/nodefile.csv"), ',');
 		
 		// map a subject to another hash map, which maps a property to its value
 		HashMap<String, HashMap<String, String>> map = new HashMap<>();
@@ -105,11 +98,11 @@ public class GraphTranslator implements Translator {
 		
 		System.out.println("saving map to .csv file");
 		for(String s : map.keySet()) {
-			String string = s;
+			String[] entries = new String[properties.size() + 1];
+			entries[0] = s;
 			HashMap<String, String> h = map.get(s);
-			for(String p : properties)
-				string = string + "\t" + h.get(p);
-			String[] entries = string.split("\t");
+			for(int i=0; i<properties.size(); i++)
+				entries[i+1] = h.get(properties.get(i));
 			writer.writeNext(entries);
 		}
 
