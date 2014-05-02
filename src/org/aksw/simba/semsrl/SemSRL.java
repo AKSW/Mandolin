@@ -1,6 +1,7 @@
 package org.aksw.simba.semsrl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.aksw.simba.semsrl.controller.CSVCrawler;
@@ -13,6 +14,8 @@ import org.aksw.simba.semsrl.model.DataSource;
 import org.aksw.simba.semsrl.model.Mapping;
 import org.aksw.simba.semsrl.model.ResourceGraph;
 
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 
@@ -49,7 +52,7 @@ public class SemSRL {
 		System.out.println("SemSRL started");
 		Mapping mapping = MappingFactory.createMapping(propFile);
 		
-		ResourceGraph graph = new ResourceGraph(ResourceFactory.createResource("http://aksw.org/Simba/SemSRL/alignment/"+propFile));
+		ResourceGraph graph = new ResourceGraph(ResourceFactory.createResource("http://aksw.org/Groups/SIMBA/SemSRL/alignment/"+propFile));
 		for(ConnectedGroup cg : mapping.getGroups()) {
 			Map<DataSource, String> map = cg.getMap();
 			System.out.println(map);
@@ -71,13 +74,29 @@ public class SemSRL {
 				ResourceGraph rg = crawler.crawl(ds, map.get(ds));
 				graph.merge(rg);
 			}
+			// add sameAs links
+			addSameAs(cg, graph);
 //			TODO remove me!
 //			if(map.keySet().contains(new DataSource("acm")))
 				break;
 		}
+		
 		GraphTranslator gtran = new GraphTranslator(graph);
 		gtran.translate();
 
+	}
+
+	private void addSameAs(ConnectedGroup cg, ResourceGraph graph) { 
+		Property sameAs = ResourceFactory.createProperty("http://www.w3.org/2002/07/owl#sameAs");
+		ArrayList<Resource> res = new ArrayList<>();
+		Map<DataSource, String> map = cg.getMap();
+		for(DataSource ds : map.keySet())
+			res.add(ResourceFactory.createResource(map.get(ds)));
+		// now mutually create sameAs links
+		for(Resource s : res)
+			for(Resource o : res)
+				if(s != o)
+					graph.addLink(s, sameAs, o);
 	}
 
 	/**
