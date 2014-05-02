@@ -5,22 +5,23 @@
 @attribute Attrhttpwwwaktorsorgontologysupportdayof CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologysupportmonthof CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologysupportyearof CATEGORICAL
-@attribute Attrhttpwwww3org200207owlsameAs CATEGORICAL
 @attribute Attrhttpwwww3org200001rdfschemasubClassOf CATEGORICAL
 @attribute Attrhttpwwww3org200001rdfschemalabel CATEGORICAL
 @attribute AttrhttptriplestoreaktorsorgdirectsubClassOf CATEGORICAL
-@attribute Attrhttpwwwaktorsorgontologyportalhastitle CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologyportalhasauthor CATEGORICAL
-@attribute Attrhttpwwwaktorsorgontologyportalarticleofjournal CATEGORICAL
-@attribute Attrhttpwwwaktorsorgontologyportalhaswebaddress CATEGORICAL
-@attribute Attrhttpwwwaktorsorgontologyportalcitespublicationreference CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologyportalhasdate CATEGORICAL
-@attribute Attrhttpwwwaktorsorgontologyportalhaspublicationreference CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologyportaladdressesgenericareaofinterest CATEGORICAL
-@attribute Attrhttpwwww3org200001rdfschemaisDefinedBy CATEGORICAL
+@attribute Attrhttpwwwaktorsorgontologyportalhastitle CATEGORICAL
+@attribute Attrhttpwwww3org200207owlsameAs CATEGORICAL
+@attribute Attrhttpwwwaktorsorgontologyportalhaspublicationreference CATEGORICAL
 @attribute Attrhttpwwww3org200207owlunionOf CATEGORICAL
+@attribute Attrhttpwwww3org200001rdfschemaisDefinedBy CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologyportalfullname CATEGORICAL
 @attribute Attrhttpwwwaktorsorgontologyportaleditedby CATEGORICAL
+@attribute Attrhttpwwww3org200001rdfschemacomment CATEGORICAL
+@attribute Attrhttpwwwaktorsorgontologyportalhaswebaddress CATEGORICAL
+@attribute Attrhttpwwwaktorsorgontologyportalcitespublicationreference CATEGORICAL
+@attribute Attrhttpwwwaktorsorgontologyportalarticleofjournal CATEGORICAL
 @nodedata nodefile.csv
 
 @edgetype httpwwww3org19990222rdfsyntaxnstype RDFNode RDFNode
@@ -43,10 +44,6 @@
 @reversible
 @edgedata edge-aca5086d9c24c533dd6c2340062c1c28d063e390.rn
 
-@edgetype httpwwww3org200207owlsameAs RDFNode RDFNode
-@reversible
-@edgedata edge-a58bb0b7b521b35dadd73a5d1e1fb55a97c064cb.rn
-
 @edgetype httpwwww3org200001rdfschemasubClassOf RDFNode RDFNode
 @reversible
 @edgedata edge-786d8a98659d94a97c84a5158ca8dbae2b473288.rn
@@ -59,17 +56,49 @@
 @reversible
 @edgedata edge-669c86515016b6e915227012904df5a5ac42f673.rn
 
-@edgetype httpwwwaktorsorgontologyportalhastitle RDFNode RDFNode
-@reversible
-@edgedata edge-61a963f81c304db727374a3e53397d461cf40a3b.rn
-
 @edgetype httpwwwaktorsorgontologyportalhasauthor RDFNode RDFNode
 @reversible
 @edgedata edge-3ce5b7af1c494ec8d702e0c70d019b6a74f5aef8.rn
 
-@edgetype httpwwwaktorsorgontologyportalarticleofjournal RDFNode RDFNode
+@edgetype httpwwwaktorsorgontologyportalhasdate RDFNode RDFNode
 @reversible
-@edgedata edge-04b47c2fd025af18424cb9a9384951586a9b4662.rn
+@edgedata edge-6403e2d705ae014838cc236c25ad36b40c2f267c.rn
+
+@edgetype httpwwwaktorsorgontologyportaladdressesgenericareaofinterest RDFNode RDFNode
+@reversible
+@edgedata edge-98c0b54cfcb1d4512adeb610c3316c6693211c89.rn
+
+@edgetype httpwwwaktorsorgontologyportalhastitle RDFNode RDFNode
+@reversible
+@edgedata edge-61a963f81c304db727374a3e53397d461cf40a3b.rn
+
+@edgetype httpwwww3org200207owlsameAs RDFNode RDFNode
+@reversible
+@edgedata edge-a58bb0b7b521b35dadd73a5d1e1fb55a97c064cb.rn
+
+@edgetype httpwwwaktorsorgontologyportalhaspublicationreference RDFNode RDFNode
+@reversible
+@edgedata edge-7f3c6e6e5d3a1e00d11ba41f59fc2289edc01b31.rn
+
+@edgetype httpwwww3org200207owlunionOf RDFNode RDFNode
+@reversible
+@edgedata edge-81a2f79be02fc62c88c952c203a52e0c6eb79ee8.rn
+
+@edgetype httpwwww3org200001rdfschemaisDefinedBy RDFNode RDFNode
+@reversible
+@edgedata edge-781aaee3b76d5b5454b98dcb5bcd261979725993.rn
+
+@edgetype httpwwwaktorsorgontologyportalfullname RDFNode RDFNode
+@reversible
+@edgedata edge-a1f830f8f3102036eb8cf33aa32597049d4d190a.rn
+
+@edgetype httpwwwaktorsorgontologyportaleditedby RDFNode RDFNode
+@reversible
+@edgedata edge-67f08ca2639fe35cb7aac727b2de413b7c9f7591.rn
+
+@edgetype httpwwww3org200001rdfschemacomment RDFNode RDFNode
+@reversible
+@edgedata edge-9f60f23de250fb62f3910c207e3f207f25493d54.rn
 
 @edgetype httpwwwaktorsorgontologyportalhaswebaddress RDFNode RDFNode
 @reversible
@@ -79,31 +108,7 @@
 @reversible
 @edgedata edge-aeea2a045c717647b3fdb11b75afc5e514a73f8b.rn
 
-@edgetype httpwwwaktorsorgontologyportalhasdate RDFNode RDFNode
+@edgetype httpwwwaktorsorgontologyportalarticleofjournal RDFNode RDFNode
 @reversible
-@edgedata edge-6403e2d705ae014838cc236c25ad36b40c2f267c.rn
-
-@edgetype httpwwwaktorsorgontologyportalhaspublicationreference RDFNode RDFNode
-@reversible
-@edgedata edge-7f3c6e6e5d3a1e00d11ba41f59fc2289edc01b31.rn
-
-@edgetype httpwwwaktorsorgontologyportaladdressesgenericareaofinterest RDFNode RDFNode
-@reversible
-@edgedata edge-98c0b54cfcb1d4512adeb610c3316c6693211c89.rn
-
-@edgetype httpwwww3org200001rdfschemaisDefinedBy RDFNode RDFNode
-@reversible
-@edgedata edge-781aaee3b76d5b5454b98dcb5bcd261979725993.rn
-
-@edgetype httpwwww3org200207owlunionOf RDFNode RDFNode
-@reversible
-@edgedata edge-81a2f79be02fc62c88c952c203a52e0c6eb79ee8.rn
-
-@edgetype httpwwwaktorsorgontologyportalfullname RDFNode RDFNode
-@reversible
-@edgedata edge-a1f830f8f3102036eb8cf33aa32597049d4d190a.rn
-
-@edgetype httpwwwaktorsorgontologyportaleditedby RDFNode RDFNode
-@reversible
-@edgedata edge-67f08ca2639fe35cb7aac727b2de413b7c9f7591.rn
+@edgedata edge-04b47c2fd025af18424cb9a9384951586a9b4662.rn
 

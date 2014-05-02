@@ -82,7 +82,7 @@ public class SemSRL {
 		}
 		
 		GraphTranslator gtran = new GraphTranslator(graph);
-		gtran.translate();
+		gtran.translateSuperCSV();
 
 	}
 
@@ -91,7 +91,7 @@ public class SemSRL {
 		ArrayList<Resource> res = new ArrayList<>();
 		Map<DataSource, String> map = cg.getMap();
 		for(DataSource ds : map.keySet())
-			res.add(ResourceFactory.createResource(map.get(ds)));
+			res.add(ResourceFactory.createResource(ds.getNamespace() + map.get(ds)));
 		// now mutually create sameAs links
 		for(Resource s : res)
 			for(Resource o : res)
