@@ -26,7 +26,7 @@ public class SparqlCrawler implements Crawler {
 	
 	public ResourceGraph crawl(DataSource ds, String id) {
 		Resource r = ResourceFactory.createResource(ds.getNamespace() + id);
-		ResourceGraph graph = new ResourceGraph(r);
+		ResourceGraph graph = new ResourceGraph(id);
 		System.out.println("crawling: "+r);
 		
 		String query = query_depth == 1 ?

@@ -10,7 +10,7 @@ public class NTLoader {
 
 	public static void load(Mapping mapping, String fileName) {
 		// TODO Auto-generated method stub
-		
+		System.err.println("NTLoader class not yet implemented!");
 	}
 	
 	

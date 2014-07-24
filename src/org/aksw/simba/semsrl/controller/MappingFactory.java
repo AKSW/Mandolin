@@ -15,7 +15,6 @@ public class MappingFactory {
 	
 	public static Mapping createMapping(String propFile) throws IOException {
 		
-		Bundle.setBundleName(propFile);
 		String[] mappingFiles = Bundle.getString("mapping_files").split(",");
 		Mapping mapping = new Mapping(propFile, mappingFiles);
 		

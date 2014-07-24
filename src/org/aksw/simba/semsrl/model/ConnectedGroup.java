@@ -3,6 +3,7 @@ package org.aksw.simba.semsrl.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.hp.hpl.jena.rdf.model.Property;
 
@@ -16,6 +17,7 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 	
 	private Property linktype;
 	private HashMap<DataSource, String> content;
+	
 
 	public ConnectedGroup(Property linktype) {
 		this.setLinktype(linktype);
@@ -28,6 +30,10 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 
 	public void setLinktype(Property linktype) {
 		this.linktype = linktype;
+	}
+	
+	public Set<DataSource> getDataSources() {
+		return content.keySet();
 	}
 	
 	public String getResourceURI(DataSource ds) {

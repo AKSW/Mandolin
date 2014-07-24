@@ -19,7 +19,7 @@ public class CSVCrawler implements Crawler {
 	@Override
 	public ResourceGraph crawl(DataSource ds, String id) throws IOException {
 		Resource r = ResourceFactory.createResource(ds.getNamespace() + id);
-		ResourceGraph graph = new ResourceGraph(r);
+		ResourceGraph graph = new ResourceGraph(id);
 		System.out.println("crawling: "+r);
 		
 		CSVReader reader = new CSVReader(new FileReader(new File(ds.getStorePath())));
