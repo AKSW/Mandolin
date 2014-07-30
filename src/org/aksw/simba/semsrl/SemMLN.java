@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.aksw.simba.semsrl.controller.AlchemyGraphTranslator;
 import org.aksw.simba.semsrl.controller.CSVCrawler;
 import org.aksw.simba.semsrl.controller.Crawler;
-import org.aksw.simba.semsrl.controller.NetkitGraphTranslator;
 import org.aksw.simba.semsrl.controller.MappingFactory;
 import org.aksw.simba.semsrl.controller.ProbcogGraphTranslator;
 import org.aksw.simba.semsrl.controller.SparqlCrawler;
@@ -87,11 +87,12 @@ public class SemMLN {
 			// add sameAs links
 			addSameAs(cg, graph);
 
-			if(++iter == 1)
-				break;
+//			if(++iter == 1)
+//				break;
 		}
 		
-		ProbcogGraphTranslator gtran = new ProbcogGraphTranslator(graph);
+//		ProbcogGraphTranslator gtran = new ProbcogGraphTranslator(graph);
+		AlchemyGraphTranslator gtran = new AlchemyGraphTranslator(graph);
 		gtran.translate();
 	}
 

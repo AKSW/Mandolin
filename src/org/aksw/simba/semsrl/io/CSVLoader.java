@@ -38,12 +38,15 @@ public class CSVLoader {
 			dataSources.add(ds);
 		}
 		
+		int line = 0;
 		while ((nextLine = reader.readNext()) != null) {
 			ConnectedGroup cg = new ConnectedGroup(linktype);
 			for(int i=0; i<nextLine.length; i++) {
 				cg.addResourceURI(dataSources.get(i), nextLine[i]);
 			}
 			mapping.addGroup(cg);
+			if(++line == 1)
+				break;
 		}
 		reader.close();
 		
