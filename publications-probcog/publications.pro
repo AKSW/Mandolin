@@ -1,0 +1,5 @@
+Equals
+R_hastitle
+R_type
+R_hasdate
+R_hasauthor

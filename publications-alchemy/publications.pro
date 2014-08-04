@@ -1,0 +1,3 @@
+R_hastitle
+R_hasdate
+R_hasauthor
