@@ -1,3 +1,5 @@
-R_hastitle
-R_hasdate
-R_hasauthor
+Equals
+Rel_hastitle
+Rel_hasdate
+Rel_hasauthor
+Rel_articleofjournal

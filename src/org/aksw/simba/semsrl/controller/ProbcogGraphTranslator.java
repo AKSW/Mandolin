@@ -47,7 +47,8 @@ public class ProbcogGraphTranslator extends GraphTranslator {
 		// indexing and writing entities (e.g., publications)
 		Mapping mapping = graph.getMapping();
 		int entIndex = 0;
-		String entities = "", nodes = "", resources = "";
+//		String entities = "", resources = "";
+		String nodes = "";
 		for(ConnectedGroup cg : mapping.getGroups())
 			for(DataSource ds : cg.getDataSources()) {
 				String localname = "p" + (++entIndex);

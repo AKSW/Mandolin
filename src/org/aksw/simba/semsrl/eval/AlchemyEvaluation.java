@@ -24,8 +24,11 @@ import org.apache.jena.atlas.lib.SetUtils;
  */
 public class AlchemyEvaluation {
 
-	private static final double THRESHOLD = 0.4;
-
+//	private static final double THRESHOLD = 0.08;
+	
+	// TODO hard coded: remove me!
+	private static final String[] DATASRC_IDS = {"dblp", "acm"};
+	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -33,18 +36,38 @@ public class AlchemyEvaluation {
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
 		
+		for(int i=90; i<110; i++) {
+			System.out.print("THR = "+(i / 1000.0));
+			evaluate(args, i / 1000.0);
+		}
+		
+	}
+	
+	private static void evaluate(String[] args, double threshold) throws ClassNotFoundException, IOException {
+		
 		Bundle.setBundleName(args[0]);
 
 		TreeSet<String> perfmap = new TreeSet<>();
 		TreeSet<String> posclass = new TreeSet<>();
+		
+		// TODO remove me. (load training set)
+		TreeSet<String> training = new TreeSet<>();
+		Scanner in1 = new Scanner(new File(args[0] + "-alchemy/" + args[0] + ".tr"));
+		while(in1.hasNextLine())
+			training.add(in1.nextLine());
+		in1.close();
 		
 		Mapping mapping = MappingFactory.createMapping(args[0]);
 		for(ConnectedGroup cg : mapping.getGroups()) {
 			String concat = "";
 			for(DataSource ds : cg.getDataSources())
 				concat += ds.getNamespace() + cg.getResourceURI(ds) + "#_ ";
-			perfmap.add(concat.trim());
-			System.out.println(concat.trim());
+			String instance = concat.trim();
+			perfmap.add(instance);
+//			TODO restore if(cg.isTraining())
+			if(training.contains(instance))
+				posclass.add(instance);
+//			System.out.println(instance);
 		}
 		
 		HashMap<String, String> map = readMap(args[0] + "-alchemy/" + args[0] + ".map");
@@ -59,28 +82,32 @@ public class AlchemyEvaluation {
 			String[] arg = extract(line[0]).split(",");
 			double val = Double.parseDouble(line[1]);
 			
-			System.out.println(map.get(arg[0]) + " " + map.get(arg[1]) + " -> "+val);
+			if(isSameDatasrc(arg) || arg[0].compareTo(arg[1]) > 0)
+				continue;
+
+//			System.out.println(arg[0] + "," + arg[1] + "\t"
+//					+map.get(arg[0]) + " " + map.get(arg[1]) + " -> "+val);
 			
-			if(val >= THRESHOLD)
+			if(val >= threshold)
 				posclass.add(map.get(arg[0]) + " " + map.get(arg[1]));
-			else tn++;
 		}
 		in.close();
 		
-		// FIXME this is not correct because it considers also other resources!
 		tp = SetUtils.intersection(perfmap, posclass).size();
 		fp = SetUtils.difference(posclass, perfmap).size();
 		fn = SetUtils.difference(perfmap, posclass).size();
+		tn = Math.pow(mapping.getGroups().size(), 2) - tp - fp - fn;
 		
 		precision = (tp+fp == 0) ? 0.0 : tp / (tp+fp) * 100.0;
 		recall = (tp+fp == 0) ? 0.0 : tp / (tp+fn) * 100.0;
 		fscore = (precision+recall == 0) ? 0.0 : 2 * precision * recall / (precision + recall);
 		
-		String details = "";
-		details += "tp = " + tp + "\tfp = " + fp + "\n";
-		details += "tn = " + tn + "\tfn = " + fn + "\n";
-		details += "pr% = " + precision + "\nrc% = " + recall + "\n";
-		details += "fscore% = " + fscore;
+//		String details = "";
+//		details += "tp = " + tp + "\tfp = " + fp + "\n";
+//		details += "tn = " + tn + "\tfn = " + fn + "\n";
+//		details += "pr% = " + precision + "\nrc% = " + recall + "\n";
+//		details += "fscore% = " + fscore;
+		String details = "\t" + precision + "\t" + recall + "\t" + fscore;
 		System.out.println(details);
 	}
 	
@@ -88,6 +115,19 @@ public class AlchemyEvaluation {
 		Matcher m = Pattern.compile(".*\\((.*?)\\)").matcher(in);
 		m.find();
 		return m.group(1);
+	}
+	
+	private static boolean isSameDatasrc(String[] arg) {
+		int[] ind = new int[2];
+		for(int j=0; j<2; j++) {
+			String s = arg[j].split("_")[1];
+			for(int i=0; i<DATASRC_IDS.length; i++)
+				if(DATASRC_IDS[i].equals(s)) {
+					ind[j] = i;
+					break;
+				}
+		}
+		return ind[0] == ind[1];
 	}
 	
 	@SuppressWarnings({"unchecked"})

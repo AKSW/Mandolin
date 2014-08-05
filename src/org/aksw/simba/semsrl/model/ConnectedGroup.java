@@ -18,6 +18,7 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 	private Property linktype;
 	private HashMap<DataSource, String> content;
 	
+	private boolean training = false;
 
 	public ConnectedGroup(Property linktype) {
 		this.setLinktype(linktype);
@@ -60,6 +61,14 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 
 	public Map<DataSource, String> getMap() {
 		return content;
+	}
+
+	public boolean isTraining() {
+		return training;
+	}
+
+	public void setTraining(boolean training) {
+		this.training = training;
 	}
 
 }

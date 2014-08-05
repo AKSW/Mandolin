@@ -76,7 +76,7 @@ public class AlchemyGraphTranslator extends GraphTranslator {
 				String localname = "P" + (++resIndex);
 				aliases.put(ds.getNamespace() + cg.getResourceURI(ds), localname);
 				resources.add(localname);
-				String entLocalname = "E" + (++entIndex);
+				String entLocalname = "E_" + ds.getId() + "_" + (++entIndex);
 				aliases.put(ds.getNamespace() + cg.getResourceURI(ds) + "#_", entLocalname);
 				entities.add(entLocalname);
 				dbWriter.write("RefersTo(" + localname + ", " + entLocalname + ")\n");
@@ -134,11 +134,10 @@ public class AlchemyGraphTranslator extends GraphTranslator {
 			
 			propSpec.put(rel, aliasS.charAt(0) + "" + aliasO.charAt(0));
 			
-			if(props.contains(rel))
+//			if(props.contains(rel))
 				dbWriter.write(rel + "(" + aliasS + ", " + aliasO + ")\n");
 			
 			if(rel.equals("Equals") && aliasS.startsWith("P") && aliasO.startsWith("P")) {
-				dbWriter.write(rel + "(" + aliasS + ", " + aliasO + ")\n");
 				dbWriter.write("EqualsEnt(" + refersTo.get(aliasS) + ", " + refersTo.get(aliasO) + ")\n");
 			}
 
@@ -160,19 +159,20 @@ public class AlchemyGraphTranslator extends GraphTranslator {
 				else // 'R' or 'P'
 					domain[i] = "resource";
 			}
-			if(props.contains(rel)) { 
+//			if(props.contains(rel)) { 
 				mlnWriter.write(rel + "(" + domain[0] + ", "+ domain[1] + ")\n");
 				
-				if(domain[1].equals("resource"))
+				if(domain[1].equals("resource")) {
 					rules += "1 Equals(x, y) ^ "+rel+"(x, a) ^ "+rel+"(y, b) => Equals(a, b)\n";
-				if(domain[1].equals("literal"))
+				}
+				if(domain[1].equals("literal")) {
 					rules += "1 Equals(x, y) ^ "+rel+"(x, a) ^ "+rel+"(y, b) => EqualsLiteral(a, b)\n";
-			}
+				}
+//			}
 		}
 		
 		mlnWriter.write("RefersTo(resource, entity)\n");
 		
-		mlnWriter.write("Equals(resource, resource)\n");
 		mlnWriter.write("EqualsEnt(entity, entity)\n");
 		mlnWriter.write("EqualsLiteral(literal, literal)\n\n");
 		
@@ -203,7 +203,7 @@ public class AlchemyGraphTranslator extends GraphTranslator {
 		if(p.getURI().equals(Bundle.getString("owl_same_as")))
 			return "Equals";
 		else
-			return "R_" + StringClean.clean(p.getLocalName());
+			return "Rel_" + StringClean.clean(p.getLocalName());
 	}
 
 	/**

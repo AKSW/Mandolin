@@ -45,7 +45,7 @@ public class CSVLoader {
 				cg.addResourceURI(dataSources.get(i), nextLine[i]);
 			}
 			mapping.addGroup(cg);
-			if(++line == 10)
+			if(++line == 50)
 				break;
 		}
 		reader.close();
