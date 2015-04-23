@@ -1,1 +1,10 @@
 *~
+/bin/
+/target/
+
+.classpath
+.project
+.settings/
+
+datasets/
+log/
