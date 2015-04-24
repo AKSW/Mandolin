@@ -35,25 +35,43 @@ import com.opencsv.CSVWriter;
  * SPARQL endpoints have to be specified.
  * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
+ * @version 0.1
  */
 public class BenchmarkSemantifier {
 
 	String perfMapping, srcNamespace, tgtNamespace, srcEndpoint, tgtEndpoint,
 			srcOut, tgtOut;
 
+	/**
+	 * Whether the CSV file has a header or not.
+	 */
 	private boolean hasHeader = true;
+
+	/**
+	 * Output format for RDF datasets.
+	 */
+	private RDFFormat format = RDFFormat.NT;
 
 	private static final Logger LOGGER = Logger
 			.getLogger(BenchmarkSemantifier.class);
 
 	/**
+	 * Semantifier constructor.
+	 * 
 	 * @param perfMapping
+	 *            path of the perfect mapping in CSV format
 	 * @param srcNamespace
+	 *            source dataset namespace, if needed
 	 * @param tgtNamespace
+	 *            target dataset namespace, if needed
 	 * @param srcEndpoint
+	 *            source SPARQL endpoint to fetch data
 	 * @param tgtEndpoint
+	 *            target SPARQL endpoint to fetch data
 	 * @param srcOut
+	 *            source RDF output file
 	 * @param tgtOut
+	 *            target RDF output file
 	 */
 	public BenchmarkSemantifier(String perfMapping, String srcNamespace,
 			String tgtNamespace, String srcEndpoint, String tgtEndpoint,
@@ -68,6 +86,8 @@ public class BenchmarkSemantifier {
 	}
 
 	/**
+	 * Command-line execution: specify the constructor arguments, or no arguments for a demo.
+	 * 
 	 * @param args
 	 * @throws IOException
 	 */
@@ -78,27 +98,27 @@ public class BenchmarkSemantifier {
 		if (args.length != ARG_SIZE) {
 			LOGGER.warn("args[] size should be " + ARG_SIZE
 					+ ". Using demo values...");
-			String[] asd = {
-				"mappings/dblp-acm.csv",
-				"http://dblp.rkbexplorer.com/id/",
-				"http://acm.rkbexplorer.com/id/",
-				"http://dblp.rkbexplorer.com/sparql",
-				"http://acm.rkbexplorer.com/sparql",
-				"datasets/dblp.nt",
-				"datasets/acm.nt",
-			};
-			args = asd;
+			args = new String[] { "mappings/dblp-acm.csv",
+					"http://dblp.rkbexplorer.com/id/",
+					"http://acm.rkbexplorer.com/id/",
+					"http://dblp.rkbexplorer.com/sparql",
+					"http://acm.rkbexplorer.com/sparql", "datasets/dblp.nt",
+					"datasets/acm.nt", };
 		}
 
-		BenchmarkSemantifier sem = new BenchmarkSemantifier(args[0], args[1], args[2],
-				args[3], args[4], args[5], args[6]);
+		BenchmarkSemantifier sem = new BenchmarkSemantifier(args[0], args[1],
+				args[2], args[3], args[4], args[5], args[6]);
 		sem.run();
 	}
 
 	/**
+	 * Run the semantifier.
+	 * 
 	 * @throws IOException
 	 */
 	public void run() throws IOException {
+		
+		LOGGER.info(getClass().getSimpleName()+" started.");
 
 		Model m1 = ModelFactory.createDefaultModel();
 		Model m2 = ModelFactory.createDefaultModel();
@@ -107,39 +127,39 @@ public class BenchmarkSemantifier {
 		String[] nextLine;
 		if (hasHeader) // skip header
 			reader.readNext();
-//		int i = 0;
 		while ((nextLine = reader.readNext()) != null) {
 
 			String srcURI = srcNamespace + nextLine[0];
 			LOGGER.info("Crawling " + srcURI);
 			addToModel(srcURI, srcEndpoint, m1);
-			LOGGER.info("Source model size = " + m1.size());
+			LOGGER.info("Done. Source model size = " + m1.size());
 
 			String tgtURI = tgtNamespace + nextLine[1];
 			LOGGER.info("Crawling " + tgtURI);
 			addToModel(tgtURI, tgtEndpoint, m2);
-			LOGGER.info("Target model size = " + m2.size());
+			LOGGER.info("Done. Target model size = " + m2.size());
 
-//			if (++i == 1)
-//				break;
 		}
 
 		reader.close();
-
+		
+		LOGGER.info("Adding satellites for source dataset...");
 		addSatellites(m1, srcEndpoint);
+		LOGGER.info("Adding satellites for target dataset...");
 		addSatellites(m2, tgtEndpoint);
 
 		LOGGER.info("Saving source model...");
-		RDFDataMgr.write(new FileOutputStream(new File(srcOut)), m1,
-				RDFFormat.NT);
+		RDFDataMgr.write(new FileOutputStream(new File(srcOut)), m1, format);
 		LOGGER.info("Saving target model...");
-		RDFDataMgr.write(new FileOutputStream(new File(tgtOut)), m2,
-				RDFFormat.NT);
+		RDFDataMgr.write(new FileOutputStream(new File(tgtOut)), m2, format);
 		LOGGER.info("Done.");
 
 	}
 
 	/**
+	 * Add satellites (i.e., URI resources directly linked with the main
+	 * resources in the model) and add their CBDs to the model.
+	 * 
 	 * @param model
 	 * @param endpoint
 	 */
@@ -153,7 +173,8 @@ public class BenchmarkSemantifier {
 			if (node.isURIResource())
 				objURIs.add(node.asResource().getURI());
 		}
-
+		
+		// add CBDs to model
 		for (String uri : objURIs) {
 			LOGGER.info("Crawling satellite " + uri);
 			addToModel(uri, endpoint, model);
@@ -162,6 +183,9 @@ public class BenchmarkSemantifier {
 	}
 
 	/**
+	 * Query for the specified resource on the specified SPARQL endpoint and add
+	 * its CBD to the model.
+	 * 
 	 * @param uri
 	 * @param endpoint
 	 * @param m
@@ -191,6 +215,14 @@ public class BenchmarkSemantifier {
 
 	public void setHeader(boolean hasHeader) {
 		this.hasHeader = hasHeader;
+	}
+
+	public RDFFormat getFormat() {
+		return format;
+	}
+
+	public void setFormat(RDFFormat format) {
+		this.format = format;
 	}
 
 }
