@@ -11,8 +11,8 @@ import org.aksw.simba.semsrl.model.Mapping;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.opencsv.CSVReader;
 
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>

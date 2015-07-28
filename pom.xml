@@ -30,7 +30,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.aksw.simba.semsrl.BenchmarkSemantifier</mainClass>
+							<mainClass>org.aksw.simba.semsrl.Main</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -68,6 +68,11 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
+			<version>2.3.1</version>
 		</dependency>
 	</dependencies>
 </project>

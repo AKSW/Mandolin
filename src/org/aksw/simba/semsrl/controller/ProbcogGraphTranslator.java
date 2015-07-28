@@ -167,7 +167,7 @@ public class ProbcogGraphTranslator extends GraphTranslator {
 	private String toIdentifier(RDFNode o) {
 		if(o.isResource())
 			return o.isAnon() ? 
-					Bundle.getString("local_namespace") + "blanknode/BN" + DigestUtils.sha1Hex(o.toString()) :
+					Bundle.getString("local_namespace") + "blanknode/BN" + DigestUtils.shaHex(o.toString()) :
 					((Resource) o).getURI();
 		else
 			return o.asLiteral().getString();

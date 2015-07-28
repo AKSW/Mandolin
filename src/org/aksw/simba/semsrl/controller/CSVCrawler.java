@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import org.aksw.simba.semsrl.model.DataSource;
 import org.aksw.simba.semsrl.model.ResourceGraph;
 
-import au.com.bytecode.opencsv.CSVReader;
-
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import com.opencsv.CSVReader;
 
 public class CSVCrawler implements Crawler {
 

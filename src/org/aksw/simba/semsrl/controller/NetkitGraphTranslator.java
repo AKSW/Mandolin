@@ -17,12 +17,11 @@ import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvListWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.opencsv.CSVWriter;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -67,7 +66,7 @@ public class NetkitGraphTranslator extends GraphTranslator {
 			
 			String s;
 			if(sub.isAnon()) {
-				s = "http://aksw.org/Groups/SIMBA/SemSRL/blanknode/BN" + DigestUtils.sha1Hex(sub.toString());
+				s = "http://aksw.org/Groups/SIMBA/SemSRL/blanknode/BN" + DigestUtils.shaHex(sub.toString());
 				if(!nodemap.containsKey(s)) {
 					// object is new
 					nodemap.put(s, new HashMap<String, String>());
@@ -90,7 +89,7 @@ public class NetkitGraphTranslator extends GraphTranslator {
 			// save property
 			if(!properties.contains(p)) {
 				properties.add(p);
-				String filename = "edge-" + DigestUtils.sha1Hex(p) + ".rn";
+				String filename = "edge-" + DigestUtils.shaHex(p) + ".rn";
 				edgefilenames.put(p, filename);
 				edgefiles.put(p, new CSVWriter(new FileWriter(
 						basepath+"/" + filename), ',', CSVWriter.NO_QUOTE_CHARACTER, '"'));
@@ -102,7 +101,7 @@ public class NetkitGraphTranslator extends GraphTranslator {
 				// object is a node
 				if(o.isAnon()) {
 					// object is a blank node
-					String bUri = "http://aksw.org/Groups/SIMBA/SemSRL/blanknode/BN" + DigestUtils.sha1Hex(o.toString());
+					String bUri = "http://aksw.org/Groups/SIMBA/SemSRL/blanknode/BN" + DigestUtils.shaHex(o.toString());
 					if(!nodemap.containsKey(bUri)) {
 						// object is new
 						nodemap.put(bUri, new HashMap<String, String>());
