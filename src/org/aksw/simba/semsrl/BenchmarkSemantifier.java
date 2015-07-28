@@ -86,7 +86,8 @@ public class BenchmarkSemantifier {
 	}
 
 	/**
-	 * Command-line execution: specify the constructor arguments, or no arguments for a demo.
+	 * Command-line execution: specify the constructor arguments, or no
+	 * arguments for a demo.
 	 * 
 	 * @param args
 	 * @throws IOException
@@ -102,8 +103,9 @@ public class BenchmarkSemantifier {
 					"http://dblp.rkbexplorer.com/id/",
 					"http://acm.rkbexplorer.com/id/",
 					"http://dblp.rkbexplorer.com/sparql",
-					"http://acm.rkbexplorer.com/sparql", "datasets/dblp.nt",
-					"datasets/acm.nt", };
+					"http://acm.rkbexplorer.com/sparql",
+					"datasets/DBLP-semantified.nt",
+					"datasets/ACM-semantified.nt", };
 		}
 
 		BenchmarkSemantifier sem = new BenchmarkSemantifier(args[0], args[1],
@@ -117,8 +119,8 @@ public class BenchmarkSemantifier {
 	 * @throws IOException
 	 */
 	public void run() throws IOException {
-		
-		LOGGER.info(getClass().getSimpleName()+" started.");
+
+		LOGGER.info(getClass().getSimpleName() + " started.");
 
 		Model m1 = ModelFactory.createDefaultModel();
 		Model m2 = ModelFactory.createDefaultModel();
@@ -142,7 +144,7 @@ public class BenchmarkSemantifier {
 		}
 
 		reader.close();
-		
+
 		LOGGER.info("Adding satellites for source dataset...");
 		addSatellites(m1, srcEndpoint);
 		LOGGER.info("Adding satellites for target dataset...");
@@ -173,7 +175,7 @@ public class BenchmarkSemantifier {
 			if (node.isURIResource())
 				objURIs.add(node.asResource().getURI());
 		}
-		
+
 		// add CBDs to model
 		for (String uri : objURIs) {
 			LOGGER.info("Crawling satellite " + uri);

@@ -8,3 +8,5 @@
 
 datasets/
 log/
+
+.DS_Store
