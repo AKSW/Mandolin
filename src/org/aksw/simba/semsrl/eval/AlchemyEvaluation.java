@@ -29,17 +29,19 @@ public class AlchemyEvaluation {
 	// TODO hard coded: remove me!
 	private static final String[] DATASRC_IDS = {"dblp", "acm"};
 	
+	private static final int EVAL_INTERVAL_FROM = 100;
+	private static final int EVAL_INTERVAL_TO   = 1000;
+	private static final int EVAL_INTERVAL_STEP = 100;
+	
 	/**
 	 * @param args
 	 * @throws IOException 
 	 * @throws ClassNotFoundException 
 	 */
-	public static void main(String[] args) throws ClassNotFoundException, IOException {
+	public static void run(String[] args) throws ClassNotFoundException, IOException {
 		
-		for(int i=90; i<110; i++) {
-			System.out.print("THR = "+(i / 1000.0));
+		for(int i=EVAL_INTERVAL_FROM; i<=EVAL_INTERVAL_TO; i+=EVAL_INTERVAL_STEP)
 			evaluate(args, i / 1000.0);
-		}
 		
 	}
 	
@@ -102,12 +104,12 @@ public class AlchemyEvaluation {
 		recall = (tp+fp == 0) ? 0.0 : tp / (tp+fn) * 100.0;
 		fscore = (precision+recall == 0) ? 0.0 : 2 * precision * recall / (precision + recall);
 		
-//		String details = "";
-//		details += "tp = " + tp + "\tfp = " + fp + "\n";
-//		details += "tn = " + tn + "\tfn = " + fn + "\n";
-//		details += "pr% = " + precision + "\nrc% = " + recall + "\n";
-//		details += "fscore% = " + fscore;
-		String details = "\t" + precision + "\t" + recall + "\t" + fscore;
+		String details = "";
+		details += "tp = " + tp + "\tfp = " + fp + "\t";
+		details += "tn = " + tn + "\tfn = " + fn + "\t";
+		details += "pr% = " + precision + "\trc% = " + recall + "\t";
+		details += "fscore% = " + fscore + "\n";
+		details += "THR = " + threshold + "\t" + precision + "\t" + recall + "\t" + fscore;
 		System.out.println(details);
 	}
 	

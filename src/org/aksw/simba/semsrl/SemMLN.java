@@ -36,7 +36,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  */
 public class SemMLN {
 
-	private static final double TRAINING_FRACTION = 0.5;
+	private static final double TRAINING_FRACTION = 0.1;
 	
 	/*
 	 * Logger.
@@ -47,6 +47,9 @@ public class SemMLN {
 	private String propFile;
 	private String approach;
 
+	private ResourceGraph graph;
+	private ArrayList<ConnectedGroup> groups;
+	
 	public String getArgs() {
 		return propFile;
 	}
@@ -62,20 +65,19 @@ public class SemMLN {
 		crawlers.put("sparql", new SparqlCrawler());
 		crawlers.put("csv", new CSVCrawler());
 	}
-	
+
 	/**
-	 * SemMLN main algorithm.
-	 * TODO Part of this code is shared with SemSRL: arrange it better.
+	 * Prepare datasets.
 	 * 
 	 * @throws IOException 
 	 */
-	public void learn() throws IOException {
-		System.out.println("SemMLN started");
+	public void prepare() throws IOException {
+		System.out.println("Preparing datasets...");
 		Mapping mapping = MappingFactory.createMapping(propFile);
 		
-		ResourceGraph graph = new ResourceGraph(propFile);
+		graph = new ResourceGraph(propFile);
 		graph.setMapping(mapping);
-		ArrayList<ConnectedGroup> groups = new ArrayList<>(mapping.getGroups());
+		groups = new ArrayList<>(mapping.getGroups());
 		
 		for(ConnectedGroup cg : groups) {
 			Map<DataSource, String> map = cg.getMap();
@@ -93,6 +95,17 @@ public class SemMLN {
 				graph.merge(rg);
 			}
 		}
+		
+	}
+	
+	/**
+	 * SemMLN main algorithm.
+	 * TODO Part of this code is shared with SemSRL: arrange it better.
+	 * 
+	 * @throws IOException 
+	 */
+	public void learn() throws IOException {
+		System.out.println("SemMLN started...");
 		
 		// training data
 		PrintWriter writer = new PrintWriter(new File(propFile + "-" + approach + "/" + propFile + ".tr"));
@@ -137,6 +150,7 @@ public class SemMLN {
 	 */
 	public static void main(String[] args) throws IOException {
 		SemMLN srl = new SemMLN(args[0], args[1]);
+		srl.prepare();
 		srl.learn();
 	}
 

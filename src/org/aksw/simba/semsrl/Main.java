@@ -16,7 +16,7 @@ public class Main {
 			SemMLN.main(new String[]{args[0], args[1]});
 	
 		if(args[2].equals("eval") && args[1].equals("alchemy"))
-			AlchemyEvaluation.main(new String[]{args[0]});
+			AlchemyEvaluation.run(new String[]{args[0]});
 		
 	}
 

@@ -56,7 +56,7 @@ public class ConnectedGroup implements Comparable<ConnectedGroup> {
 
 	@Override
 	public int compareTo(ConnectedGroup o) {
-		return this.hashCode() - o.hashCode();
+		return Integer.compare(this.hashCode(), o.hashCode());
 	}
 
 	public Map<DataSource, String> getMap() {

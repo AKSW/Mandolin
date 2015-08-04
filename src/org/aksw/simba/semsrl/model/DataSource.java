@@ -45,7 +45,7 @@ public class DataSource implements Comparable<DataSource> {
 
 	@Override
 	public int compareTo(DataSource o) {
-		return this.hashCode() - o.hashCode();
+		return Integer.compare(this.hashCode(), o.hashCode());
 	}
 
 	public String getStorePath() {
