@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.model;
+package org.aksw.mandolin.semsrl.model;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.model;
+package org.aksw.mandolin.semsrl.model;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>

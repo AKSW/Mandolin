@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.eval;
+package org.aksw.mandolin.semsrl.eval;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,11 +11,11 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aksw.simba.semsrl.controller.MappingFactory;
-import org.aksw.simba.semsrl.io.Bundle;
-import org.aksw.simba.semsrl.model.ConnectedGroup;
-import org.aksw.simba.semsrl.model.DataSource;
-import org.aksw.simba.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.controller.MappingFactory;
+import org.aksw.mandolin.semsrl.model.ConnectedGroup;
+import org.aksw.mandolin.semsrl.model.DataSource;
+import org.aksw.mandolin.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.util.Bundle;
 import org.apache.jena.atlas.lib.SetUtils;
 
 /**

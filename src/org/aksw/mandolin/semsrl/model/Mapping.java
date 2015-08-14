@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.model;
+package org.aksw.mandolin.semsrl.model;
 
 import java.util.Set;
 import java.util.TreeSet;

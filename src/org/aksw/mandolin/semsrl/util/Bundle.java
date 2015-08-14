@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.io;
+package org.aksw.mandolin.semsrl.util;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;

@@ -1,14 +1,14 @@
-package org.aksw.simba.semsrl;
+package org.aksw.mandolin;
 
 import java.io.IOException;
 
-import org.aksw.simba.semsrl.eval.AlchemyEvaluation;
+import org.aksw.mandolin.semsrl.eval.AlchemyEvaluation;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class Main {
+public class SemMLNController {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		

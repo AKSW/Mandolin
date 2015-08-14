@@ -1,10 +1,10 @@
-package org.aksw.simba.semsrl.controller;
+package org.aksw.mandolin.semsrl.controller;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.aksw.simba.semsrl.io.Bundle;
-import org.aksw.simba.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.util.Bundle;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>

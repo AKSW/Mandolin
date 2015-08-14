@@ -1,8 +1,8 @@
-package org.aksw.simba.semsrl.controller;
+package org.aksw.mandolin.semsrl.controller;
 
-import org.aksw.simba.semsrl.io.Bundle;
-import org.aksw.simba.semsrl.model.DataSource;
-import org.aksw.simba.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.model.DataSource;
+import org.aksw.mandolin.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.util.Bundle;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;

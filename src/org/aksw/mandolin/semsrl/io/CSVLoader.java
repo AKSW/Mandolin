@@ -1,13 +1,14 @@
-package org.aksw.simba.semsrl.io;
+package org.aksw.mandolin.semsrl.io;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.aksw.simba.semsrl.model.ConnectedGroup;
-import org.aksw.simba.semsrl.model.DataSource;
-import org.aksw.simba.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.model.ConnectedGroup;
+import org.aksw.mandolin.semsrl.model.DataSource;
+import org.aksw.mandolin.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.util.Bundle;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;

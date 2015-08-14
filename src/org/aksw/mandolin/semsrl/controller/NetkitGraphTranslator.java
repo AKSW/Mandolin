@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.controller;
+package org.aksw.mandolin.semsrl.controller;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aksw.simba.semsrl.model.ResourceGraph;
-import org.aksw.simba.semsrl.util.CustomQuoteMode;
+import org.aksw.mandolin.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.util.CustomQuoteMode;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;

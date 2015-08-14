@@ -1,20 +1,20 @@
-package org.aksw.simba.semsrl;
+package org.aksw.mandolin;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.simba.semsrl.controller.CSVCrawler;
-import org.aksw.simba.semsrl.controller.Crawler;
-import org.aksw.simba.semsrl.controller.NetkitGraphTranslator;
-import org.aksw.simba.semsrl.controller.MappingFactory;
-import org.aksw.simba.semsrl.controller.SparqlCrawler;
-import org.aksw.simba.semsrl.io.Bundle;
-import org.aksw.simba.semsrl.model.ConnectedGroup;
-import org.aksw.simba.semsrl.model.DataSource;
-import org.aksw.simba.semsrl.model.Mapping;
-import org.aksw.simba.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.controller.CSVCrawler;
+import org.aksw.mandolin.semsrl.controller.Crawler;
+import org.aksw.mandolin.semsrl.controller.MappingFactory;
+import org.aksw.mandolin.semsrl.controller.NetkitGraphTranslator;
+import org.aksw.mandolin.semsrl.controller.SparqlCrawler;
+import org.aksw.mandolin.semsrl.model.ConnectedGroup;
+import org.aksw.mandolin.semsrl.model.DataSource;
+import org.aksw.mandolin.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.util.Bundle;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;

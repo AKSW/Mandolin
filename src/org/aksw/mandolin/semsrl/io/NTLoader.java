@@ -1,6 +1,6 @@
-package org.aksw.simba.semsrl.io;
+package org.aksw.mandolin.semsrl.io;
 
-import org.aksw.simba.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.model.Mapping;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>

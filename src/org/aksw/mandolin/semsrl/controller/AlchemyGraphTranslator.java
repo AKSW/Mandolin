@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl.controller;
+package org.aksw.mandolin.semsrl.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,12 +12,12 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.aksw.simba.semsrl.io.Bundle;
-import org.aksw.simba.semsrl.model.ConnectedGroup;
-import org.aksw.simba.semsrl.model.DataSource;
-import org.aksw.simba.semsrl.model.Mapping;
-import org.aksw.simba.semsrl.model.ResourceGraph;
-import org.aksw.simba.semsrl.util.StringClean;
+import org.aksw.mandolin.semsrl.model.ConnectedGroup;
+import org.aksw.mandolin.semsrl.model.DataSource;
+import org.aksw.mandolin.semsrl.model.Mapping;
+import org.aksw.mandolin.semsrl.model.ResourceGraph;
+import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.semsrl.util.StringClean;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.hp.hpl.jena.rdf.model.Property;

@@ -1,5 +1,4 @@
-mvn compile
-mvn package
+mvn compile package
 
 # java -Xmx2G -XX:+HeapDumpOnOutOfMemoryError -cp bin/:lib/* org.aksw.simba.semsrl.SemMLN publications alchemy
 java -Xmx2g -jar target/SemSRL-0.0.1-SNAPSHOT-jar-with-dependencies.jar publications alchemy start

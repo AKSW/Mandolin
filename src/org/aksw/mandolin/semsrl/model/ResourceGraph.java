@@ -1,8 +1,8 @@
-package org.aksw.simba.semsrl.model;
+package org.aksw.mandolin.semsrl.model;
 
 import java.util.List;
 
-import org.aksw.simba.semsrl.io.Bundle;
+import org.aksw.mandolin.semsrl.util.Bundle;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;

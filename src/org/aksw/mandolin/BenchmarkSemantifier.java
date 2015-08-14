@@ -1,4 +1,4 @@
-package org.aksw.simba.semsrl;
+package org.aksw.mandolin;
 
 import java.io.File;
 import java.io.FileOutputStream;
