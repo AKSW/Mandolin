@@ -1,28 +1,29 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.semsrl;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.aksw.mandolin.semsrl.controller.CSVCrawler;
-import org.aksw.mandolin.semsrl.controller.Crawler;
-import org.aksw.mandolin.semsrl.controller.MappingFactory;
-import org.aksw.mandolin.semsrl.controller.NetkitGraphTranslator;
-import org.aksw.mandolin.semsrl.controller.SparqlCrawler;
+import org.aksw.mandolin.semsrl.crawlers.CSVCrawler;
+import org.aksw.mandolin.semsrl.crawlers.Crawler;
+import org.aksw.mandolin.semsrl.crawlers.SparqlCrawler;
+import org.aksw.mandolin.semsrl.io.MappingFactory;
 import org.aksw.mandolin.semsrl.model.ConnectedGroup;
 import org.aksw.mandolin.semsrl.model.DataSource;
 import org.aksw.mandolin.semsrl.model.Mapping;
 import org.aksw.mandolin.semsrl.model.ResourceGraph;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.semsrl.translators.NetkitGraphTranslator;
+import org.aksw.mandolin.util.Bundle;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
-
 /**
- * Statistical Relational Learning of Semantic Links.
+ * Statistical Relational Learning of Semantic Links using Markov Logic Networks.
+ * <br>
+ * Warning: experimental code.
  * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *

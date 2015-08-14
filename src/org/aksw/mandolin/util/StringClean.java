@@ -1,4 +1,4 @@
-package org.aksw.mandolin.semsrl.util;
+package org.aksw.mandolin.util;
 
 /**
  * @author Tommaso Soru <>

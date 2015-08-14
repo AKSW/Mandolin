@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.aksw.mandolin.semsrl.model.ConnectedGroup;
 import org.aksw.mandolin.semsrl.model.DataSource;
 import org.aksw.mandolin.semsrl.model.Mapping;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.util.Bundle;
 
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;

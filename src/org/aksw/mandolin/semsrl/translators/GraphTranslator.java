@@ -1,10 +1,10 @@
-package org.aksw.mandolin.semsrl.controller;
+package org.aksw.mandolin.semsrl.translators;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.aksw.mandolin.semsrl.model.ResourceGraph;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.util.Bundle;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>

@@ -1,4 +1,4 @@
-package org.aksw.mandolin.semsrl.controller;
+package org.aksw.mandolin.semsrl.translators;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,8 +16,8 @@ import org.aksw.mandolin.semsrl.model.ConnectedGroup;
 import org.aksw.mandolin.semsrl.model.DataSource;
 import org.aksw.mandolin.semsrl.model.Mapping;
 import org.aksw.mandolin.semsrl.model.ResourceGraph;
-import org.aksw.mandolin.semsrl.util.Bundle;
-import org.aksw.mandolin.semsrl.util.StringClean;
+import org.aksw.mandolin.util.Bundle;
+import org.aksw.mandolin.util.StringClean;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import com.hp.hpl.jena.rdf.model.Property;
@@ -25,6 +25,10 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
+/**
+ * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
+ *
+ */
 public class AlchemyGraphTranslator extends GraphTranslator {
 
 	private static final String NAME = "alchemy";

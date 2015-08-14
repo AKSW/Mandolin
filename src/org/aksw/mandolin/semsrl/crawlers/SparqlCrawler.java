@@ -1,8 +1,8 @@
-package org.aksw.mandolin.semsrl.controller;
+package org.aksw.mandolin.semsrl.crawlers;
 
 import org.aksw.mandolin.semsrl.model.DataSource;
 import org.aksw.mandolin.semsrl.model.ResourceGraph;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.util.Bundle;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;

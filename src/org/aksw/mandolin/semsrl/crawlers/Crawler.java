@@ -1,4 +1,4 @@
-package org.aksw.mandolin.semsrl.controller;
+package org.aksw.mandolin.semsrl.crawlers;
 
 import java.io.IOException;
 

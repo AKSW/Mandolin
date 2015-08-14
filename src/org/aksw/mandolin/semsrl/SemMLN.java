@@ -1,4 +1,4 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.semsrl;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,19 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.aksw.mandolin.semsrl.controller.AlchemyGraphTranslator;
-import org.aksw.mandolin.semsrl.controller.CSVCrawler;
-import org.aksw.mandolin.semsrl.controller.Crawler;
-import org.aksw.mandolin.semsrl.controller.GraphTranslator;
-import org.aksw.mandolin.semsrl.controller.MappingFactory;
-import org.aksw.mandolin.semsrl.controller.NetkitGraphTranslator;
-import org.aksw.mandolin.semsrl.controller.ProbcogGraphTranslator;
-import org.aksw.mandolin.semsrl.controller.SparqlCrawler;
+import org.aksw.mandolin.semsrl.crawlers.CSVCrawler;
+import org.aksw.mandolin.semsrl.crawlers.Crawler;
+import org.aksw.mandolin.semsrl.crawlers.SparqlCrawler;
+import org.aksw.mandolin.semsrl.io.MappingFactory;
 import org.aksw.mandolin.semsrl.model.ConnectedGroup;
 import org.aksw.mandolin.semsrl.model.DataSource;
 import org.aksw.mandolin.semsrl.model.Mapping;
 import org.aksw.mandolin.semsrl.model.ResourceGraph;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.semsrl.translators.AlchemyGraphTranslator;
+import org.aksw.mandolin.semsrl.translators.GraphTranslator;
+import org.aksw.mandolin.semsrl.translators.NetkitGraphTranslator;
+import org.aksw.mandolin.semsrl.translators.ProbcogGraphTranslator;
+import org.aksw.mandolin.util.Bundle;
 import org.apache.log4j.Logger;
 
 import com.hp.hpl.jena.rdf.model.Property;
@@ -30,6 +30,8 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 /**
  * Statistical Relational Learning of Semantic Links using Markov Logic Networks.
+ * <br>
+ * Warning: experimental code.
  * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *

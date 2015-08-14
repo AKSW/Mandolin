@@ -11,11 +11,11 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.aksw.mandolin.semsrl.controller.MappingFactory;
+import org.aksw.mandolin.semsrl.io.MappingFactory;
 import org.aksw.mandolin.semsrl.model.ConnectedGroup;
 import org.aksw.mandolin.semsrl.model.DataSource;
 import org.aksw.mandolin.semsrl.model.Mapping;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.util.Bundle;
 import org.apache.jena.atlas.lib.SetUtils;
 
 /**

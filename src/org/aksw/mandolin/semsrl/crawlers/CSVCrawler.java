@@ -1,4 +1,4 @@
-package org.aksw.mandolin.semsrl.controller;
+package org.aksw.mandolin.semsrl.crawlers;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,6 +13,10 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.opencsv.CSVReader;
 
+/**
+ * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
+ *
+ */
 public class CSVCrawler implements Crawler {
 
 	@Override

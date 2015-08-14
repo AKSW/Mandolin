@@ -1,11 +1,9 @@
-package org.aksw.mandolin.semsrl.controller;
+package org.aksw.mandolin.semsrl.io;
 
 import java.io.IOException;
 
-import org.aksw.mandolin.semsrl.io.CSVLoader;
-import org.aksw.mandolin.semsrl.io.NTLoader;
 import org.aksw.mandolin.semsrl.model.Mapping;
-import org.aksw.mandolin.semsrl.util.Bundle;
+import org.aksw.mandolin.util.Bundle;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
