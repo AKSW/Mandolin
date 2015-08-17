@@ -35,12 +35,12 @@ import com.opencsv.CSVWriter;
  * SPARQL endpoints have to be specified.
  * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
- * @version 0.1
+ * @version 0.2
  */
 public class BenchmarkSemantifier {
 
 	String perfMapping, srcNamespace, tgtNamespace, srcEndpoint, tgtEndpoint,
-			srcOut, tgtOut;
+			srcOut, tgtOut, mapOut;
 
 	/**
 	 * Whether the CSV file has a header or not.
@@ -72,10 +72,12 @@ public class BenchmarkSemantifier {
 	 *            source RDF output file
 	 * @param tgtOut
 	 *            target RDF output file
+	 * @param mapOut
+	 *            mapping RDF output file
 	 */
 	public BenchmarkSemantifier(String perfMapping, String srcNamespace,
 			String tgtNamespace, String srcEndpoint, String tgtEndpoint,
-			String srcOut, String tgtOut) {
+			String srcOut, String tgtOut, String mapOut) {
 		this.perfMapping = perfMapping;
 		this.srcNamespace = srcNamespace;
 		this.tgtNamespace = tgtNamespace;
@@ -83,6 +85,7 @@ public class BenchmarkSemantifier {
 		this.tgtEndpoint = tgtEndpoint;
 		this.srcOut = srcOut;
 		this.tgtOut = tgtOut;
+		this.mapOut = mapOut;
 	}
 
 	/**
@@ -94,7 +97,7 @@ public class BenchmarkSemantifier {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		final int ARG_SIZE = 7;
+		final int ARG_SIZE = 8;
 
 		if (args.length != ARG_SIZE) {
 			LOGGER.warn("args[] size should be " + ARG_SIZE
@@ -104,12 +107,12 @@ public class BenchmarkSemantifier {
 					"http://acm.rkbexplorer.com/id/",
 					"http://dblp.rkbexplorer.com/sparql",
 					"http://acm.rkbexplorer.com/sparql",
-					"datasets/DBLP-semantified.nt",
-					"datasets/ACM-semantified.nt", };
+					"datasets/DBLP-new.nt", "datasets/ACM-new.nt",
+					"datasets/DBLP-ACM-new.nt" };
 		}
 
 		BenchmarkSemantifier sem = new BenchmarkSemantifier(args[0], args[1],
-				args[2], args[3], args[4], args[5], args[6]);
+				args[2], args[3], args[4], args[5], args[6], args[7]);
 		sem.run();
 	}
 
@@ -129,6 +132,7 @@ public class BenchmarkSemantifier {
 		String[] nextLine;
 		if (hasHeader) // skip header
 			reader.readNext();
+		int c = 0;
 		while ((nextLine = reader.readNext()) != null) {
 
 			String srcURI = srcNamespace + nextLine[0];
@@ -141,6 +145,8 @@ public class BenchmarkSemantifier {
 			addToModel(tgtURI, tgtEndpoint, m2);
 			LOGGER.info("Done. Target model size = " + m2.size());
 
+			if (++c == 100)
+				break;
 		}
 
 		reader.close();
@@ -154,6 +160,8 @@ public class BenchmarkSemantifier {
 		RDFDataMgr.write(new FileOutputStream(new File(srcOut)), m1, format);
 		LOGGER.info("Saving target model...");
 		RDFDataMgr.write(new FileOutputStream(new File(tgtOut)), m2, format);
+		LOGGER.info("Saving mapping model...");
+		MappingSemantifier.run(srcNamespace, tgtNamespace, perfMapping, mapOut);
 		LOGGER.info("Done.");
 
 	}
