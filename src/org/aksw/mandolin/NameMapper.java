@@ -15,7 +15,7 @@ public class NameMapper {
 	private HashMap<Type, TreeSet<String>> listByType = new HashMap<>();	
 	
 	public enum Type {
-		RESOURCE("Res"), PROPERTY("Res");
+		RESOURCE("Res"), PROPERTY("Prop");
 		private String str;
 		Type(String str) {
 			this.str = str;

@@ -34,7 +34,7 @@ public class Mandolin {
 		
 		PrintWriter pwEvid = new PrintWriter(new File(EVIDENCE_DB));
 		
-		StreamRDF dest = new StreamRDF() {
+		StreamRDF dataStream = new StreamRDF() {
 
 			@Override
 			public void base(String arg0) {}
@@ -56,7 +56,7 @@ public class Mandolin {
 				String s = map.add(arg0.getSubject().getURI(), Type.RESOURCE);
 				System.out.println("Added "+s+" - "+map.getURI(s));
 				String p = map.add(arg0.getPredicate().getURI(), Type.PROPERTY);
-//				System.out.println("Added "+p+" - "+map.getURI(p));
+				System.out.println("Added "+p+" - "+map.getURI(p));
 				String o = map.add(arg0.getObject().toString(), Type.RESOURCE);
 				System.out.println("Added "+o+" - "+map.getURI(o));
 				
@@ -65,9 +65,45 @@ public class Mandolin {
 			
 		};
 
-		RDFDataMgr.parse(dest, SRC_PATH);
-		RDFDataMgr.parse(dest, TGT_PATH);
-		RDFDataMgr.parse(dest, MAP_PATH);
+		final Cache training = new Cache();
+		
+		StreamRDF mapStream = new StreamRDF() {
+
+			@Override
+			public void base(String arg0) {}
+
+			@Override
+			public void finish() {}
+
+			@Override
+			public void prefix(String arg0, String arg1) {}
+
+			@Override
+			public void quad(Quad arg0) {}
+
+			@Override
+			public void start() {}
+
+			@Override
+			public void triple(Triple arg0) {
+				String s = map.add(arg0.getSubject().getURI(), Type.RESOURCE);
+//				System.out.println("Added "+s+" - "+map.getURI(s));
+				String p = map.add(arg0.getPredicate().getURI(), Type.PROPERTY);
+//				System.out.println("Added "+p+" - "+map.getURI(p));
+				String o = map.add(arg0.getObject().toString(), Type.RESOURCE);
+//				System.out.println("Added "+o+" - "+map.getURI(o));
+				
+				if(++training.count <= 90) {
+					System.out.println(training.count + "\t" + p + "(" + s + ", " + o + ")");
+					pwEvid.write(p + "(" + s + ", " + o + ")\n");
+				}
+			}
+			
+		};
+
+		RDFDataMgr.parse(dataStream, SRC_PATH);
+		RDFDataMgr.parse(dataStream, TGT_PATH);
+		RDFDataMgr.parse(mapStream, MAP_PATH);
 		
 		pwEvid.close();
 		
@@ -93,4 +129,10 @@ public class Mandolin {
 		
 	}
 
+}
+
+class Cache {
+	
+	int count = 0;
+	
 }
