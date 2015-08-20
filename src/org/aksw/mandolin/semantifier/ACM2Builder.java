@@ -49,14 +49,9 @@ public class ACM2Builder {
 
 		}
 
-		DataIO.serialize(data, "data.map");
-		
-		ArrayList<Elements> data2 = DataIO.readList("data.map");
-		for(Elements e : data2) {
-			System.out.println(e.getURI() + "\t" + e.getElements());
-		}
-		
 //		write(elem);
+		
+		DataIO.serialize(data, "data.map");		
 
 	}
 
@@ -128,7 +123,7 @@ public class ACM2Builder {
 
 	}
 
-	private ResultSet sparql(String query, String endpoint) {
+	public static ResultSet sparql(String query, String endpoint) {
 
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint,
