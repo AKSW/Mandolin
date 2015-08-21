@@ -2,6 +2,7 @@ package org.aksw.mandolin.semantifier;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,8 +12,14 @@ import java.util.TreeSet;
 import org.aksw.mandolin.util.DataIO;
 import org.simmetrics.metrics.Levenshtein;
 
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.Syntax;
+import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -103,7 +110,7 @@ public class DatasetBuilder {
 		String query = "SELECT * WHERE { <"+uri+"> <http://www.w3.org/2000/01/rdf-schema#label> ?l }";
 		System.out.println(query);
 		
-		ResultSet rs = ACM2Builder.sparql(query, "http://dblp.l3s.de/d2r/sparql");
+		ResultSet rs = DatasetBuilder.sparql(query, "http://dblp.l3s.de/d2r/sparql");
 
 		if (rs.hasNext()) {
 			QuerySolution qs = rs.next();
@@ -121,7 +128,7 @@ public class DatasetBuilder {
 				+ "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l }";
 		System.out.println(query);
 		
-		ResultSet rs = ACM2Builder.sparql(query, "http://acm.rkbexplorer.com/sparql");
+		ResultSet rs = DatasetBuilder.sparql(query, "http://acm.rkbexplorer.com/sparql");
 
 		ArrayList<Entity> ent = new ArrayList<>();
 		
@@ -146,6 +153,34 @@ public class DatasetBuilder {
 		in.close();
 		
 		return map;
+	}
+
+	public static ResultSet sparql(String query, String endpoint, String graph) {
+	
+		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint,
+				sparqlQuery, graph);
+		return qexec.execSelect();
+	
+	}
+
+	public static ResultSet sparql(String query, String endpoint) {
+		return sparql(query, endpoint, "");
+	}
+
+	public static void save(Model m, String name) {
+		
+		// save to TURTLE/N3
+		try {
+			FileOutputStream fout = new FileOutputStream(name);
+			m.write(fout, "N-TRIPLES");
+			fout.close();
+		} catch (Exception e) {
+			System.out.println("Exception caught" + e.getMessage());
+			e.printStackTrace();
+		}
+
+		
 	}
 
 }

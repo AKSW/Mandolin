@@ -12,26 +12,21 @@ import java.util.TreeSet;
 
 import org.aksw.mandolin.util.DataIO;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.Syntax;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class ACM2Builder {
+public class DatasetBuildStarter {
 
 	public static final String ORIGIN_ENDPOINT = "http://dblp.l3s.de/d2r/sparql";
 
 	public static final String ELEMENT_REL = "http://purl.org/dc/elements/1.1/creator";
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		new ACM2Builder().run();
+		new DatasetBuildStarter().run();
 	}
 
 	public void run() throws IOException, ClassNotFoundException {
@@ -106,7 +101,7 @@ public class ACM2Builder {
 				+ pubURI + "> ; <" + elementRel + "> ?cr }";
 //		System.out.println(query);
 		
-		ResultSet rs = sparql(query, endpoint);
+		ResultSet rs = DatasetBuilder.sparql(query, endpoint);
 
 		ArrayList<String> list = new ArrayList<>();
 		String uri = null;
@@ -120,15 +115,6 @@ public class ACM2Builder {
 		elem.setElements(list);
 
 		return elem;
-
-	}
-
-	public static ResultSet sparql(String query, String endpoint) {
-
-		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint,
-				sparqlQuery);
-		return qexec.execSelect();
 
 	}
 
