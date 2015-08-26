@@ -49,8 +49,6 @@ public class DatasetBuildSemantifier {
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
 		
-		
-		
 		new DatasetBuildSemantifier().linkedACM();
 		new DatasetBuildSemantifier().mapping();
 		// new DatasetBuildSemantifier().linkedDBLP();

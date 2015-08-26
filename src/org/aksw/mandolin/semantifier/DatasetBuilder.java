@@ -28,7 +28,7 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class DatasetBuilder {
 
-	private static final String ENDPOINT = "http://localhost:8890/sparql";
+	private static final String ENDPOINT = "http://139.18.8.97:8890/sparql";
 	private static final String GRAPH = "http://acm.rkbexplorer.com";
 
 	public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, IOException {

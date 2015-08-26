@@ -30,7 +30,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.aksw.simba.semsrl.Main</mainClass>
+							<mainClass>org.aksw.mandolin.semantifier.DatasetBuilder</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
