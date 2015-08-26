@@ -49,6 +49,8 @@ public class DatasetBuildSemantifier {
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
 		
+		
+		
 		new DatasetBuildSemantifier().linkedACM();
 		new DatasetBuildSemantifier().mapping();
 		// new DatasetBuildSemantifier().linkedDBLP();
@@ -67,7 +69,7 @@ public class DatasetBuildSemantifier {
 		TreeSet<String> neighbours = new TreeSet<>();
 
 		// for each publication, add CBD to model
-		Scanner in = new Scanner(new File("l3s-to-acmrkb.csv"));
+		Scanner in = new Scanner(new File("tmp/l3s-to-acmrkb.csv"));
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
@@ -83,6 +85,7 @@ public class DatasetBuildSemantifier {
 			System.out.println("Model size = " + m.size());
 			System.out.println("URI Neighb = " + neigh.size());
 			System.out.println("Tot Neighb = " + neighbours.size());
+			// TODO remove me!
 			if (++i == 100)
 				break;
 		}
@@ -126,7 +129,7 @@ public class DatasetBuildSemantifier {
 
 		// build reverse map
 		HashMap<String, ArrayList<String>> map = DataIO
-				.readMap("authors-sameas.map");
+				.readMap("tmp/authors-sameas-100.map");
 		HashMap<String, String> old2new = new HashMap<>();
 		for (String key : map.keySet())
 			for (String val : map.get(key))
@@ -163,7 +166,7 @@ public class DatasetBuildSemantifier {
 		m.add(m2);
 
 		System.out.println("Saving model...");
-		DatasetBuilder.save(m, "LinkedACM-final.nt");
+		DatasetBuilder.save(m, "tmp/LinkedACM-final-100.nt");
 
 	}
 
@@ -171,14 +174,14 @@ public class DatasetBuildSemantifier {
 
 		// index elements with pubs and authors
 		ArrayList<Elements> pubsAuthsL3s = DataIO
-				.readList("pubs-with-authors.dblp-l3s.map");
+				.readList("tmp/pubs-with-authors.dblp-l3s.map");
 		HashMap<String, Elements> elemMap = new HashMap<>();
 		for (Elements el : pubsAuthsL3s)
 			elemMap.put(el.getURI(), el);
 
-		PrintWriter pw = new PrintWriter(new File("DBLPL3S-LinkedACM.nt"));
+		PrintWriter pw = new PrintWriter(new File("tmp/DBLPL3S-LinkedACM-100.nt"));
 		// for each publication, add CBD to model
-		Scanner in = new Scanner(new File("l3s-to-acmrkb.csv"));
+		Scanner in = new Scanner(new File("tmp/l3s-to-acmrkb.csv"));
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
@@ -193,7 +196,7 @@ public class DatasetBuildSemantifier {
 				// add author sameAs links
 				pw.write("<" + author + "> <" + OWL_SAMEAS + "> <"
 						+ toLinkedACMURI(author) + "> .\n");
-
+			// TODO remove me!
 			if (++i == 100)
 				break;
 		}

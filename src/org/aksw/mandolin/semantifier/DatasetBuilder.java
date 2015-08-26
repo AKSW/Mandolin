@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -27,17 +28,27 @@ import com.hp.hpl.jena.rdf.model.Model;
  */
 public class DatasetBuilder {
 
+	private static final String ENDPOINT = "http://localhost:8890/sparql";
+	private static final String GRAPH = "http://acm.rkbexplorer.com";
+
 	public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, IOException {
 		new DatasetBuilder().run();
 	}
 
 	public void run() throws FileNotFoundException, ClassNotFoundException, IOException {
 		
+		// load DBLP l3s to ACM rkb
+		HashMap<String, String> l3sMap = l3sToACMRkb();
+		
 		// build reverse map
 		HashMap<String, TreeSet<String>> map = new HashMap<>();
 		
-		ArrayList<Elements> data = DataIO.readList("pubs-with-authors.dblp-l3s.map");
+		ArrayList<Elements> data = DataIO.readList("tmp/pubs-with-authors.dblp-l3s.map");
 		for(Elements e : data) {
+//			// TODO remove me!
+//			if(!l3sMap.containsKey(e.getURI()))
+//				continue;
+			
 			for(String el : e.getElements()) {
 				TreeSet<String> pubSet;
 				if(map.containsKey(el))
@@ -50,21 +61,20 @@ public class DatasetBuilder {
 			}
 		}
 		
-		// load DBLP l3s to ACM rkb
-		HashMap<String, String> l3sMap = l3sToACMRkb();
-		
 		HashMap<String, ArrayList<String>> sameAsMap = new HashMap<>();
 		
+		PrintWriter pw = new PrintWriter(new File("tmp/distances.csv"));
+		
 		// algorithm starts here
-		for(String key : map.keySet()) {
+		for(String author : map.keySet()) {
 			
-			String name = getName(key);
+			String authorName = getName(author);
 			
-			System.out.println("Listing " + name + " ("+key+"): "+map.get(key));
+			System.out.println("Listing " + authorName + " ("+author+"): "+map.get(author));
 			
 			TreeSet<String> sameAs = new TreeSet<>();
 			
-			for(String l3s : map.get(key)) {
+			for(String l3s : map.get(author)) {
 				
 				System.out.println("L3S: "+l3s);
 				
@@ -76,12 +86,12 @@ public class DatasetBuilder {
 				ArrayList<Entity> rkb = getCreators(acmRkb);
 				for(Entity e : rkb) {
 					Levenshtein lev = new Levenshtein();
-					float d = lev.distance(name, e.getLabel());
+					float d = lev.distance(authorName, e.getLabel());
 					if(d <= distMin) {
 						distMin = d;
 						entity = e;
 					}
-					System.out.println("d("+name+", "+e.getLabel()+") = "+d);
+					System.out.println("d("+authorName+", "+e.getLabel()+") = "+d);
 				}
 				
 				if(entity == null) {
@@ -89,19 +99,25 @@ public class DatasetBuilder {
 					continue;
 				}
 				
+				if(distMin >= 5.0)
+					pw.write(authorName+","+entity.getLabel()+","+author+","+entity.getUri()+"\n");
+				
 				System.out.println("sameAs = "+entity.getUri());
 				sameAs.add(entity.getUri());
 				
 			}
 			
-			sameAsMap.put("http://mandolin.aksw.org/acm/" + key.substring(32), new ArrayList<>(sameAs));
+			sameAsMap.put("http://mandolin.aksw.org/acm/" + author.substring(32), new ArrayList<>(sameAs));
+			
 			
 //			System.out.println(sameAsMap);
 //			break;
 			
 		}
 		
-		DataIO.serialize(sameAsMap, "sameas.map");
+		pw.close();
+		
+		DataIO.serialize(sameAsMap, "tmp/authors-sameas.map");
 
 	}
 	
@@ -125,10 +141,10 @@ public class DatasetBuilder {
 		
 		String query = "SELECT DISTINCT * WHERE { <"+acmRkb+"> "
 				+ "<http://www.aktors.org/ontology/portal#has-author> ?s . "
-				+ "?s <http://www.w3.org/2000/01/rdf-schema#label> ?l }";
+				+ "?s <http://www.aktors.org/ontology/portal#full-name> ?l }";
 		System.out.println(query);
 		
-		ResultSet rs = DatasetBuilder.sparql(query, "http://acm.rkbexplorer.com/sparql");
+		ResultSet rs = DatasetBuilder.sparql(query, ENDPOINT, GRAPH);
 
 		ArrayList<Entity> ent = new ArrayList<>();
 		
@@ -144,11 +160,14 @@ public class DatasetBuilder {
 	private HashMap<String, String> l3sToACMRkb() throws FileNotFoundException {
 		HashMap<String, String> map = new HashMap<>();
 		
-		Scanner in = new Scanner(new File("l3s-to-acmrkb.csv"));
+		Scanner in = new Scanner(new File("tmp/l3s-to-acmrkb.csv"));
 		in.nextLine();
+//		int i = 0; // TODO remove me!
 		while(in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
 			map.put(line[0], "http://acm.rkbexplorer.com/id/" + line[1]);
+//			if(++i == 100)
+//				break;
 		}
 		in.close();
 		

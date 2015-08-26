@@ -46,22 +46,8 @@ public class DatasetBuildStarter {
 
 //		write(elem);
 		
-		DataIO.serialize(data, "data.map");		
+		DataIO.serialize(data, "tmp/pubs-with-authors.dblp-l3s.map");		
 
-	}
-
-	/**
-	 * Write element (e.g., author) list to text file.
-	 * 
-	 * @param elem
-	 * @throws FileNotFoundException
-	 */
-	public void write(TreeSet<String> elem) throws FileNotFoundException {
-		PrintWriter pw = new PrintWriter(new File("authors.txt"));
-		for(String e : elem) {
-			pw.write(e+"\n");
-		}
-		pw.close();
 	}
 
 	/**

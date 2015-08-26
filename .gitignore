@@ -9,5 +9,7 @@
 datasets/
 log/
 publications-*/
+old/
+tmp/
 
 .DS_Store
