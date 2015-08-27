@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+  xmlns:rdf  = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs = "http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:owl  = "http://www.w3.org/2002/07/owl#"
+>
+
+  <!-- the URI http://acm.rkbexplorer.com/id/375690 has been deprecated, see following alternative. -->
+
+  <rdf:Description rdf:about="http://acm.rkbexplorer.com/id/375690">
+    <rdfs:seeAlso rdf:resource="http://acm.rkbexplorer.com/id/501176" />
+    <owl:sameAs rdf:resource="http://acm.rkbexplorer.com/id/501176" />
+  </rdf:Description>
+
+</rdf:RDF>

@@ -34,7 +34,8 @@ public class DatasetBuildSemantifier {
 		
 		new DatasetBuildSemantifier().linkedACM();
 		new DatasetBuildSemantifier().mapping();
-		// new DatasetBuildSemantifier().linkedDBLP();
+		// new DatasetBuildSemantifier().linkedDBLP();		 
+		 
 	}
 
 	public void linkedDBLP() {
@@ -55,7 +56,7 @@ public class DatasetBuildSemantifier {
 		int i = 0;
 		while (in.hasNextLine()) {
 			String acmID = in.nextLine().split(",")[1];
-			String uri = Commons.ACMRKB_NAMESPACE + acmID;
+			String uri = Commons.ACMRKB_NAMESPACE + acmID.replaceAll("\"", "");
 			goodURIs.add(uri);
 			Model m1 = getCBD(uri);
 			m.add(m1);
@@ -167,8 +168,8 @@ public class DatasetBuildSemantifier {
 		int i = 0;
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
-			String l3s = Commons.DBLPL3S_NAMESPACE + line[0];
-			String lACM = Commons.ACMRKB_NAMESPACE + line[1];
+			String l3s = Commons.DBLPL3S_NAMESPACE + line[0].replaceAll("\"", "");
+			String lACM = Commons.ACMRKB_NAMESPACE + line[1].replaceAll("\"", "");
 
 			// add publication sameAs links
 			pw.write("<" + l3s + "> <" + Commons.OWL_SAMEAS + "> <" + lACM + "> .\n");
@@ -195,6 +196,7 @@ public class DatasetBuildSemantifier {
 	private Model getCBD(String uri) {
 
 		String query = "DESCRIBE <" + uri + ">";
+		System.out.println(query);
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(Commons.ACMRKB_ENDPOINT,
 				sparqlQuery, Commons.ACMRKB_GRAPH);
