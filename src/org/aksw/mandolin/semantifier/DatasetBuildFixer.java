@@ -6,10 +6,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TreeSet;
 
+import org.aksw.mandolin.util.DataIO;
 import org.simmetrics.metrics.Levenshtein;
 
 import com.hp.hpl.jena.query.QuerySolution;
@@ -26,7 +28,7 @@ import com.opencsv.CSVWriter;
  */
 public class DatasetBuildFixer {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
 //		System.out.println(new Levenshtein().distance("Query Execution Techniques for Caching Expensive Methods.", "2Q"));
 		
@@ -133,7 +135,7 @@ public class DatasetBuildFixer {
 					}
 				}
 			}
-			// give more importance to full string comparison
+			// give more importance to full string comparison when d is at most 2.0
 			if(dMin > 2.0) {
 				System.out.println("Using substring comparison (dMin = "+dMin+")");
 				dMin = dMinSub;
