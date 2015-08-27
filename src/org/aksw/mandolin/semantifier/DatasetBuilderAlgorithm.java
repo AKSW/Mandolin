@@ -83,15 +83,15 @@ public class DatasetBuilderAlgorithm {
 				System.out.println("L3S: " + l3s);
 
 				String acmRkb = l3sMap.get(l3s);
-				
+
 				float distMin = Float.MAX_VALUE;
 				Entity entity = null;
-				
+
 				ArrayList<Entity> rkb;
 				final int MAX_TRIES = 3;
 				int tries = 0;
 				do {
-					
+
 					rkb = getCreators(acmRkb);
 					tries++;
 					for (Entity e : rkb) {
@@ -101,21 +101,21 @@ public class DatasetBuilderAlgorithm {
 							distMin = d;
 							entity = e;
 						}
-						System.out.println("d(" + authorName + ", " + e.getLabel()
-								+ ") = " + d);
+						System.out.println("d(" + authorName + ", "
+								+ e.getLabel() + ") = " + d);
 					}
-	
+
 					if (entity == null) {
 						System.out.println("URI " + acmRkb
 								+ " is deprecated or has issues.");
-	
+
 						acmRkb = getRedirect(acmRkb.substring(acmRkb
 								.lastIndexOf('/') + 1));
-						System.out.println("*** Redirected to: "+acmRkb);
-	
+						System.out.println("*** Redirected to: " + acmRkb);
+
 					}
-					
-				} while(rkb.isEmpty() || tries >= MAX_TRIES);
+
+				} while (rkb.isEmpty() || tries >= MAX_TRIES);
 
 				if (distMin >= 5.0)
 					pw.write(authorName + "," + entity.getLabel() + ","
@@ -126,12 +126,13 @@ public class DatasetBuilderAlgorithm {
 
 			}
 
-			if (!sameAsMap.isEmpty())
+			if (!sameAs.isEmpty())
 				sameAsMap.put(
 						Commons.LINKEDACM_NAMESPACE + author.substring(32),
 						new ArrayList<>(sameAs));
 			else
-				;
+				System.out.println("*** " + Commons.LINKEDACM_NAMESPACE
+						+ author.substring(32) + " had an empty sameAs set.");
 
 			// System.out.println(sameAsMap);
 			// break;
@@ -147,18 +148,19 @@ public class DatasetBuilderAlgorithm {
 	private String getRedirect(String acmID) {
 
 		// get remote file
-		String uri = Commons.ACMRKB_NAMESPACE+acmID;
-		String fileIn = "http://acm.rkbexplorer.com/data/"+acmID;
-		String fileOut = "tmp/"+acmID+".rdf";
+		String uri = Commons.ACMRKB_NAMESPACE + acmID;
+		String fileIn = "http://acm.rkbexplorer.com/data/" + acmID;
+		String fileOut = "tmp/" + acmID + ".rdf";
 		try {
 			download(fileIn, fileOut);
-		} catch (IOException e) {}
-		
+		} catch (IOException e) {
+		}
+
 		Model model = RDFDataMgr.loadModel(fileOut);
-		NodeIterator it = model.listObjectsOfProperty(ResourceFactory.createResource(uri), 
-				Commons.OWL_SAMEAS);
-		
-		if(it.hasNext())
+		NodeIterator it = model.listObjectsOfProperty(
+				ResourceFactory.createResource(uri), Commons.OWL_SAMEAS);
+
+		if (it.hasNext())
 			return it.nextNode().asResource().getURI();
 
 		return null;
