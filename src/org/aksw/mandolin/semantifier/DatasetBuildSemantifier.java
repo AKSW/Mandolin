@@ -30,6 +30,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
  */
 public class DatasetBuildSemantifier {
 
+	private static final String L3S_NAMESPACE = "http://dblp.l3s.de/d2r/resource/publications/";
 	private static final String ACMRKB_NAMESPACE = "http://acm.rkbexplorer.com/id/";
 
 	private static final String ENDPOINT = "http://localhost:8890/sparql";
@@ -45,6 +46,7 @@ public class DatasetBuildSemantifier {
 
 	private static final Property OWL_SAMEAS = ResourceFactory
 			.createProperty("http://www.w3.org/2002/07/owl#sameAs");
+
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
@@ -67,7 +69,7 @@ public class DatasetBuildSemantifier {
 		TreeSet<String> neighbours = new TreeSet<>();
 
 		// for each publication, add CBD to model
-		Scanner in = new Scanner(new File("tmp/l3s-to-acmrkb.csv"));
+		Scanner in = new Scanner(new File("mapping/dblp-acm-fixed.csv"));
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
@@ -179,12 +181,12 @@ public class DatasetBuildSemantifier {
 
 		PrintWriter pw = new PrintWriter(new File("tmp/DBLPL3S-LinkedACM-100.nt"));
 		// for each publication, add CBD to model
-		Scanner in = new Scanner(new File("tmp/l3s-to-acmrkb.csv"));
+		Scanner in = new Scanner(new File("mapping/dblp-acm-fixed.csv"));
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
-			String l3s = line[0];
+			String l3s = L3S_NAMESPACE + line[0];
 			String lACM = ACMRKB_NAMESPACE + line[1];
 
 			// add publication sameAs links
