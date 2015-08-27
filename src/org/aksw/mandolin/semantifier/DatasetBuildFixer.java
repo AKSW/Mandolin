@@ -6,12 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TreeSet;
 
-import org.aksw.mandolin.util.DataIO;
 import org.simmetrics.metrics.Levenshtein;
 
 import com.hp.hpl.jena.query.QuerySolution;
@@ -39,16 +37,16 @@ public class DatasetBuildFixer {
 	public void fix() throws IOException {
 		
 		TreeSet<String> ids = new TreeSet<>();
-		Scanner in = new Scanner(new File("tmp/to-be-deleted-id.txt"));
+		Scanner in = new Scanner(new File(Commons.TO_BE_DELETED_ID));
 		while (in.hasNextLine())
 			ids.add(in.nextLine());
 		in.close();
 		
 		System.out.println("-----------\n"+ids);
 		
-		CSVReader reader = new CSVReader(new FileReader(new File("mappings/dblp-acm.csv")));
-		CSVWriter writer = new CSVWriter(new FileWriter(new File("mappings/dblp-acm-fixed.csv")));
-		CSVWriter removed = new CSVWriter(new FileWriter(new File("old/removed-publications.csv")));
+		CSVReader reader = new CSVReader(new FileReader(new File(Commons.DBLP_ACM_CSV)));
+		CSVWriter writer = new CSVWriter(new FileWriter(new File(Commons.DBLP_ACM_FIXED_CSV)));
+		CSVWriter removed = new CSVWriter(new FileWriter(new File(Commons.DBLP_ACM_REMOVED_CSV)));
 		String[] nextLine = reader.readNext();
 		writer.writeNext(nextLine);
 		removed.writeNext(nextLine);
@@ -68,11 +66,11 @@ public class DatasetBuildFixer {
 	public void run() throws FileNotFoundException {
 		
 		TreeSet<String> blacklist = new TreeSet<>();
-		PrintWriter pw = new PrintWriter(new File("tmp/to-be-deleted-id.txt"));
+		PrintWriter pw = new PrintWriter(new File(Commons.TO_BE_DELETED_ID));
 		
 		// get list of faulty authors
 		TreeSet<String> pairs = new TreeSet<>();
-		Scanner in = new Scanner(new File("tmp/to-be-deleted.txt"));
+		Scanner in = new Scanner(new File(Commons.TO_BE_DELETED));
 		while (in.hasNextLine())
 			pairs.add(in.nextLine());
 		in.close();
@@ -85,7 +83,7 @@ public class DatasetBuildFixer {
 
 			// query for DBLP-L3S publications
 			HashMap<String, String> dblpLabelToURI = new HashMap<>();
-			ResultSet rs1 = DatasetBuilder.sparql(
+			ResultSet rs1 = Commons.sparql(
 					"select ?p ?t where { ?p <http://purl.org/dc/elements/1.1/creator> <" + dblp
 							+ "> . ?p <http://www.w3.org/2000/01/rdf-schema#label> ?t }",
 					"http://dblp.l3s.de/d2r/sparql");
@@ -96,7 +94,7 @@ public class DatasetBuildFixer {
 
 			// query for ACM publications
 			HashMap<String, String> acmLabelToURI = new HashMap<>();
-			ResultSet rs2 = DatasetBuilder.sparql(
+			ResultSet rs2 = Commons.sparql(
 					"select ?p ?t where { ?p <http://www.aktors.org/ontology/portal#has-author> <" + acm
 							+ "> . ?p <http://www.aktors.org/ontology/portal#has-title> ?t }",
 					"http://localhost:8890/sparql");

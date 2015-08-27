@@ -2,7 +2,6 @@ package org.aksw.mandolin.semantifier;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -13,27 +12,18 @@ import java.util.TreeSet;
 import org.aksw.mandolin.util.DataIO;
 import org.simmetrics.metrics.Levenshtein;
 
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.Syntax;
-import com.hp.hpl.jena.rdf.model.Model;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class DatasetBuilder {
-
-	private static final String ENDPOINT = "http://139.18.8.97:8890/sparql";
-	private static final String GRAPH = "http://acm.rkbexplorer.com";
+public class DatasetBuilderAlgorithm {
 
 	public static void main(String[] args) throws FileNotFoundException,
 			ClassNotFoundException, IOException {
-		new DatasetBuilder().run();
+		new DatasetBuilderAlgorithm().run();
 	}
 
 	public void run() throws FileNotFoundException, ClassNotFoundException,
@@ -46,7 +36,7 @@ public class DatasetBuilder {
 		HashMap<String, TreeSet<String>> map = new HashMap<>();
 
 		ArrayList<Elements> data = DataIO
-				.readList("tmp/pubs-with-authors.dblp-l3s.map");
+				.readList(Commons.PUBS_WITH_AUTHORS_MAP);
 		for (Elements e : data) {
 			// // TODO remove me!
 			// if(!l3sMap.containsKey(e.getURI()))
@@ -66,7 +56,7 @@ public class DatasetBuilder {
 
 		HashMap<String, ArrayList<String>> sameAsMap = new HashMap<>();
 
-		PrintWriter pw = new PrintWriter(new File("tmp/distances.csv"));
+		PrintWriter pw = new PrintWriter(new File(Commons.DISTANCES_CSV));
 
 		// algorithm starts here
 		for (String author : map.keySet()) {
@@ -115,7 +105,7 @@ public class DatasetBuilder {
 			}
 
 			sameAsMap.put(
-					"http://mandolin.aksw.org/acm/" + author.substring(32),
+					Commons.LINKEDACM_NAMESPACE + author.substring(32),
 					new ArrayList<>(sameAs));
 
 			// System.out.println(sameAsMap);
@@ -125,18 +115,18 @@ public class DatasetBuilder {
 
 		pw.close();
 
-		DataIO.serialize(sameAsMap, "tmp/authors-sameas.map");
+		DataIO.serialize(sameAsMap, Commons.AUTHORS_SAMEAS_MAP);
 
 	}
 
 	private String getName(String uri) {
 
 		String query = "SELECT * WHERE { <" + uri
-				+ "> <http://www.w3.org/2000/01/rdf-schema#label> ?l }";
+				+ "> <"+Commons.RDFS_LABEL+"> ?l }";
 		System.out.println(query);
 
-		ResultSet rs = DatasetBuilder.sparql(query,
-				"http://dblp.l3s.de/d2r/sparql");
+		ResultSet rs = Commons.sparql(query,
+				Commons.DBLPL3S_ENDPOINT);
 
 		if (rs.hasNext()) {
 			QuerySolution qs = rs.next();
@@ -149,11 +139,11 @@ public class DatasetBuilder {
 	private ArrayList<Entity> getCreators(String acmRkb) {
 
 		String query = "SELECT DISTINCT * WHERE { <" + acmRkb + "> "
-				+ "<http://www.aktors.org/ontology/portal#has-author> ?s . "
-				+ "?s <http://www.aktors.org/ontology/portal#full-name> ?l }";
+				+ "<"+Commons.HAS_AUTHOR+"> ?s . "
+				+ "?s <"+Commons.FULL_NAME+"> ?l }";
 		System.out.println(query);
 
-		ResultSet rs = DatasetBuilder.sparql(query, ENDPOINT, GRAPH);
+		ResultSet rs = Commons.sparql(query, Commons.ACMRKB_ENDPOINT, Commons.ACMRKB_GRAPH);
 
 		ArrayList<Entity> ent = new ArrayList<>();
 
@@ -170,46 +160,19 @@ public class DatasetBuilder {
 	private HashMap<String, String> l3sToACMRkb() throws FileNotFoundException {
 		HashMap<String, String> map = new HashMap<>();
 
-		Scanner in = new Scanner(new File("mapping/dblp-acm-fixed.csv"));
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
 		in.nextLine();
 		// int i = 0; // TODO remove me!
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
-			map.put("http://dblp.l3s.de/d2r/resource/publications/" + line[0],
-					"http://acm.rkbexplorer.com/id/" + line[1]);
+			map.put(Commons.DBLPL3S_NAMESPACE + line[0],
+					Commons.ACMRKB_NAMESPACE + line[1]);
 			// if(++i == 100)
 			// break;
 		}
 		in.close();
 
 		return map;
-	}
-
-	public static ResultSet sparql(String query, String endpoint, String graph) {
-
-		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(endpoint,
-				sparqlQuery, graph);
-		return qexec.execSelect();
-
-	}
-
-	public static ResultSet sparql(String query, String endpoint) {
-		return sparql(query, endpoint, "");
-	}
-
-	public static void save(Model m, String name) {
-
-		// save to TURTLE/N3
-		try {
-			FileOutputStream fout = new FileOutputStream(name);
-			m.write(fout, "N-TRIPLES");
-			fout.close();
-		} catch (Exception e) {
-			System.out.println("Exception caught" + e.getMessage());
-			e.printStackTrace();
-		}
-
 	}
 
 }

@@ -3,12 +3,10 @@ package org.aksw.mandolin.semantifier;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.TreeSet;
 
 import org.aksw.mandolin.util.DataIO;
 
@@ -21,10 +19,6 @@ import com.hp.hpl.jena.query.ResultSet;
  */
 public class DatasetBuildStarter {
 
-	public static final String ORIGIN_ENDPOINT = "http://dblp.l3s.de/d2r/sparql";
-
-	public static final String ELEMENT_REL = "http://purl.org/dc/elements/1.1/creator";
-
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		new DatasetBuildStarter().run();
 	}
@@ -35,7 +29,7 @@ public class DatasetBuildStarter {
 
 		for (String rkbURI : getRKBURIs()) {
 
-			Elements e = getElements(rkbURI, ELEMENT_REL, ORIGIN_ENDPOINT);
+			Elements e = getElements(rkbURI, Commons.DC_CREATOR.getURI(), Commons.DBLPL3S_ENDPOINT);
 
 			System.out.println(e.getURI());
 			
@@ -43,10 +37,8 @@ public class DatasetBuildStarter {
 				data.add(e);
 
 		}
-
-//		write(elem);
 		
-		DataIO.serialize(data, "tmp/pubs-with-authors.dblp-l3s.map");		
+		DataIO.serialize(data, Commons.PUBS_WITH_AUTHORS_MAP);		
 
 	}
 
@@ -60,12 +52,12 @@ public class DatasetBuildStarter {
 
 		ArrayList<String> list = new ArrayList<>();
 
-		Scanner in = new Scanner(new File("mappings/dblp-acm.csv"));
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
 		in.nextLine(); // skip header
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
 			String rkb = line[0].replaceAll("\"", "");
-			list.add("http://dblp.rkbexplorer.com/id/" + rkb);
+			list.add(Commons.DBLP_NAMESPACE + rkb);
 		}
 		in.close();
 
@@ -83,11 +75,11 @@ public class DatasetBuildStarter {
 	private Elements getElements(String pubURI, String elementRel,
 			String endpoint) {
 
-		String query = "SELECT ?cr ?pub WHERE { ?pub <http://www.w3.org/2002/07/owl#sameAs> <"
+		String query = "SELECT ?cr ?pub WHERE { ?pub <"+Commons.OWL_SAMEAS+"> <"
 				+ pubURI + "> ; <" + elementRel + "> ?cr }";
 //		System.out.println(query);
 		
-		ResultSet rs = DatasetBuilder.sparql(query, endpoint);
+		ResultSet rs = Commons.sparql(query, endpoint);
 
 		ArrayList<String> list = new ArrayList<>();
 		String uri = null;

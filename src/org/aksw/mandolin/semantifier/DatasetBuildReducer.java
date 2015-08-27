@@ -51,7 +51,7 @@ public class DatasetBuildReducer {
 			m.remove(getCBD(pubURI));
 		}
 
-		DatasetBuilder.save(m, "LinkedACM-final.nt");
+		Commons.save(m, "LinkedACM-final.nt");
 
 	}
 
@@ -69,7 +69,7 @@ public class DatasetBuildReducer {
 				+ "FILTER regex(?s,'^http://acm.rkbexplorer.com/id/person-','i') }";
 		TreeSet<String> uris = new TreeSet<>();
 
-		ResultSet rs = DatasetBuilder.sparql(query, ENDPOINT, GRAPH);
+		ResultSet rs = Commons.sparql(query, ENDPOINT, GRAPH);
 		while (rs.hasNext())
 			uris.add(rs.next().getResource("s").getURI());
 
@@ -82,7 +82,7 @@ public class DatasetBuildReducer {
 				+ personURI + "> }";
 		TreeSet<String> uris = new TreeSet<>();
 
-		ResultSet rs = DatasetBuilder.sparql(query, ENDPOINT, GRAPH);
+		ResultSet rs = Commons.sparql(query, ENDPOINT, GRAPH);
 		while (rs.hasNext())
 			uris.add(rs.next().getResource("s").getURI());
 
@@ -96,7 +96,7 @@ public class DatasetBuildReducer {
 				+ "MINUS { ?s <http://www.aktors.org/ontology/portal#has-author> ?au } }";
 		TreeSet<String> uris = new TreeSet<>();
 
-		ResultSet rs = DatasetBuilder.sparql(query, ENDPOINT, GRAPH);
+		ResultSet rs = Commons.sparql(query, ENDPOINT, GRAPH);
 		while (rs.hasNext())
 			uris.add(rs.next().getResource("s").getURI());
 

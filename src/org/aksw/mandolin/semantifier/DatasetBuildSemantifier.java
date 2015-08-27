@@ -19,7 +19,6 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.Syntax;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
@@ -30,25 +29,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
  */
 public class DatasetBuildSemantifier {
 
-	private static final String L3S_NAMESPACE = "http://dblp.l3s.de/d2r/resource/publications/";
-	private static final String ACMRKB_NAMESPACE = "http://acm.rkbexplorer.com/id/";
-
-	private static final String ENDPOINT = "http://localhost:8890/sparql";
-	private static final String GRAPH = "http://acm.rkbexplorer.com";
-
-	private static final Resource PUBLICATION_CLASS = ResourceFactory
-			.createResource("http://www.aktors.org/ontology/portal#Article-Reference");
-	private static final Resource AUTHOR_CLASS = ResourceFactory
-			.createResource("http://www.aktors.org/ontology/portal#Person");
-
-	private static final Property RDF_TYPE = ResourceFactory
-			.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-
-	private static final Property OWL_SAMEAS = ResourceFactory
-			.createProperty("http://www.w3.org/2002/07/owl#sameAs");
-
-
-	public static void main(String[] args) throws ClassNotFoundException,
+	 public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
 		
 		new DatasetBuildSemantifier().linkedACM();
@@ -69,12 +50,12 @@ public class DatasetBuildSemantifier {
 		TreeSet<String> neighbours = new TreeSet<>();
 
 		// for each publication, add CBD to model
-		Scanner in = new Scanner(new File("mapping/dblp-acm-fixed.csv"));
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
 			String acmID = in.nextLine().split(",")[1];
-			String uri = ACMRKB_NAMESPACE + acmID;
+			String uri = Commons.ACMRKB_NAMESPACE + acmID;
 			goodURIs.add(uri);
 			Model m1 = getCBD(uri);
 			m.add(m1);
@@ -98,7 +79,7 @@ public class DatasetBuildSemantifier {
 			Resource s = ResourceFactory.createResource(uri);
 			// probably the following is useless, since two publications are
 			// never directly connected
-			if (m1.contains(s, RDF_TYPE, PUBLICATION_CLASS)) {
+			if (m1.contains(s, Commons.RDF_TYPE, Commons.PUBLICATION_CLASS)) {
 				// nothing
 			} else {
 				// add the model if subject isn't a publication
@@ -110,9 +91,9 @@ public class DatasetBuildSemantifier {
 		}
 
 		// collect non-wanted URIs from SPARQL query
-		ResultSet rs = DatasetBuilder.sparql("SELECT ?s WHERE { { ?s a <"
-				+ PUBLICATION_CLASS + "> } UNION { ?s a <" + AUTHOR_CLASS
-				+ "> } }", ENDPOINT, GRAPH);
+		ResultSet rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
+				+ Commons.PUBLICATION_CLASS + "> } UNION { ?s a <" + Commons.AUTHOR_CLASS
+				+ "> } }", Commons.ACMRKB_ENDPOINT, Commons.ACMRKB_GRAPH);
 		while (rs.hasNext())
 			nonwantedURIs.add(rs.nextSolution().getResource("s").getURI());
 		System.out.println("Total URIs = " + nonwantedURIs.size());
@@ -129,7 +110,7 @@ public class DatasetBuildSemantifier {
 
 		// build reverse map
 		HashMap<String, ArrayList<String>> map = DataIO
-				.readMap("tmp/authors-sameas-100.map");
+				.readMap(Commons.AUTHORS_SAMEAS_MAP);
 		HashMap<String, String> old2new = new HashMap<>();
 		for (String key : map.keySet())
 			for (String val : map.get(key))
@@ -166,7 +147,7 @@ public class DatasetBuildSemantifier {
 		m.add(m2);
 
 		System.out.println("Saving model...");
-		DatasetBuilder.save(m, "tmp/LinkedACM-final-100.nt");
+		Commons.save(m, Commons.LINKEDACM_NT);
 
 	}
 
@@ -174,27 +155,27 @@ public class DatasetBuildSemantifier {
 
 		// index elements with pubs and authors
 		ArrayList<Elements> pubsAuthsL3s = DataIO
-				.readList("tmp/pubs-with-authors.dblp-l3s.map");
+				.readList(Commons.PUBS_WITH_AUTHORS_MAP);
 		HashMap<String, Elements> elemMap = new HashMap<>();
 		for (Elements el : pubsAuthsL3s)
 			elemMap.put(el.getURI(), el);
 
-		PrintWriter pw = new PrintWriter(new File("tmp/DBLPL3S-LinkedACM-100.nt"));
+		PrintWriter pw = new PrintWriter(new File(Commons.DBLPL3S_LINKEDACM_NT));
 		// for each publication, add CBD to model
-		Scanner in = new Scanner(new File("mapping/dblp-acm-fixed.csv"));
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
-			String l3s = L3S_NAMESPACE + line[0];
-			String lACM = ACMRKB_NAMESPACE + line[1];
+			String l3s = Commons.DBLPL3S_NAMESPACE + line[0];
+			String lACM = Commons.ACMRKB_NAMESPACE + line[1];
 
 			// add publication sameAs links
-			pw.write("<" + l3s + "> <" + OWL_SAMEAS + "> <" + lACM + "> .\n");
+			pw.write("<" + l3s + "> <" + Commons.OWL_SAMEAS + "> <" + lACM + "> .\n");
 
 			for (String author : elemMap.get(l3s).getElements())
 				// add author sameAs links
-				pw.write("<" + author + "> <" + OWL_SAMEAS + "> <"
+				pw.write("<" + author + "> <" + Commons.OWL_SAMEAS + "> <"
 						+ toLinkedACMURI(author) + "> .\n");
 			// TODO remove me!
 			if (++i == 100)
@@ -208,15 +189,15 @@ public class DatasetBuildSemantifier {
 	}
 
 	private String toLinkedACMURI(String author) {
-		return "http://mandolin.aksw.org/acm/" + author.substring(32);
+		return Commons.LINKEDACM_NAMESPACE + author.substring(32);
 	}
 
 	private Model getCBD(String uri) {
 
 		String query = "DESCRIBE <" + uri + ">";
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(ENDPOINT,
-				sparqlQuery, GRAPH);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(Commons.ACMRKB_ENDPOINT,
+				sparqlQuery, Commons.ACMRKB_GRAPH);
 		return qexec.execDescribe();
 
 	}

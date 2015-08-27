@@ -70,7 +70,7 @@ public class DatasetBuildFinalizer {
 			System.out.println("Tot Neighb = "+neighbours.size());
 		}
 		in.close();
-		DatasetBuilder.save(m, "LinkedACM.nt");
+		Commons.save(m, "LinkedACM.nt");
 		// remove all visited nodes from neighbours
 		System.out.println("Neighbour size before = "+neighbours.size());
 		neighbours.removeAll(visited);
@@ -84,7 +84,7 @@ public class DatasetBuildFinalizer {
 			System.out.println("N CBD size = "+m1.size());
 			System.out.println("Model size = "+m.size());
 		}
-		DatasetBuilder.save(m, "LinkedACM.nt");
+		Commons.save(m, "LinkedACM.nt");
 		// replace all occurrences of old ACM URIs with the new ones (old2new map)
 		Iterator<Statement> it = m.listStatements();
 		Model m2 = ModelFactory.createDefaultModel();
@@ -110,7 +110,7 @@ public class DatasetBuildFinalizer {
 		m.add(m2);
 		// save model
 		System.out.println("Saving model...");
-		DatasetBuilder.save(m, "LinkedACM.nt");
+		Commons.save(m, "LinkedACM.nt");
 				
 		
 	}
