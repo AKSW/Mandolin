@@ -14,31 +14,40 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 /**
+ * Build the Commons.PUBS_WITH_AUTHORS_MAP containing all DBLPL3S publications
+ * with their respective authors, if any. The process could have been carried
+ * out by replacing namespaces (RKBExplorer to L3S), however this is a safer way
+ * to do it.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
 public class DatasetBuildStarter {
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
+	public static void main(String[] args) throws IOException,
+			ClassNotFoundException {
 		new DatasetBuildStarter().run();
 	}
 
 	public void run() throws IOException, ClassNotFoundException {
-		
+
 		ArrayList<Elements> data = new ArrayList<>();
 
 		for (String rkbURI : getRKBURIs()) {
 
-			Elements e = getElements(rkbURI, Commons.DC_CREATOR.getURI(), Commons.DBLPL3S_ENDPOINT);
+			Elements e = getElements(rkbURI, Commons.DC_CREATOR.getURI(),
+					Commons.DBLPL3S_ENDPOINT);
 
 			System.out.println(e.getURI());
-			
-			if(e.getURI() != null)
+
+			if (e.getURI() != null) {
+				// should always happen
 				data.add(e);
+			}
 
 		}
-		
-		DataIO.serialize(data, Commons.PUBS_WITH_AUTHORS_MAP);		
+
+		DataIO.serialize(data, Commons.PUBS_WITH_AUTHORS_MAP);
 
 	}
 
@@ -67,33 +76,59 @@ public class DatasetBuildStarter {
 	/**
 	 * Get the publication associated with a list of elements (e.g., authors).
 	 * 
-	 * @param pubURI
-	 * @param elementRel
+	 * @param rkbURI
+	 * @param relation
 	 * @param endpoint
 	 * @return
 	 */
-	private Elements getElements(String pubURI, String elementRel,
-			String endpoint) {
+	private Elements getElements(String rkbURI, String relation, String endpoint) {
 
-		String query = "SELECT ?cr ?pub WHERE { ?pub <"+Commons.OWL_SAMEAS+"> <"
-				+ pubURI + "> ; <" + elementRel + "> ?cr }";
-//		System.out.println(query);
-		
+		String query = "SELECT ?cr ?pub WHERE { ?pub <" + Commons.OWL_SAMEAS
+				+ "> <" + rkbURI + "> ; <" + relation + "> ?cr }";
+		System.out.println(query);
+
 		ResultSet rs = Commons.sparql(query, endpoint);
 
 		ArrayList<String> list = new ArrayList<>();
-		String uri = null;
+		String l3sURI = null;
 
 		while (rs.hasNext()) {
 			QuerySolution qs = rs.next();
-			uri = qs.getResource("?pub").getURI();
+			l3sURI = qs.getResource("?pub").getURI();
 			list.add(qs.getResource("?cr").getURI());
 		}
-		Elements elem = new Elements(uri);
-		elem.setElements(list);
+
+		Elements elem;
+
+		if (l3sURI == null) {
+			elem = getElementsNoCreator(rkbURI, relation, endpoint);
+		} else {
+			elem = new Elements(l3sURI);
+			elem.setElements(list);
+		}
 
 		return elem;
 
+	}
+
+	private Elements getElementsNoCreator(String rkbURI, String relation,
+			String endpoint) {
+		String query = "SELECT ?pub WHERE { ?pub <" + Commons.OWL_SAMEAS
+				+ "> <" + rkbURI + "> }";
+		System.out.println(query);
+
+		ResultSet rs = Commons.sparql(query, endpoint);
+
+		String l3sURI = null;
+
+		while (rs.hasNext()) {
+			l3sURI = rs.next().getResource("?pub").getURI();
+		}
+
+		Elements elem = new Elements(l3sURI);
+		elem.setElements(new ArrayList<>());
+
+		return elem;
 	}
 
 }
@@ -101,7 +136,7 @@ public class DatasetBuildStarter {
 class Elements implements Serializable {
 
 	private static final long serialVersionUID = -4523439946804741035L;
-	
+
 	private String uri;
 	private List<String> elements;
 

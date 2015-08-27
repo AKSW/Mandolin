@@ -50,8 +50,8 @@ public class Commons {
 			.createProperty("http://purl.org/dc/elements/1.1/creator");
 
 	// I/O
-	public static final String DBLP_ACM_CSV = "mapping/dblp-acm.csv";
-	public static final String DBLP_ACM_FIXED_CSV = "mapping/dblp-acm-fixed.csv";
+	public static final String DBLP_ACM_CSV = "mappings/dblp-acm.csv";
+	public static final String DBLP_ACM_FIXED_CSV = "mappings/dblp-acm-fixed.csv";
 	public static final String DBLP_ACM_REMOVED_CSV = "tmp/removed-publications.csv";
 	
 	public static final String PUBS_WITH_AUTHORS_MAP = "tmp/pubs-with-authors.dblp-l3s.map";
