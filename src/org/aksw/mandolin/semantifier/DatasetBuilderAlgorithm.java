@@ -115,8 +115,8 @@ public class DatasetBuilderAlgorithm {
 
 					}
 
-				} while (rkb.isEmpty() || tries >= MAX_TRIES);
-
+				} while (rkb.isEmpty() && tries < MAX_TRIES);
+				
 				if (distMin >= 5.0)
 					pw.write(authorName + "," + entity.getLabel() + ","
 							+ author + "," + entity.getUri() + "\n");
