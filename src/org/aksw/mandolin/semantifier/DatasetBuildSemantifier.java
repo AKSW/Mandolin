@@ -29,13 +29,13 @@ import com.hp.hpl.jena.rdf.model.Statement;
  */
 public class DatasetBuildSemantifier {
 
-	 public static void main(String[] args) throws ClassNotFoundException,
+	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
-		
+
 		new DatasetBuildSemantifier().linkedACM();
 		new DatasetBuildSemantifier().mapping();
-		// new DatasetBuildSemantifier().linkedDBLP();		 
-		 
+		// new DatasetBuildSemantifier().linkedDBLP();
+
 	}
 
 	public void linkedDBLP() {
@@ -93,8 +93,9 @@ public class DatasetBuildSemantifier {
 
 		// collect non-wanted URIs from SPARQL query
 		ResultSet rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
-				+ Commons.PUBLICATION_CLASS + "> } UNION { ?s a <" + Commons.AUTHOR_CLASS
-				+ "> } }", Commons.ACMRKB_ENDPOINT, Commons.ACMRKB_GRAPH);
+				+ Commons.PUBLICATION_CLASS + "> } UNION { ?s a <"
+				+ Commons.AUTHOR_CLASS + "> } }", Commons.ACMRKB_ENDPOINT,
+				Commons.ACMRKB_GRAPH);
 		while (rs.hasNext())
 			nonwantedURIs.add(rs.nextSolution().getResource("s").getURI());
 		System.out.println("Total URIs = " + nonwantedURIs.size());
@@ -119,6 +120,9 @@ public class DatasetBuildSemantifier {
 		System.out.println("# old author URIs = " + old2new.size());
 		System.out.println("# new author URIs = " + map.size());
 
+		// handle old ACM namespace
+		HashMap<String, String> toNewURI = handleOldACMNamespace(m);
+
 		// replace occurrences of authors
 		Iterator<Statement> it = m.listStatements();
 		Model m2 = ModelFactory.createDefaultModel();
@@ -132,6 +136,15 @@ public class DatasetBuildSemantifier {
 				m2.add(m2.createStatement(newSub, st.getPredicate(),
 						st.getObject()));
 				it.remove();
+			} else {
+				if(toNewURI.containsKey(sub)) {
+					Resource newSub = ResourceFactory.createResource(toNewURI
+							.get(sub));
+					System.out.println(sub + " -> " + newSub.getURI());
+					m2.add(m2.createStatement(newSub, st.getPredicate(),
+							st.getObject()));
+					it.remove();
+				}
 			}
 			if (st.getObject().isURIResource()) {
 				String obj = st.getObject().asResource().getURI();
@@ -142,6 +155,15 @@ public class DatasetBuildSemantifier {
 					m2.add(m2.createStatement(st.getSubject(),
 							st.getPredicate(), newObj));
 					it.remove();
+				} else {
+					if(toNewURI.containsKey(obj)) {
+						Resource newObj = ResourceFactory.createResource(toNewURI
+								.get(obj));
+						System.out.println(obj + " -> " + newObj.getURI());
+						m2.add(m2.createStatement(st.getSubject(),
+								st.getPredicate(), newObj));
+						it.remove();
+					}
 				}
 			}
 		}
@@ -150,6 +172,27 @@ public class DatasetBuildSemantifier {
 		System.out.println("Saving model...");
 		Commons.save(m, Commons.LINKEDACM_NT);
 
+	}
+
+	private HashMap<String, String> handleOldACMNamespace(Model m) {
+
+		HashMap<String, String> oldUriToName = new HashMap<>();
+
+		// get author names for the URIs
+		Iterator<Statement> it = m.listStatements(null, Commons.FULL_NAME,
+				(String) null);
+		while (it.hasNext()) {
+			Statement st = it.next();
+			if (st.getSubject().getURI().startsWith(Commons.OLD_AUTHOR_PREFIX))
+				oldUriToName.put(st.getSubject().getURI(),
+						Commons.LINKEDACM_NAMESPACE
+								+ "authors/"
+								+ st.getObject().asLiteral().getString()
+										.replaceAll("[^A-Za-z0-9]", ""));
+		}
+		System.out.println(oldUriToName);
+
+		return oldUriToName;
 	}
 
 	public void mapping() throws ClassNotFoundException, IOException {
@@ -168,11 +211,14 @@ public class DatasetBuildSemantifier {
 		int i = 0;
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
-			String l3s = Commons.DBLPL3S_NAMESPACE + line[0].replaceAll("\"", "");
-			String lACM = Commons.ACMRKB_NAMESPACE + line[1].replaceAll("\"", "");
+			String l3s = Commons.DBLPL3S_NAMESPACE
+					+ line[0].replaceAll("\"", "");
+			String lACM = Commons.ACMRKB_NAMESPACE
+					+ line[1].replaceAll("\"", "");
 
 			// add publication sameAs links
-			pw.write("<" + l3s + "> <" + Commons.OWL_SAMEAS + "> <" + lACM + "> .\n");
+			pw.write("<" + l3s + "> <" + Commons.OWL_SAMEAS + "> <" + lACM
+					+ "> .\n");
 
 			for (String author : elemMap.get(l3s).getElements())
 				// add author sameAs links
@@ -198,8 +244,8 @@ public class DatasetBuildSemantifier {
 		String query = "DESCRIBE <" + uri + ">";
 		System.out.println(query);
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(Commons.ACMRKB_ENDPOINT,
-				sparqlQuery, Commons.ACMRKB_GRAPH);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(
+				Commons.ACMRKB_ENDPOINT, sparqlQuery, Commons.ACMRKB_GRAPH);
 		return qexec.execDescribe();
 
 	}

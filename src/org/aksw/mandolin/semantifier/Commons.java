@@ -30,6 +30,8 @@ public class Commons {
 	public static final String DBLPL3S_NAMESPACE = "http://dblp.l3s.de/d2r/resource/publications/";
 	public static final String ACMRKB_NAMESPACE = "http://acm.rkbexplorer.com/id/";
 	public static final String LINKEDACM_NAMESPACE = "http://mandolin.aksw.org/acm/";
+	
+	public static final String OLD_AUTHOR_PREFIX = "http://acm.rkbexplorer.com/id/person-";
 
 	// URIs
 	public static final Resource PUBLICATION_CLASS = ResourceFactory
