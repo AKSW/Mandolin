@@ -74,7 +74,7 @@ public class Commons {
 	
 	public static final String LINKEDACM_NT = "tmp/LinkedACM-final.nt";
 	public static final String DBLPL3S_LINKEDACM_NT = "tmp/DBLPL3S-LinkedACM.nt";
-	public static final String DBLPL3S_NT = "tmp/DBLP3LS-final.nt";
+	public static final String DBLPL3S_NT = "tmp/DBLPL3S-final.nt";
 
 	/**
 	 * Perform SPARQL query against an endpoint on a given graph.

@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.util.DataIO;
+import org.apache.jena.atlas.web.HttpException;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -314,8 +315,15 @@ public class DatasetBuildSemantifier {
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(
 				endpoint, sparqlQuery, graph);
-		return qexec.execDescribe();
-
+		Model m2;
+		try {
+			m2 = qexec.execDescribe();
+		} catch (Exception e) {
+			// the result vector is too large: create empty model
+			m2 = ModelFactory.createDefaultModel();
+		}
+		return m2;
+		
 	}
 
 	private TreeSet<String> getNeighbours(String uri, Model m1) {
