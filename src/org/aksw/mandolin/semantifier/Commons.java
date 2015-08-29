@@ -22,7 +22,10 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 public class Commons {
 
 	// SPARQL
-	public static final String DBLPL3S_ENDPOINT = "http://dblp.l3s.de/d2r/sparql";
+	// used to be "http://dblp.l3s.de/d2r/sparql"
+	public static final String DBLPL3S_ENDPOINT = "http://localhost:8890/sparql";
+	// used to be ""
+	public static final String DBLPL3S_GRAPH = "http://dblp.l3s.de";
 	public static final String ACMRKB_ENDPOINT = "http://localhost:8890/sparql";
 	public static final String ACMRKB_GRAPH = "http://acm.rkbexplorer.com";
 
@@ -34,9 +37,13 @@ public class Commons {
 	public static final String OLD_AUTHOR_PREFIX = "http://acm.rkbexplorer.com/id/person-";
 
 	// URIs
-	public static final Resource PUBLICATION_CLASS = ResourceFactory
+	public static final Resource DBLPL3S_PUBLICATION_CLASS = ResourceFactory
+			.createResource("http://xmlns.com/foaf/0.1/Document");
+	public static final Resource ACMRKB_PUBLICATION_CLASS = ResourceFactory
 			.createResource("http://www.aktors.org/ontology/portal#Article-Reference");
-	public static final Resource AUTHOR_CLASS = ResourceFactory
+	public static final Resource DBLPL3S_AUTHOR_CLASS = ResourceFactory
+			.createResource("http://xmlns.com/foaf/0.1/Agent");
+	public static final Resource ACMRKB_AUTHOR_CLASS = ResourceFactory
 			.createResource("http://www.aktors.org/ontology/portal#Person");
 	public static final Property RDF_TYPE = ResourceFactory
 			.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
@@ -46,6 +53,8 @@ public class Commons {
 			.createProperty("http://www.w3.org/2000/01/rdf-schema#label");
 	public static final Property HAS_AUTHOR = ResourceFactory
 			.createProperty("http://www.aktors.org/ontology/portal#has-author");
+	public static final Property HAS_TITLE = ResourceFactory
+			.createProperty("http://www.aktors.org/ontology/portal#has-title");
 	public static final Property FULL_NAME = ResourceFactory
 			.createProperty("http://www.aktors.org/ontology/portal#full-name");
 	public static final Property DC_CREATOR = ResourceFactory
@@ -65,6 +74,7 @@ public class Commons {
 	
 	public static final String LINKEDACM_NT = "tmp/LinkedACM-final.nt";
 	public static final String DBLPL3S_LINKEDACM_NT = "tmp/DBLPL3S-LinkedACM.nt";
+	public static final String DBLPL3S_NT = "tmp/DBLP3LS-final.nt";
 
 	/**
 	 * Perform SPARQL query against an endpoint on a given graph.
@@ -81,17 +91,6 @@ public class Commons {
 				sparqlQuery, graph);
 		return qexec.execSelect();
 
-	}
-
-	/**
-	 * Perform SPARQL query against an endpoint.
-	 * 
-	 * @param query
-	 * @param endpoint
-	 * @return
-	 */
-	public static ResultSet sparql(String query, String endpoint) {
-		return sparql(query, endpoint, "");
 	}
 
 	/**

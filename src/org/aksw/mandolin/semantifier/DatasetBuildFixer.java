@@ -84,9 +84,9 @@ public class DatasetBuildFixer {
 			// query for DBLP-L3S publications
 			HashMap<String, String> dblpLabelToURI = new HashMap<>();
 			ResultSet rs1 = Commons.sparql(
-					"select ?p ?t where { ?p <http://purl.org/dc/elements/1.1/creator> <" + dblp
-							+ "> . ?p <http://www.w3.org/2000/01/rdf-schema#label> ?t }",
-					"http://dblp.l3s.de/d2r/sparql");
+					"select ?p ?t where { ?p <"+Commons.DC_CREATOR+"> <" + dblp
+							+ "> . ?p <"+Commons.RDFS_LABEL+"> ?t }",
+					Commons.DBLPL3S_ENDPOINT, Commons.DBLPL3S_GRAPH);
 			while(rs1.hasNext()) {
 				QuerySolution qs = rs1.next();
 				dblpLabelToURI.put(qs.getLiteral("t").getString(), qs.getResource("p").getURI());
@@ -95,9 +95,9 @@ public class DatasetBuildFixer {
 			// query for ACM publications
 			HashMap<String, String> acmLabelToURI = new HashMap<>();
 			ResultSet rs2 = Commons.sparql(
-					"select ?p ?t where { ?p <http://www.aktors.org/ontology/portal#has-author> <" + acm
-							+ "> . ?p <http://www.aktors.org/ontology/portal#has-title> ?t }",
-					"http://localhost:8890/sparql");
+					"select ?p ?t where { ?p <"+Commons.HAS_AUTHOR+"> <" + acm
+							+ "> . ?p <"+Commons.HAS_TITLE+"> ?t }",
+					Commons.ACMRKB_ENDPOINT, Commons.ACMRKB_GRAPH);
 			while(rs2.hasNext()) {
 				QuerySolution qs = rs2.next();
 				acmLabelToURI.put(qs.getLiteral("t").getString(), qs.getResource("p").getURI());

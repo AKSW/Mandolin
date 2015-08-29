@@ -36,7 +36,7 @@ public class DatasetBuildStarter {
 		for (String rkbURI : getRKBURIs()) {
 
 			Elements e = getElements(rkbURI, Commons.DC_CREATOR.getURI(),
-					Commons.DBLPL3S_ENDPOINT);
+					Commons.DBLPL3S_ENDPOINT, Commons.DBLPL3S_GRAPH);
 
 			System.out.println(e.getURI());
 
@@ -81,13 +81,13 @@ public class DatasetBuildStarter {
 	 * @param endpoint
 	 * @return
 	 */
-	private Elements getElements(String rkbURI, String relation, String endpoint) {
+	private Elements getElements(String rkbURI, String relation, String endpoint, String graph) {
 
 		String query = "SELECT ?cr ?pub WHERE { ?pub <" + Commons.OWL_SAMEAS
 				+ "> <" + rkbURI + "> ; <" + relation + "> ?cr }";
 		System.out.println(query);
 
-		ResultSet rs = Commons.sparql(query, endpoint);
+		ResultSet rs = Commons.sparql(query, endpoint, graph);
 
 		ArrayList<String> list = new ArrayList<>();
 		String l3sURI = null;
@@ -101,7 +101,7 @@ public class DatasetBuildStarter {
 		Elements elem;
 
 		if (l3sURI == null) {
-			elem = getElementsNoCreator(rkbURI, relation, endpoint);
+			elem = getElementsNoCreator(rkbURI, relation, endpoint, graph);
 		} else {
 			elem = new Elements(l3sURI);
 			elem.setElements(list);
@@ -112,12 +112,12 @@ public class DatasetBuildStarter {
 	}
 
 	private Elements getElementsNoCreator(String rkbURI, String relation,
-			String endpoint) {
+			String endpoint, String graph) {
 		String query = "SELECT ?pub WHERE { ?pub <" + Commons.OWL_SAMEAS
 				+ "> <" + rkbURI + "> }";
 		System.out.println(query);
 
-		ResultSet rs = Commons.sparql(query, endpoint);
+		ResultSet rs = Commons.sparql(query, endpoint, graph);
 
 		String l3sURI = null;
 

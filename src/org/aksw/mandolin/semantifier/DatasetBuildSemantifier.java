@@ -1,6 +1,7 @@
 package org.aksw.mandolin.semantifier;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -32,15 +33,82 @@ public class DatasetBuildSemantifier {
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
 
-		new DatasetBuildSemantifier().linkedACM();
-		new DatasetBuildSemantifier().mapping();
-		// new DatasetBuildSemantifier().linkedDBLP();
+//		new DatasetBuildSemantifier().linkedACM();
+//		new DatasetBuildSemantifier().mapping();
+		new DatasetBuildSemantifier().linkedDBLP();
 
 	}
 
-	public void linkedDBLP() {
-		// TODO Auto-generated method stub
+	public void linkedDBLP() throws FileNotFoundException {
+		
+		Model m = ModelFactory.createDefaultModel();
+		TreeSet<String> nonwantedURIs = new TreeSet<>();
+		TreeSet<String> goodURIs = new TreeSet<>();
+		TreeSet<String> neighbours = new TreeSet<>();
+		
+		// for each publication, add CBD to model
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
+		in.nextLine();
+		int i = 0;
+		while (in.hasNextLine()) {
+			String acmID = in.nextLine().split(",")[0];
+			String uri = Commons.DBLPL3S_NAMESPACE + acmID.replaceAll("\"", "");
+			goodURIs.add(uri);
+			Model m1 = getCBD(uri, Commons.DBLPL3S_ENDPOINT, Commons.DBLPL3S_GRAPH);
+			m.add(m1);
+			TreeSet<String> neigh = getNeighbours(uri, m1);
+			neighbours.addAll(neigh);
+			System.out.println("URI        = " + uri);
+			System.out.println("CBD size   = " + m1.size());
+			System.out.println("Model size = " + m.size());
+			System.out.println("URI Neighb = " + neigh.size());
+			System.out.println("Tot Neighb = " + neighbours.size());
+			// TODO remove me!
+			if (++i == 100)
+				break;
+		}
+		in.close();
+		
+		// for each neighbour, add CBD to model as long as it's not part of a
+		// publication CBD
+		for (String uri : neighbours) {
+			Model m1 = getCBD(uri, Commons.DBLPL3S_ENDPOINT, Commons.DBLPL3S_GRAPH);
+			Resource s = ResourceFactory.createResource(uri);
+			// probably the following is useless, since two publications are
+			// never directly connected
+			if (m1.contains(s, Commons.RDF_TYPE, Commons.DBLPL3S_PUBLICATION_CLASS)) {
+				// nothing
+			} else {
+				// add the model if subject isn't a publication
+				m.add(m1);
+			}
+			System.out.println("Neighb URI = " + uri);
+			System.out.println("N CBD size = " + m1.size());
+			System.out.println("Model size = " + m.size());
+		}
+		
+		// collect non-wanted URIs from SPARQL query
+		ResultSet rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
+				+ Commons.DBLPL3S_PUBLICATION_CLASS + "> } UNION { ?s a <"
+				+ Commons.DBLPL3S_AUTHOR_CLASS + "> } }", Commons.DBLPL3S_ENDPOINT,
+				Commons.DBLPL3S_GRAPH);
+		while (rs.hasNext())
+			nonwantedURIs.add(rs.nextSolution().getResource("s").getURI());
+		System.out.println("Total URIs = " + nonwantedURIs.size());
+		System.out.println("Good URIs = " + goodURIs.size());
+		nonwantedURIs.removeAll(goodURIs);
+		System.out.println("Non-wanted URIs = " + nonwantedURIs.size());
 
+		// remove all triples containing non-wanted URIs
+		for (String uri : nonwantedURIs) {
+			Resource s = ResourceFactory.createResource(uri);
+			m.removeAll(s, null, null);
+			m.removeAll(null, null, s);
+		}
+		
+		System.out.println("Saving model...");
+		Commons.save(m, Commons.DBLPL3S_NT);
+		
 	}
 
 	public void linkedACM() throws ClassNotFoundException, IOException {
@@ -58,7 +126,7 @@ public class DatasetBuildSemantifier {
 			String acmID = in.nextLine().split(",")[1];
 			String uri = Commons.ACMRKB_NAMESPACE + acmID.replaceAll("\"", "");
 			goodURIs.add(uri);
-			Model m1 = getCBD(uri);
+			Model m1 = getCBD(uri, Commons.ACMRKB_ENDPOINT, Commons.ACMRKB_GRAPH);
 			m.add(m1);
 			TreeSet<String> neigh = getNeighbours(uri, m1);
 			neighbours.addAll(neigh);
@@ -76,11 +144,11 @@ public class DatasetBuildSemantifier {
 		// for each neighbour, add CBD to model as long as it's not part of a
 		// publication CBD
 		for (String uri : neighbours) {
-			Model m1 = getCBD(uri);
+			Model m1 = getCBD(uri, Commons.ACMRKB_ENDPOINT, Commons.ACMRKB_GRAPH);
 			Resource s = ResourceFactory.createResource(uri);
 			// probably the following is useless, since two publications are
 			// never directly connected
-			if (m1.contains(s, Commons.RDF_TYPE, Commons.PUBLICATION_CLASS)) {
+			if (m1.contains(s, Commons.RDF_TYPE, Commons.ACMRKB_PUBLICATION_CLASS)) {
 				// nothing
 			} else {
 				// add the model if subject isn't a publication
@@ -93,8 +161,8 @@ public class DatasetBuildSemantifier {
 
 		// collect non-wanted URIs from SPARQL query
 		ResultSet rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
-				+ Commons.PUBLICATION_CLASS + "> } UNION { ?s a <"
-				+ Commons.AUTHOR_CLASS + "> } }", Commons.ACMRKB_ENDPOINT,
+				+ Commons.ACMRKB_PUBLICATION_CLASS + "> } UNION { ?s a <"
+				+ Commons.ACMRKB_AUTHOR_CLASS + "> } }", Commons.ACMRKB_ENDPOINT,
 				Commons.ACMRKB_GRAPH);
 		while (rs.hasNext())
 			nonwantedURIs.add(rs.nextSolution().getResource("s").getURI());
@@ -239,13 +307,13 @@ public class DatasetBuildSemantifier {
 		return Commons.LINKEDACM_NAMESPACE + author.substring(32);
 	}
 
-	private Model getCBD(String uri) {
+	private Model getCBD(String uri, String endpoint, String graph) {
 
 		String query = "DESCRIBE <" + uri + ">";
 		System.out.println(query);
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(
-				Commons.ACMRKB_ENDPOINT, sparqlQuery, Commons.ACMRKB_GRAPH);
+				endpoint, sparqlQuery, graph);
 		return qexec.execDescribe();
 
 	}

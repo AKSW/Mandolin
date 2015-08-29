@@ -190,7 +190,7 @@ public class DatasetBuilderAlgorithm {
 				+ "> ?l }";
 		System.out.println(query);
 
-		ResultSet rs = Commons.sparql(query, Commons.DBLPL3S_ENDPOINT);
+		ResultSet rs = Commons.sparql(query, Commons.DBLPL3S_ENDPOINT, Commons.DBLPL3S_GRAPH);
 
 		if (rs.hasNext()) {
 			QuerySolution qs = rs.next();
