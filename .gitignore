@@ -7,6 +7,7 @@
 .settings/
 
 datasets/
+linksets/
 log/
 publications-*/
 old/

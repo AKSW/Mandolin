@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.util.DataIO;
-import org.apache.jena.atlas.web.HttpException;
 
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;

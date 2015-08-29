@@ -18,9 +18,9 @@ import com.hp.hpl.jena.sparql.core.Quad;
  */
 public class Mandolin {
 	
-	private static final String SRC_PATH = "datasets/DBLP-100.nt";
-	private static final String TGT_PATH = "datasets/ACM-100.nt";
-	private static final String MAP_PATH = "datasets/DBLP-ACM-100.nt";
+	private static final String SRC_PATH = "datasets/DBLPL3S-100.nt";
+	private static final String TGT_PATH = "datasets/LinkedACM-100.nt";
+	private static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-100.nt";
 	
 	private static final String BASE = "publications-tuffy";
 	
@@ -103,7 +103,7 @@ public class Mandolin {
 
 		RDFDataMgr.parse(dataStream, SRC_PATH);
 		RDFDataMgr.parse(dataStream, TGT_PATH);
-		RDFDataMgr.parse(mapStream, MAP_PATH);
+		RDFDataMgr.parse(mapStream, LINKSET_PATH);
 		
 		pwEvid.close();
 		
