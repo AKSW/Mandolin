@@ -70,4 +70,9 @@ public class NameMapper {
 		return listByType.get(type);
 	}
 	
+	public void pretty() {
+		for(String key : mlnToUri.keySet())
+			System.out.println(key + "\t" + mlnToUri.get(key));
+	}
+	
 }

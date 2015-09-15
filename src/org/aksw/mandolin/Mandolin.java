@@ -18,21 +18,69 @@ import com.hp.hpl.jena.sparql.core.Quad;
  */
 public class Mandolin {
 	
-	private static final String SRC_PATH = "datasets/DBLPL3S-100.nt";
-	private static final String TGT_PATH = "datasets/LinkedACM-100.nt";
-	private static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-100.nt";
+	public static final String SRC_PATH = "datasets/DBLPL3S-100.nt";
+	public static final String TGT_PATH = "datasets/LinkedACM-100.nt";
+	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-100.nt";
 	
-	private static final String BASE = "publications-tuffy";
+	public static final String BASE = "publications-tuffy";
 	
-	private static final String EVIDENCE_DB = BASE + "/evidence.db";
-	private static final String QUERY_DB = BASE + "/query.db";
-	private static final String PROG_MLN = BASE + "/prog.mln";
+	public static final String EVIDENCE_DB = BASE + "/evidence.db";
+	public static final String QUERY_DB = BASE + "/query.db";
+	public static final String PROG_MLN = BASE + "/prog.mln";
 	
-	private NameMapper map = new NameMapper();
+	private NameMapper map;
+	
+	public NameMapper getMap() {
+		return map;
+	}
+
+	public Mandolin() {
+		
+		map = new NameMapper();
+		
+	}
 
 	private void run() throws FileNotFoundException {
 		
 		PrintWriter pwEvid = new PrintWriter(new File(EVIDENCE_DB));
+		graphEvidence(pwEvid);
+		mappingEvidence(pwEvid, 0, (int)(417 * 0.9));
+		
+		buildQueryDB(new PrintWriter(new File(QUERY_DB)));
+		
+		buildProgMLN(new PrintWriter(new File(PROG_MLN)));
+
+	}
+
+	public void buildProgMLN(PrintWriter pwProg) {
+
+		String sameAs = map.getName(URLs.OWL_SAMEAS);
+		for(String name : map.getNamesByType(Type.PROPERTY)) {
+			// closed world assumption is false for owl:sameAs
+			String cw = name.equals(sameAs) ? "" : "*";
+			pwProg.write(cw + name + "(res, res)\n");
+		}
+		pwProg.write("\n");
+		for(String name : map.getNamesByType(Type.PROPERTY)) {
+			// symmetric property
+			pwProg.write("1 !"+name+"(x, y) v "+name+"(y, x)\n");
+			pwProg.write("1 !"+name+"(y, x) v "+name+"(x, y)\n");
+			// transitive property
+			pwProg.write("1 !"+name+"(x, y) v !"+name+"(y, z) v "+name+"(x, z)\n");
+		}
+		pwProg.close();
+
+	}
+
+	public void buildQueryDB(PrintWriter pwQuery) {
+		
+		String sameAs = map.getName(URLs.OWL_SAMEAS);
+		pwQuery.write(sameAs);
+		pwQuery.close();
+		
+	}
+
+	public void graphEvidence(PrintWriter pwEvid) {
 		
 		StreamRDF dataStream = new StreamRDF() {
 
@@ -60,10 +108,18 @@ public class Mandolin {
 				String o = map.add(arg0.getObject().toString(), Type.RESOURCE);
 				System.out.println("Added "+o+" - "+map.getURI(o));
 				
-				pwEvid.write(p + "(" + s + ", " + o + ")\n");
+				if(pwEvid != null)
+					pwEvid.write(p + "(" + s + ", " + o + ")\n");
 			}
 			
 		};
+		
+		RDFDataMgr.parse(dataStream, SRC_PATH);
+		RDFDataMgr.parse(dataStream, TGT_PATH);
+		
+	}
+	
+	public void mappingEvidence(PrintWriter pwEvid, final int START, final int END) {
 
 		final Cache training = new Cache();
 		
@@ -93,34 +149,21 @@ public class Mandolin {
 				String o = map.add(arg0.getObject().toString(), Type.RESOURCE);
 //				System.out.println("Added "+o+" - "+map.getURI(o));
 				
-				if(++training.count <= 90) {
-					System.out.println(training.count + "\t" + p + "(" + s + ", " + o + ")");
-					pwEvid.write(p + "(" + s + ", " + o + ")\n");
+				if(pwEvid != null) {
+					int c = ++training.count;
+					if(START <= c && c <= END) {
+						System.out.println(training.count + "\t" + p + "(" + s + ", " + o + ")");
+						pwEvid.write(p + "(" + s + ", " + o + ")\n");
+					}
 				}
 			}
 			
 		};
 
-		RDFDataMgr.parse(dataStream, SRC_PATH);
-		RDFDataMgr.parse(dataStream, TGT_PATH);
 		RDFDataMgr.parse(mapStream, LINKSET_PATH);
 		
 		pwEvid.close();
 		
-		// ---------------
-		
-		PrintWriter pwQuery = new PrintWriter(new File(QUERY_DB));
-		pwQuery.write(map.getName(URLs.OWL_SAMEAS));
-		pwQuery.close();
-		
-		// ---------------
-		
-		PrintWriter pwProg = new PrintWriter(new File(PROG_MLN));
-		for(String name : map.getNamesByType(Type.PROPERTY))
-			pwProg.write(name+"(res, res)\n");
-		pwProg.close();
-
-
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
