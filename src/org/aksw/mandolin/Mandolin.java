@@ -21,12 +21,15 @@ public class Mandolin {
 	public static final String SRC_PATH = "datasets/DBLPL3S-100.nt";
 	public static final String TGT_PATH = "datasets/LinkedACM-100.nt";
 	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-100.nt";
+	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard-100.nt";
 	
-	public static final String BASE = "publications-tuffy";
+	public static final String BASE = "eval/02_publi-tuffy";
 	
 	public static final String EVIDENCE_DB = BASE + "/evidence.db";
 	public static final String QUERY_DB = BASE + "/query.db";
 	public static final String PROG_MLN = BASE + "/prog.mln";
+	
+	public static final int TRAINING_SIZE = (int) (417 * 0.9);
 	
 	private NameMapper map;
 	
@@ -44,7 +47,8 @@ public class Mandolin {
 		
 		PrintWriter pwEvid = new PrintWriter(new File(EVIDENCE_DB));
 		graphEvidence(pwEvid);
-		mappingEvidence(pwEvid, 0, (int)(417 * 0.9));
+		mappingEvidence(pwEvid, 0, TRAINING_SIZE);
+		pwEvid.close();
 		
 		buildQueryDB(new PrintWriter(new File(QUERY_DB)));
 		
@@ -102,14 +106,16 @@ public class Mandolin {
 			@Override
 			public void triple(Triple arg0) {
 				String s = map.add(arg0.getSubject().getURI(), Type.RESOURCE);
-				System.out.println("Added "+s+" - "+map.getURI(s));
+//				System.out.println("Added "+s+" - "+map.getURI(s));
 				String p = map.add(arg0.getPredicate().getURI(), Type.PROPERTY);
-				System.out.println("Added "+p+" - "+map.getURI(p));
+//				System.out.println("Added "+p+" - "+map.getURI(p));
 				String o = map.add(arg0.getObject().toString(), Type.RESOURCE);
-				System.out.println("Added "+o+" - "+map.getURI(o));
+//				System.out.println("Added "+o+" - "+map.getURI(o));
 				
-				if(pwEvid != null)
+				if(pwEvid != null) {
+					System.out.println(p + "(" + s + ", " + o + ")");
 					pwEvid.write(p + "(" + s + ", " + o + ")\n");
+				}
 			}
 			
 		};
@@ -162,13 +168,52 @@ public class Mandolin {
 
 		RDFDataMgr.parse(mapStream, LINKSET_PATH);
 		
-		pwEvid.close();
+	}
+	
+	public void closureEvidence(PrintWriter pwEvid) {
+
+		StreamRDF mapStream = new StreamRDF() {
+
+			@Override
+			public void base(String arg0) {}
+
+			@Override
+			public void finish() {}
+
+			@Override
+			public void prefix(String arg0, String arg1) {}
+
+			@Override
+			public void quad(Quad arg0) {}
+
+			@Override
+			public void start() {}
+
+			@Override
+			public void triple(Triple arg0) {
+				String s = map.getName(arg0.getSubject().getURI());
+				String p = map.getName(arg0.getPredicate().getURI());
+				String o = map.getName(arg0.getObject().toString());
+				
+				if(s == null || p == null || o == null)
+					System.err.println("HALT!");
+				
+				if(pwEvid != null) {
+					pwEvid.write(p + "(" + s + ", " + o + ")\n");
+				}
+			}
+			
+		};
+
+		RDFDataMgr.parse(mapStream, GOLD_STANDARD_PATH);
 		
 	}
 
+
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		new Mandolin().run();
+		System.err.println("Launch line commented to prevent file overwrite.");
+//		new Mandolin().run();
 		
 	}
 
