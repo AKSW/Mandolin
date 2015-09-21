@@ -29,13 +29,21 @@ import com.hp.hpl.jena.rdf.model.Statement;
  *
  */
 public class DatasetBuildSemantifier {
+	
+	private int N_EXAMPLES;
+	
+	public DatasetBuildSemantifier(int numEx) {
+		this.N_EXAMPLES = numEx;
+	}
 
 	public static void main(String[] args) throws ClassNotFoundException,
 			IOException {
+		
+		int n = 100;
 
-//		new DatasetBuildSemantifier().linkedACM();
-//		new DatasetBuildSemantifier().mapping();
-		new DatasetBuildSemantifier().linkedDBLP();
+//		new DatasetBuildSemantifier(n).linkedACM();
+//		new DatasetBuildSemantifier(n).mapping();
+		new DatasetBuildSemantifier(n).linkedDBLP();
 
 	}
 
@@ -51,8 +59,8 @@ public class DatasetBuildSemantifier {
 		in.nextLine();
 		int i = 0;
 		while (in.hasNextLine()) {
-			String acmID = in.nextLine().split(",")[0];
-			String uri = Commons.DBLPL3S_NAMESPACE + acmID.replaceAll("\"", "");
+			String dblpID = in.nextLine().split(",")[0];
+			String uri = Commons.DBLPL3S_NAMESPACE + dblpID.replaceAll("\"", "");
 			goodURIs.add(uri);
 			Model m1 = getCBD(uri, Commons.DBLPL3S_ENDPOINT, Commons.DBLPL3S_GRAPH);
 			m.add(m1);
@@ -64,7 +72,7 @@ public class DatasetBuildSemantifier {
 			System.out.println("URI Neighb = " + neigh.size());
 			System.out.println("Tot Neighb = " + neighbours.size());
 			// TODO remove me!
-			if (++i == 100)
+			if (++i == N_EXAMPLES)
 				break;
 		}
 		in.close();
@@ -88,12 +96,22 @@ public class DatasetBuildSemantifier {
 		}
 		
 		// collect non-wanted URIs from SPARQL query
-		ResultSet rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
+		ResultSet rs = null;
+		long page = 0;
+		long offset;
+		do {
+			offset = page * 1048576;
+			System.out.println("page = "+page+" | offset = "+offset);
+			rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
 				+ Commons.DBLPL3S_PUBLICATION_CLASS + "> } UNION { ?s a <"
-				+ Commons.DBLPL3S_AUTHOR_CLASS + "> } }", Commons.DBLPL3S_ENDPOINT,
+				+ Commons.DBLPL3S_AUTHOR_CLASS + "> } } LIMIT 1048576 OFFSET " + offset, Commons.DBLPL3S_ENDPOINT,
 				Commons.DBLPL3S_GRAPH);
-		while (rs.hasNext())
-			nonwantedURIs.add(rs.nextSolution().getResource("s").getURI());
+			System.out.println("before = "+nonwantedURIs.size());
+			while (rs.hasNext())
+				nonwantedURIs.add(rs.next().getResource("s").getURI());
+			System.out.println("after = "+nonwantedURIs.size());
+			page++;
+		} while(rs.getRowNumber() > 0);
 		System.out.println("Total URIs = " + nonwantedURIs.size());
 		System.out.println("Good URIs = " + goodURIs.size());
 		nonwantedURIs.removeAll(goodURIs);
@@ -105,6 +123,8 @@ public class DatasetBuildSemantifier {
 			m.removeAll(s, null, null);
 			m.removeAll(null, null, s);
 		}
+		
+		System.out.println("Model size after removal = " + m.size());
 		
 		System.out.println("Saving model...");
 		Commons.save(m, Commons.DBLPL3S_NT);
@@ -136,7 +156,7 @@ public class DatasetBuildSemantifier {
 			System.out.println("URI Neighb = " + neigh.size());
 			System.out.println("Tot Neighb = " + neighbours.size());
 			// TODO remove me!
-			if (++i == 100)
+			if (++i == N_EXAMPLES)
 				break;
 		}
 		in.close();
@@ -160,12 +180,22 @@ public class DatasetBuildSemantifier {
 		}
 
 		// collect non-wanted URIs from SPARQL query
-		ResultSet rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
+		ResultSet rs = null;
+		long page = 0;
+		long offset;
+		do {
+			offset = page * 1048576;
+			System.out.println("page = "+page+" | offset = "+offset);
+			rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
 				+ Commons.ACMRKB_PUBLICATION_CLASS + "> } UNION { ?s a <"
 				+ Commons.ACMRKB_AUTHOR_CLASS + "> } }", Commons.ACMRKB_ENDPOINT,
 				Commons.ACMRKB_GRAPH);
-		while (rs.hasNext())
-			nonwantedURIs.add(rs.nextSolution().getResource("s").getURI());
+			System.out.println("before = "+nonwantedURIs.size());
+			while (rs.hasNext())
+				nonwantedURIs.add(rs.next().getResource("s").getURI());
+			System.out.println("after = "+nonwantedURIs.size());
+			page++;
+		} while(rs.getRowNumber() > 0);
 		System.out.println("Total URIs = " + nonwantedURIs.size());
 		System.out.println("Good URIs = " + goodURIs.size());
 		nonwantedURIs.removeAll(goodURIs);
@@ -177,6 +207,8 @@ public class DatasetBuildSemantifier {
 			m.removeAll(s, null, null);
 			m.removeAll(null, null, s);
 		}
+		
+		System.out.println("Model size after removal = " + m.size());
 
 		// build reverse map
 		HashMap<String, ArrayList<String>> map = DataIO
@@ -293,7 +325,7 @@ public class DatasetBuildSemantifier {
 				pw.write("<" + author + "> <" + Commons.OWL_SAMEAS + "> <"
 						+ toLinkedACMURI(author) + "> .\n");
 			// TODO remove me!
-			if (++i == 100)
+			if (++i == N_EXAMPLES)
 				break;
 		}
 		in.close();
