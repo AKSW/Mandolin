@@ -18,10 +18,10 @@ import com.hp.hpl.jena.sparql.core.Quad;
  */
 public class Mandolin {
 	
-	public static final String SRC_PATH = "datasets/DBLPL3S-100.nt";
-	public static final String TGT_PATH = "datasets/LinkedACM-100.nt";
-	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-100.nt";
-	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard-100.nt";
+	public static final String SRC_PATH = "datasets/DBLPL3S-10.nt";
+	public static final String TGT_PATH = "datasets/LinkedACM-10.nt";
+	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-10.nt";
+	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard-10.nt";
 	
 	public static final String BASE = "eval/02_publi-tuffy";
 	

@@ -28,26 +28,14 @@ public class MandolinEvaluation {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		
-
 		Mandolin m = new Mandolin();
+		NameMapper map = m.getMap();
+
 		// fill out NameMapper without saving graph evidence on file
 		File graphEvidence = new File(Mandolin.BASE + "/graph_evidence.db");
 		PrintWriter pwGrEvid = new PrintWriter(graphEvidence);
 		m.graphEvidence(pwGrEvid);
 		pwGrEvid.close();
-		// save a link evidence on file (linkset statements only)
-		File perfMapping = new File(Mandolin.BASE + "/link_evidence.db");
-		PrintWriter pwPerfMap = new PrintWriter(perfMapping);
-		m.mappingEvidence(pwPerfMap, 0, 417);
-		pwPerfMap.close();
-		// closure evidence
-		File closureMapping = new File(Mandolin.BASE + "/closure_evidence.db");
-		PrintWriter pwClosure = new PrintWriter(closureMapping);
-		m.closureEvidence(pwClosure);
-		pwClosure.close();
-		
-		NameMapper map = m.getMap();
-
 		// load graph evidence
 		Scanner gIn = new Scanner(graphEvidence);
 		String linkURI = map.getName(Commons.OWL_SAMEAS.getURI());
@@ -63,6 +51,11 @@ public class MandolinEvaluation {
 		}
 		gIn.close();
 
+		// save a link evidence on file (linkset statements only)
+		File perfMapping = new File(Mandolin.BASE + "/link_evidence.db");
+		PrintWriter pwPerfMap = new PrintWriter(perfMapping);
+		m.mappingEvidence(pwPerfMap, 0, 417);
+		pwPerfMap.close();
 		// load perfect mapping
 		Scanner in = new Scanner(perfMapping);
 		for(int i=0; in.hasNextLine(); i++) {
@@ -79,6 +72,11 @@ public class MandolinEvaluation {
 		}
 		in.close();
 		
+		// closure evidence
+		File closureMapping = new File(Mandolin.BASE + "/closure_evidence.db");
+		PrintWriter pwClosure = new PrintWriter(closureMapping);
+		m.closureEvidence(pwClosure);
+		pwClosure.close();
 		// load closure evidence
 		Scanner cIn = new Scanner(closureMapping);
 		while(cIn.hasNextLine()) {
@@ -91,7 +89,6 @@ public class MandolinEvaluation {
 			closureLinkSet.add(new Example(s, t, null));
 		}
 		cIn.close();
-
 		
 		// load Tuffy output and scores
 		Scanner tIn = new Scanner(new File("eval/02_publi-tuffy/out.txt"));
@@ -104,14 +101,11 @@ public class MandolinEvaluation {
 			System.out.println(s + "\t" + map.getURI(s));
 			System.out.println(t + "\t" + map.getURI(t));
 			System.out.println(score);
-			// XXX reflexive statements are discarded
-			if(!s.equals(t))
-				tuffy.add(new Example(s, t, score));
+			tuffy.add(new Example(s, t, score));
 		}
 		tIn.close();
-
-		// TODO for each threshold, compare mappings and compute F1 (knowing all
-		// positive examples should be faster than usual)
+		
+		// TODO for each threshold, compare mappings and compute F1 (knowing all positive examples should be faster than usual)
 		
 		ArrayList<Example> tpArray = new ArrayList<>();
 		ArrayList<Example> fpArray = new ArrayList<>();
@@ -141,6 +135,7 @@ public class MandolinEvaluation {
 				// if it belongs to the closure?
 				if(isInList(ex, closureLinkSet)) {
 					System.out.println("\tbelongs to CLOSURE\\TEST SET -> SKIP");
+					continue;
 				} else {
 					System.out.println("\tdoes not belong to any set -> FALSE POSITIVE");
 					fpArray.add(ex);
@@ -148,12 +143,18 @@ public class MandolinEvaluation {
 			}
 		}
 		
-		System.out.println("=== TRUE POSITIVES ===");
-		for(Example ex : tpArray)
-			System.out.println(map.getURI(ex.getSrc())+" | "+map.getURI(ex.getTgt()));
-		System.out.println("=== FALSE POSITIVES ===");
-		for(Example ex : fpArray)
-			System.out.println(map.getURI(ex.getSrc())+" | "+map.getURI(ex.getTgt()));
+		if(!tpArray.isEmpty()) {
+			System.out.println("= TRUE POSITIVES ====");
+			for(Example ex : tpArray)
+				System.out.println(map.getURI(ex.getSrc())+" | "+map.getURI(ex.getTgt()));
+			System.out.println("=====================");
+		}
+		if(!fpArray.isEmpty()) {
+			System.out.println("= FALSE POSITIVES ===");
+			for(Example ex : fpArray)
+				System.out.println(map.getURI(ex.getSrc())+" | "+map.getURI(ex.getTgt()));
+			System.out.println("=====================");
+		}
 
 		System.out.println("Training: "+trainingSet.size());
 		System.out.println("Test: "+testSet.size());
@@ -162,7 +163,7 @@ public class MandolinEvaluation {
 		int fp = fpArray.size();
 		int fn = testSet.size() - tp;
 		
-		System.out.println("===================");
+		System.out.println("=====================");
 		System.out.println("TP = "+tp);
 		System.out.println("FP = "+fp);
 		System.out.println("FN = "+fn);
@@ -171,7 +172,7 @@ public class MandolinEvaluation {
 		double rec = (double) tp / (tp + fn);
 		double f1 = 2 * pre * rec / (pre + rec);
 		
-		System.out.println("===================");
+		System.out.println("=====================");
 		System.out.println("Pre = " + pre);
 		System.out.println("Rec = " + rec);
 		System.out.println("F1  = " + f1);

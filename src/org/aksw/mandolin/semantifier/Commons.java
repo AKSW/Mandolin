@@ -72,9 +72,9 @@ public class Commons {
 	public static final String TO_BE_DELETED = "tmp/to-be-deleted.txt";
 	public static final String DISTANCES_CSV = "tmp/distances.csv";
 	
-	public static final String LINKEDACM_NT = "tmp/LinkedACM-final.nt";
-	public static final String DBLPL3S_LINKEDACM_NT = "tmp/DBLPL3S-LinkedACM.nt";
-	public static final String DBLPL3S_NT = "tmp/DBLPL3S-final.nt";
+	public static final String LINKEDACM_NT = "datasets/LinkedACM-10.nt";
+	public static final String DBLPL3S_LINKEDACM_NT = "linksets/DBLPL3S-LinkedACM-10.nt";
+	public static final String DBLPL3S_NT = "datasets/DBLPL3S-10.nt";
 
 	/**
 	 * Perform SPARQL query against an endpoint on a given graph.

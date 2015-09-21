@@ -27,6 +27,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
+@Deprecated
 public class DatasetBuildFinalizer {
 
 	public static final String ENDPOINT = "http://localhost:8890/sparql";
