@@ -21,15 +21,15 @@ public class Mandolin {
 	public static final String SRC_PATH = "datasets/DBLPL3S-10.nt";
 	public static final String TGT_PATH = "datasets/LinkedACM-10.nt";
 	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-10.nt";
-	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard-10.nt";
+	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-10-GoldStandard.nt";
 	
-	public static final String BASE = "eval/02_publi-tuffy";
+	public static final String BASE = "eval/03_publi-tuffy";
 	
 	public static final String EVIDENCE_DB = BASE + "/evidence.db";
 	public static final String QUERY_DB = BASE + "/query.db";
 	public static final String PROG_MLN = BASE + "/prog.mln";
 	
-	public static final int TRAINING_SIZE = (int) (417 * 0.9);
+	public static final int TRAINING_SIZE = 47; // TODO restore: (int) (47 * 0.9);
 	
 	private NameMapper map;
 	
@@ -212,8 +212,8 @@ public class Mandolin {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		System.err.println("Launch line commented to prevent file overwrite.");
-//		new Mandolin().run();
+//		System.err.println("Launch line commented to prevent file overwrite.");
+		new Mandolin().run();
 		
 	}
 

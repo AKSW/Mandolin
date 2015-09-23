@@ -92,9 +92,9 @@ public class DatasetBuildClosure {
 
 		};
 
-		RDFDataMgr.parse(dataStream, Mandolin.SRC_PATH);
-		RDFDataMgr.parse(dataStream, Mandolin.TGT_PATH);
-		RDFDataMgr.parse(dataStream, Mandolin.LINKSET_PATH);
+		RDFDataMgr.parse(dataStream, Commons.DBLPL3S_NT);
+		RDFDataMgr.parse(dataStream, Commons.LINKEDACM_NT);
+		RDFDataMgr.parse(dataStream, Commons.DBLPL3S_LINKEDACM_NT);
 		
 		// clone closure object...
 		HashMap<String, TreeSet<String>> closureClone = new HashMap<>();

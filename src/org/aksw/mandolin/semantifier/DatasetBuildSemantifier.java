@@ -96,22 +96,22 @@ public class DatasetBuildSemantifier {
 		}
 		
 		// collect non-wanted URIs from SPARQL query
-		ResultSet rs = null;
-		long page = 0;
-		long offset;
-		do {
-			offset = page * 1048576;
+		for(long page = 0; true; page++) {
+			long offset = page * 1048576;
 			System.out.println("page = "+page+" | offset = "+offset);
-			rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
+			ResultSet rs = Commons.sparql("SELECT DISTINCT ?s WHERE { { ?s a <"
 				+ Commons.DBLPL3S_PUBLICATION_CLASS + "> } UNION { ?s a <"
 				+ Commons.DBLPL3S_AUTHOR_CLASS + "> } } LIMIT 1048576 OFFSET " + offset, Commons.DBLPL3S_ENDPOINT,
 				Commons.DBLPL3S_GRAPH);
-			System.out.println("before = "+nonwantedURIs.size());
+			TreeSet<String> cache = new TreeSet<>();
 			while (rs.hasNext())
-				nonwantedURIs.add(rs.next().getResource("s").getURI());
-			System.out.println("after = "+nonwantedURIs.size());
-			page++;
-		} while(rs.getRowNumber() > 0);
+				cache.add(rs.next().getResource("s").getURI());
+			System.out.println("cache size = "+cache.size());
+			if(cache.isEmpty())
+				break;
+			nonwantedURIs.addAll(cache);
+			System.out.println("non-wanted URIs = "+nonwantedURIs.size());
+		}
 		System.out.println("Total URIs = " + nonwantedURIs.size());
 		System.out.println("Good URIs = " + goodURIs.size());
 		nonwantedURIs.removeAll(goodURIs);
@@ -180,22 +180,22 @@ public class DatasetBuildSemantifier {
 		}
 
 		// collect non-wanted URIs from SPARQL query
-		ResultSet rs = null;
-		long page = 0;
-		long offset;
-		do {
-			offset = page * 1048576;
+		for(long page = 0; true; page++) {
+			long offset = page * 1048576;
 			System.out.println("page = "+page+" | offset = "+offset);
-			rs = Commons.sparql("SELECT ?s WHERE { { ?s a <"
-				+ Commons.ACMRKB_PUBLICATION_CLASS + "> } UNION { ?s a <"
-				+ Commons.ACMRKB_AUTHOR_CLASS + "> } }", Commons.ACMRKB_ENDPOINT,
-				Commons.ACMRKB_GRAPH);
-			System.out.println("before = "+nonwantedURIs.size());
+			ResultSet rs = Commons.sparql("SELECT DISTINCT ?s WHERE { { ?s a <"
+					+ Commons.ACMRKB_PUBLICATION_CLASS + "> } UNION { ?s a <"
+					+ Commons.ACMRKB_AUTHOR_CLASS + "> } } LIMIT 1048576 OFFSET " + offset, Commons.ACMRKB_ENDPOINT,
+					Commons.ACMRKB_GRAPH);
+			TreeSet<String> cache = new TreeSet<>();
 			while (rs.hasNext())
-				nonwantedURIs.add(rs.next().getResource("s").getURI());
-			System.out.println("after = "+nonwantedURIs.size());
-			page++;
-		} while(rs.getRowNumber() > 0);
+				cache.add(rs.next().getResource("s").getURI());
+			System.out.println("cache size = "+cache.size());
+			if(cache.isEmpty())
+				break;
+			nonwantedURIs.addAll(cache);
+			System.out.println("non-wanted URIs = "+nonwantedURIs.size());
+		}
 		System.out.println("Total URIs = " + nonwantedURIs.size());
 		System.out.println("Good URIs = " + goodURIs.size());
 		nonwantedURIs.removeAll(goodURIs);
