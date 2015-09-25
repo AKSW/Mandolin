@@ -1,4 +1,4 @@
-SemSRL
-======
+Mandolin
+========
 
-Statistical Relational Learning of Semantic Links.
+Markov Logic Networks for Discovering Links.
