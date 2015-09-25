@@ -79,5 +79,10 @@
 			<artifactId>simmetrics-core</artifactId>
 			<version>3.2.0</version>
 		</dependency>
+		<dependency>
+			<groupId>it.unimi.dsi</groupId>
+			<artifactId>fastutil</artifactId>
+			<version>6.3</version>
+		</dependency>
 	</dependencies>
 </project>
