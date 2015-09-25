@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 import org.aksw.mandolin.util.DataIO;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotNotFoundException;
 import org.simmetrics.metrics.Levenshtein;
 
 import com.hp.hpl.jena.query.QuerySolution;
@@ -29,10 +30,16 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
  *
  */
 public class DatasetBuilderAlgorithm {
+	
+	private int N_EXAMPLES;
+	
+	public DatasetBuilderAlgorithm(int n) {
+		this.N_EXAMPLES = n;
+	}
 
 	public static void main(String[] args) throws FileNotFoundException,
 			ClassNotFoundException, IOException {
-		new DatasetBuilderAlgorithm().run();
+		new DatasetBuilderAlgorithm(100).run();
 	}
 
 	public void run() throws FileNotFoundException, ClassNotFoundException,
@@ -156,7 +163,13 @@ public class DatasetBuilderAlgorithm {
 		} catch (IOException e) {
 		}
 
-		Model model = RDFDataMgr.loadModel(fileOut);
+		Model model = null;
+		try {
+			model = RDFDataMgr.loadModel(fileOut);
+		} catch (RiotNotFoundException e) {
+			// There is no information about the requested URI in this repository.
+			return null;
+		}
 		NodeIterator it = model.listObjectsOfProperty(
 				ResourceFactory.createResource(uri), Commons.OWL_SAMEAS);
 
@@ -225,14 +238,14 @@ public class DatasetBuilderAlgorithm {
 	private HashMap<String, String> l3sToACMRkb() throws FileNotFoundException {
 		HashMap<String, String> map = new HashMap<>();
 
-		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_CSV));
 		in.nextLine();
-		int i = 0; // TODO remove me!
+		int i = 0;
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");
 			map.put(Commons.DBLPL3S_NAMESPACE + line[0].replaceAll("\"", ""),
 					Commons.ACMRKB_NAMESPACE + line[1].replaceAll("\"", ""));
-			if (++i == 100)
+			if (++i == N_EXAMPLES)
 				break;
 		}
 		in.close();

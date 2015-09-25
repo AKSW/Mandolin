@@ -61,7 +61,7 @@ public class DatasetBuildStarter {
 
 		ArrayList<String> list = new ArrayList<>();
 
-		Scanner in = new Scanner(new File(Commons.DBLP_ACM_FIXED_CSV));
+		Scanner in = new Scanner(new File(Commons.DBLP_ACM_CSV));
 		in.nextLine(); // skip header
 		while (in.hasNextLine()) {
 			String[] line = in.nextLine().split(",");

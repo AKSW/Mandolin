@@ -23,10 +23,10 @@ public class Commons {
 
 	// SPARQL
 	// used to be "http://dblp.l3s.de/d2r/sparql"
-	public static final String DBLPL3S_ENDPOINT = "http://localhost:8890/sparql";
+	public static final String DBLPL3S_ENDPOINT = "http://139.18.8.97:8890/sparql";
 	// used to be ""
 	public static final String DBLPL3S_GRAPH = "http://dblp.l3s.de";
-	public static final String ACMRKB_ENDPOINT = "http://localhost:8890/sparql";
+	public static final String ACMRKB_ENDPOINT = "http://139.18.8.97:8890/sparql";
 	public static final String ACMRKB_GRAPH = "http://acm.rkbexplorer.com";
 
 	public static final String DBLP_NAMESPACE = "http://dblp.rkbexplorer.com/id/";
