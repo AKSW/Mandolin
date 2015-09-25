@@ -85,7 +85,7 @@ public class DatasetBuilderAlgorithm {
 
 			TreeSet<String> sameAs = new TreeSet<>();
 
-			for (String l3s : map.get(author)) {
+			nextPub: for (String l3s : map.get(author)) {
 
 				System.out.println("L3S: " + l3s);
 
@@ -118,6 +118,11 @@ public class DatasetBuilderAlgorithm {
 
 						acmRkb = getRedirect(acmRkb.substring(acmRkb
 								.lastIndexOf('/') + 1));
+						
+						if(acmRkb == null) {
+							System.out.println("*** No redirects available. Skipping "+l3s);
+							continue nextPub;
+						}
 						System.out.println("*** Redirected to: " + acmRkb);
 
 					}
