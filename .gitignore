@@ -6,11 +6,14 @@
 .project
 .settings/
 
+mappings/
 datasets/
 linksets/
 log/
 publications-*/
 old/
+tmp/
+eval/
 
 .DS_Store
 *.log
