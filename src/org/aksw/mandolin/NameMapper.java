@@ -72,6 +72,7 @@ public class NameMapper {
 	
 	public void pretty() {
 		for(String key : mlnToUri.keySet())
+//			if(listByType.get(Type.PROPERTY).contains(key)) // TODO remove me!
 			System.out.println(key + "\t" + mlnToUri.get(key));
 	}
 	

@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.semantifier.Commons;
 import org.aksw.mandolin.util.URLs;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
@@ -18,18 +19,18 @@ import com.hp.hpl.jena.sparql.core.Quad;
  */
 public class Mandolin {
 	
-	public static final String SRC_PATH = "datasets/DBLPL3S.nt";
-	public static final String TGT_PATH = "datasets/LinkedACM.nt";
-	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM.nt";
-	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard.nt";
+	public static final String SRC_PATH = "datasets/DBLPL3S-10.nt";
+	public static final String TGT_PATH = "datasets/LinkedACM-10.nt";
+	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-10.nt";
+	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-10-GoldStandard.nt";
 	
-	public static final String BASE = "eval/05_publi-tuffy";
+	public static final String BASE = "eval/07_publi-tuffy";
 	
 	public static final String EVIDENCE_DB = BASE + "/evidence.db";
 	public static final String QUERY_DB = BASE + "/query.db";
 	public static final String PROG_MLN = BASE + "/prog.mln";
 	
-	public static final int TRAINING_SIZE = 8852; // TODO restore: (int) (47 * 0.9);
+	public static final int TRAINING_SIZE = 10; // TODO restore: (int) (47 * 0.9);
 	
 	private NameMapper map;
 	
@@ -115,16 +116,25 @@ public class Mandolin {
 //				System.out.println("Added "+o+" - "+map.getURI(o));
 				
 				if(pwEvid != null) {
-					System.out.println(p + "(" + s + ", " + o + ")");
-					pwEvid.write(p + "(" + s + ", " + o + ")\n");
+					
+					if(arg0.getPredicate().getURI().equals(Commons.RDF_TYPE.getURI())) { 
+						System.out.println(o + "(" + s + ")");
+						System.out.println("NEWCLASS\t"+o+"\t"+arg0.getObject().toString());
+						pwEvid.write(o + "(" + s + ")\n");
+					} else {
+						System.out.println(p + "(" + s + ", " + o + ")");
+						pwEvid.write(p + "(" + s + ", " + o + ")\n");
+					}
 				}
 			}
 			
 		};
 		
+		
 		RDFDataMgr.parse(dataStream, SRC_PATH);
 		RDFDataMgr.parse(dataStream, TGT_PATH);
 		
+		map.pretty();
 	}
 	
 	public void mappingEvidence(PrintWriter pwEvid, final int START, final int END) {
