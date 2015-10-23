@@ -13,11 +13,15 @@ import jp.ndca.similarity.join.PPJoin;
 import jp.ndca.similarity.join.StringItem;
 import jp.ndca.similarity.join.Tokenizer;
 
+/**
+ * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
+ *
+ */
 public class PPJoinTest {
 
-	private static final String TEST_FILE = "ppjoin-test.txt";
+	private static final String TEST_FILE = "tmp/ppjoin-test.txt";
 
-	static double threshold = 0.70;
+	static double threshold = 0.7;
 
 	public static void main(String[] args) throws IOException{
 		
