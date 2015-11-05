@@ -59,6 +59,11 @@ public class Commons {
 			.createProperty("http://www.aktors.org/ontology/portal#full-name");
 	public static final Property DC_CREATOR = ResourceFactory
 			.createProperty("http://purl.org/dc/elements/1.1/creator");
+	// additional
+	public static final Resource SIMILAR_TO_90 = ResourceFactory
+			.createResource("http://mandolin.aksw.org/ontology#similarTo09");
+	public static final Resource SIMILAR_TO_80 = ResourceFactory
+			.createResource("http://mandolin.aksw.org/ontology#similarTo08");
 
 	// I/O
 	public static final String DBLP_ACM_CSV = "mappings/dblp-acm.csv";

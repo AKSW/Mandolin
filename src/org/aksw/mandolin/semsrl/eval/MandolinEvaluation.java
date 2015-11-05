@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.aksw.mandolin.Mandolin;
-import org.aksw.mandolin.NameMapper;
+import org.aksw.mandolin.common.MandolinCommon;
+import org.aksw.mandolin.common.NameMapperCommon;
 import org.aksw.mandolin.semantifier.Commons;
 
 
@@ -28,11 +28,11 @@ public class MandolinEvaluation {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		Mandolin m = new Mandolin();
-		NameMapper map = m.getMap();
+		MandolinCommon m = new MandolinCommon();
+		NameMapperCommon map = m.getMap();
 
 		// fill out NameMapper without saving graph evidence on file
-		File graphEvidence = new File(Mandolin.BASE + "/graph_evidence.db");
+		File graphEvidence = new File(MandolinCommon.BASE + "/graph_evidence.db");
 		PrintWriter pwGrEvid = new PrintWriter(graphEvidence);
 		m.graphEvidence(pwGrEvid);
 		pwGrEvid.close();
@@ -52,7 +52,7 @@ public class MandolinEvaluation {
 		gIn.close();
 
 		// save a link evidence on file (linkset statements only)
-		File perfMapping = new File(Mandolin.BASE + "/link_evidence.db");
+		File perfMapping = new File(MandolinCommon.BASE + "/link_evidence.db");
 		PrintWriter pwPerfMap = new PrintWriter(perfMapping);
 		m.mappingEvidence(pwPerfMap, 0, 417);
 		pwPerfMap.close();
@@ -65,7 +65,7 @@ public class MandolinEvaluation {
 			System.out.println(s + "\t" + map.getURI(s));
 			System.out.println(t + "\t" + map.getURI(t));
 			System.out.println();
-			if(i <= Mandolin.TRAINING_SIZE)
+			if(i <= MandolinCommon.TRAINING_SIZE)
 				trainingSet.add(new Example(s, t, null));
 			else
 				testSet.add(new Example(s, t, null));
@@ -73,7 +73,7 @@ public class MandolinEvaluation {
 		in.close();
 		
 		// closure evidence
-		File closureMapping = new File(Mandolin.BASE + "/closure_evidence.db");
+		File closureMapping = new File(MandolinCommon.BASE + "/closure_evidence.db");
 		PrintWriter pwClosure = new PrintWriter(closureMapping);
 		m.closureEvidence(pwClosure);
 		pwClosure.close();

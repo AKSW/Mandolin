@@ -1,9 +1,8 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.common;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,7 +14,9 @@ import jp.ndca.similarity.join.PPJoin;
 import jp.ndca.similarity.join.StringItem;
 import jp.ndca.similarity.join.Tokenizer;
 
-import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.common.NameMapperCommon.Type;
+import org.aksw.mandolin.model.Cache;
+import org.aksw.mandolin.model.ComparableLiteral;
 import org.aksw.mandolin.semantifier.Commons;
 import org.aksw.mandolin.util.URLs;
 import org.apache.jena.riot.RDFDataMgr;
@@ -26,10 +27,13 @@ import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
+ * Mandolin for syntax used by common MLN learning frameworks (e.g., Netkit,
+ * ProbCog, Alchemy, Tuffy).
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class Mandolin {
+public class MandolinCommon {
 
 	public static final String SRC_PATH = "datasets/DBLPL3S.nt";
 	public static final String TGT_PATH = "datasets/LinkedACM.nt";
@@ -42,23 +46,25 @@ public class Mandolin {
 	public static final String QUERY_DB = BASE + "/query.db";
 	public static final String PROG_MLN = BASE + "/prog.mln";
 
-	public static final int TRAINING_SIZE = Integer.MAX_VALUE; // TODO restore: (int) (47 * 0.9);
-	
+	public static final int TRAINING_SIZE = Integer.MAX_VALUE; // TODO restore:
+																// (int) (47 *
+																// 0.9);
+
 	private static final int THR_MIN = 80;
 	private static final int THR_MAX = 90;
 	private static final int THR_STEP = 10;
-	
+
 	private TreeSet<String> unary = new TreeSet<>();
 
-	private NameMapper map;
+	private NameMapperCommon map;
 
-	public NameMapper getMap() {
+	public NameMapperCommon getMap() {
 		return map;
 	}
 
-	public Mandolin() {
+	public MandolinCommon() {
 
-		map = new NameMapper();
+		map = new NameMapperCommon();
 
 	}
 
@@ -85,10 +91,10 @@ public class Mandolin {
 			String cw = name.equals(sameAs) ? "" : "*";
 			pwProg.write(cw + name + "(res, res)\n");
 		}
-		for(int thr=THR_MIN; thr<=THR_MAX; thr+=THR_STEP)
-			pwProg.write("*Sim"+thr+"(res, res)\n");
-		for(String u : unary) 
-			pwProg.write("*"+u+"(res)\n");
+		for (int thr = THR_MIN; thr <= THR_MAX; thr += THR_STEP)
+			pwProg.write("*Sim" + thr + "(res, res)\n");
+		for (String u : unary)
+			pwProg.write("*" + u + "(res)\n");
 		pwProg.write("\n");
 		for (String name : map.getNamesByType(Type.PROPERTY)) {
 			// symmetric property
@@ -175,12 +181,12 @@ public class Mandolin {
 					if (dtURI == null)
 						considerString = true;
 					else
-						considerString = dtURI
-								.equals(XSD.xstring.getURI());
+						considerString = dtURI.equals(XSD.xstring.getURI());
 
 					if (considerString) {
-						ComparableLiteral lit = new ComparableLiteral( arg0.getObject().getLiteral().toString(true),
-								arg0.getObject().getLiteral().getValue().toString());
+						ComparableLiteral lit = new ComparableLiteral(arg0
+								.getObject().getLiteral().toString(true), arg0
+								.getObject().getLiteral().getValue().toString());
 						setOfStrings.add(lit);
 					}
 				}
@@ -211,14 +217,15 @@ public class Mandolin {
 
 		ppjoin.setUseSortAtExtractPairs(false);
 
-		for(int thr=THR_MIN; thr<=THR_MAX; thr+=THR_STEP) {
-			System.out.println("thr = "+(thr / 100.0));
+		for (int thr = THR_MIN; thr <= THR_MAX; thr += THR_STEP) {
+			System.out.println("thr = " + (thr / 100.0));
 			List<Entry<StringItem, StringItem>> result = ppjoin.extractPairs(
 					strDatum, thr / 100.0);
 			for (Entry<StringItem, StringItem> entry : result) {
 				ComparableLiteral lit1 = dataset.get(entry.getKey().getId());
 				ComparableLiteral lit2 = dataset.get(entry.getValue().getId());
-				pwEvid.write("Sim" + thr + "(" + map.getName(lit1.getUri()) + ", " + map.getName(lit2.getUri()) + ")\n");
+				pwEvid.write("Sim" + thr + "(" + map.getName(lit1.getUri())
+						+ ", " + map.getName(lit2.getUri()) + ")\n");
 				System.out.println(lit1.getUri() + " <=> " + lit2.getUri());
 				System.out.println(lit1.getVal() + " <=> " + lit2.getVal());
 			}
@@ -325,40 +332,8 @@ public class Mandolin {
 	public static void main(String[] args) throws FileNotFoundException {
 
 		// System.err.println("Launch line commented to prevent file overwrite.");
-		new Mandolin().run();
+		new MandolinCommon().run();
 
 	}
 
-}
-
-class Cache {
-
-	int count = 0;
-	List<StringItem> stringItems = new ArrayList<StringItem>();
-
-}
-
-class ComparableLiteral implements Comparable<ComparableLiteral> {
-	
-	private String uri;
-	private String val;
-	
-	public ComparableLiteral(String uri, String val) {
-		this.uri = uri;
-		this.val = val;
-	}
-	
-	public String getUri() {
-		return uri;
-	}
-
-	public String getVal() {
-		return val;
-	}
-
-	@Override
-	public int compareTo(ComparableLiteral o) {
-		return this.getUri().compareTo(o.getUri());
-	}
-	
 }

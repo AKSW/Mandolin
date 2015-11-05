@@ -3,7 +3,7 @@ package org.aksw.mandolin.semantifier;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import org.aksw.mandolin.Mandolin;
+import org.aksw.mandolin.common.MandolinCommon;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
@@ -120,7 +120,7 @@ public class DatasetBuildClosure {
 				m.add(key, DISCOVERY_LINK, val);
 			}
 		}
-		Commons.save(m, Mandolin.GOLD_STANDARD_PATH);
+		Commons.save(m, MandolinCommon.GOLD_STANDARD_PATH);
 
 	}
 }

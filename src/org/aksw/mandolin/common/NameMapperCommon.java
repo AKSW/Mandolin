@@ -1,4 +1,4 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.common;
 
 import java.util.HashMap;
 import java.util.TreeSet;
@@ -7,7 +7,7 @@ import java.util.TreeSet;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class NameMapper {
+public class NameMapperCommon {
 	
 	private HashMap<String, String> mlnToUri = new HashMap<>();
 	private HashMap<String, String> uriToMln = new HashMap<>();
@@ -27,7 +27,7 @@ public class NameMapper {
 	
 	private HashMap<Type, Integer> count = new HashMap<>();
 	
-	public NameMapper() {
+	public NameMapperCommon() {
 		super();
 		count.put(Type.RESOURCE, 0);
 		count.put(Type.PROPERTY, 0);
