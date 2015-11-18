@@ -8,6 +8,8 @@ import org.aksw.mandolin.MandolinProbKB;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
+import amie.mining.AMIE;
+
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
 
@@ -20,9 +22,19 @@ import com.hp.hpl.jena.sparql.core.Quad;
 public class RDFToTab {
 
 	public static void main(String[] args) throws FileNotFoundException {
-
-		run("tmp/DBLPACM.tsv", MandolinProbKB.SRC_PATH,
+		
+		String output = "tmp/DBLPACM.tsv";
+		
+		run(output, MandolinProbKB.SRC_PATH,
 				MandolinProbKB.TGT_PATH, MandolinProbKB.GOLD_STANDARD_PATH);
+
+		try {
+			AMIE.main(new String[]{output});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 	}
 
