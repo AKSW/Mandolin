@@ -16,9 +16,9 @@ import com.opencsv.CSVWriter;
  */
 public class ProbKBData {
 	
-	private final static int ENT_LENGTH = Type.ENTITY.name().length();
-	private final static int CLS_LENGTH = Type.CLASS.name().length();
-	private final static int REL_LENGTH = Type.RELATION.name().length();
+	public final static int ENT_LENGTH = Type.ENTITY.name().length();
+	public final static int CLS_LENGTH = Type.CLASS.name().length();
+	public final static int REL_LENGTH = Type.RELATION.name().length();
 	
 	private static String base;
 	private static NameMapperProbKB map;
@@ -40,7 +40,7 @@ public class ProbKBData {
 	
 	private static void functionals() throws IOException {
 		
-		CSVWriter writer = new CSVWriter(new FileWriter(new File(base + "/relations.csv"))); 
+		CSVWriter writer = new CSVWriter(new FileWriter(new File(base + "/functionals.csv"))); 
 		
 		// TODO
 		
@@ -58,6 +58,7 @@ public class ProbKBData {
 		HashMap<String, String> hmap = map.getNamesToURIs();
 		
 		for(String key : hmap.keySet()) {
+			System.out.println("***************** "+key+ " ********************");			
 			String id = "";
 			if(key.startsWith(Type.ENTITY.name())) {
 				id = key.substring(ENT_LENGTH);
@@ -119,7 +120,7 @@ public class ProbKBData {
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(base + "/relationships.csv"))); 
 		
 		Iterator<String> it = map.getRelationships().iterator();
-		for(int i=0; it.hasNext(); i++) {
+		while(it.hasNext()) {
 			String line = it.next();
 			String[] arr = line.split("#");
 			// relation_id+"|"+entity_id+"|"+entity_id
@@ -127,8 +128,7 @@ public class ProbKBData {
 			String id2 = arr[1].substring(ENT_LENGTH);
 			String id3 = arr[2].substring(ENT_LENGTH);
 			
-			// TODO get class IDs...
-			writer.writeNext(new String[] {"" + i, id1, id2, "0", id3, "0", "1.0"});
+			writer.writeNext(new String[] {id1, id2, id3, "1.0", "http://"});
 		}
 		
 		writer.close();

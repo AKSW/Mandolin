@@ -1,7 +1,8 @@
 package org.aksw.mandolin;
 
 import java.io.File;
-import java.io.IOException;
+
+import org.aksw.mandolin.amie.RDFToTSV;
 
 /**
  * Mandolin for the ProbKB framework, i.e. CSV file build.
@@ -51,9 +52,9 @@ public class MandolinProbKB {
 	}
 
 	/**
-	 * @throws IOException 
+	 * @throws Exception 
 	 */
-	private void run() throws IOException {
+	private void run() throws Exception {
 
 		// create working directory
 		new File(BASE).mkdirs();
@@ -69,6 +70,8 @@ public class MandolinProbKB {
 		
 		ProbKBData.buildCSV(map, BASE);
 		
+		RDFToTSV.run(map, BASE);
+		
 	}
 	
 
@@ -76,7 +79,7 @@ public class MandolinProbKB {
 		return map;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 
 		new MandolinProbKB().run();
 

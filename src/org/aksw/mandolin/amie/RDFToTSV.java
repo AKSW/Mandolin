@@ -7,10 +7,10 @@ import java.io.PrintWriter;
 import javatools.datatypes.ByteString;
 
 import org.aksw.mandolin.MandolinProbKB;
+import org.aksw.mandolin.NameMapperProbKB;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
-import amie.mining.AMIE;
 import amie.rules.Rule;
 
 import com.hp.hpl.jena.graph.Triple;
@@ -25,6 +25,12 @@ import com.hp.hpl.jena.sparql.core.Quad;
 public class RDFToTSV {
 
 	public static void main(String[] args) throws Exception {
+		
+		run(MandolinProbKB.BASE);
+		
+	}
+	
+	public static void run(NameMapperProbKB map, String base) throws Exception {
 
 		String output = "tmp/DBLPACM.tsv";
 
@@ -34,7 +40,7 @@ public class RDFToTSV {
 		AmieHandler h = new AmieHandler(output);
 		h.run();
 		
-		RuleDriver driver = new RuleDriver();
+		RuleDriver driver = new RuleDriver(map, base);
 		for(Rule rule : h.getRules()) {
 			// send rule to driver
 			driver.process(rule);
@@ -48,6 +54,9 @@ public class RDFToTSV {
 			}
 			System.out.println(rule.getHeadRelation() + "\t" + str + "\t" + rule.getPcaConfidence());
 		}
+		
+		// make CSVs
+		driver.buildCSV();
 
 	}
 
