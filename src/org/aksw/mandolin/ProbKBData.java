@@ -58,7 +58,6 @@ public class ProbKBData {
 		HashMap<String, String> hmap = map.getNamesToURIs();
 		
 		for(String key : hmap.keySet()) {
-			System.out.println("***************** "+key+ " ********************");			
 			String id = "";
 			if(key.startsWith(Type.ENTITY.name())) {
 				id = key.substring(ENT_LENGTH);
@@ -67,6 +66,7 @@ public class ProbKBData {
 			if(key.startsWith(Type.CLASS.name())) {
 				id = key.substring(CLS_LENGTH);
 				clsWriter.writeNext(new String[] {id, hmap.get(key)});
+				entWriter.writeNext(new String[] {"-" + id, hmap.get(key)});
 			}
 			if(key.startsWith(Type.RELATION.name())) {
 				id = key.substring(REL_LENGTH);
@@ -127,6 +127,8 @@ public class ProbKBData {
 			String id1 = arr[0].substring(REL_LENGTH);
 			String id2 = arr[1].substring(ENT_LENGTH);
 			String id3 = arr[2].substring(ENT_LENGTH);
+			
+			System.out.println(line);
 			
 			writer.writeNext(new String[] {id1, id2, id3, "1.0", "http://"});
 		}

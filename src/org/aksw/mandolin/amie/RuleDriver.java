@@ -115,11 +115,13 @@ public class RuleDriver {
 	 */
 	private void addTypeOne(String pHead, String pBody, double weight) {
 		System.out.println("Adding type one: "+pHead+", "+pBody+", "+weight);
+		String headName = map.getName(pHead).substring(ProbKBData.REL_LENGTH);
+		String bodyName = map.getName(pBody).substring(ProbKBData.REL_LENGTH); 
 		String str[] = {
-				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
-				map.getName(pBody).substring(ProbKBData.REL_LENGTH),
-				"0", // TODO class of pHead
-				"0", // TODO class of pBody
+				headName,
+				bodyName,
+				"1", // TODO class of x
+				"1", // TODO class of y
 				"" + weight
 		};
 		csvContent.get(base + "/mln1.csv").add(str);
@@ -133,8 +135,15 @@ public class RuleDriver {
 	 * @param weight
 	 */
 	private void addTypeTwo(String pHead, String pBody, double weight) {
-		// TODO
 		System.out.println("Adding type two: "+pHead+", "+pBody+", "+weight);
+		String str[] = {
+				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBody).substring(ProbKBData.REL_LENGTH),
+				"1", // TODO class of x
+				"1", // TODO class of y
+				"" + weight
+		};
+		csvContent.get(base + "/mln2.csv").add(str);
 	}
 
 	/**
@@ -147,8 +156,17 @@ public class RuleDriver {
 	 */
 	private void addTypeThree(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		// TODO
 		System.out.println("Adding type three: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		String str[] = {
+				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyR).substring(ProbKBData.REL_LENGTH),
+				"1", // TODO class of x
+				"1", // TODO class of y
+				"1", // TODO class of z
+				"" + weight
+		};
+		csvContent.get(base + "/mln3.csv").add(str);
 	}
 
 	/**
@@ -160,8 +178,17 @@ public class RuleDriver {
 	 */
 	private void addTypeFour(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		// TODO
 		System.out.println("Adding type four: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		String str[] = {
+				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyR).substring(ProbKBData.REL_LENGTH),
+				"1", // TODO class of x
+				"1", // TODO class of y
+				"1", // TODO class of z
+				"" + weight
+		};
+		csvContent.get(base + "/mln4.csv").add(str);
 	}
 
 	/**
@@ -173,8 +200,17 @@ public class RuleDriver {
 	 */
 	private void addTypeFive(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		// TODO
 		System.out.println("Adding type five: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		String str[] = {
+				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyR).substring(ProbKBData.REL_LENGTH),
+				"1", // TODO class of x
+				"1", // TODO class of y
+				"1", // TODO class of z
+				"" + weight
+		};
+		csvContent.get(base + "/mln5.csv").add(str);
 	}
 
 	/**
@@ -186,8 +222,17 @@ public class RuleDriver {
 	 */
 	private void addTypeSix(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		// TODO
 		System.out.println("Adding type six: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		String str[] = {
+				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
+				map.getName(pBodyR).substring(ProbKBData.REL_LENGTH),
+				"1", // TODO class of x
+				"1", // TODO class of y
+				"1", // TODO class of z
+				"" + weight
+		};
+		csvContent.get(base + "/mln6.csv").add(str);
 	}
 
 	public void buildCSV() {
