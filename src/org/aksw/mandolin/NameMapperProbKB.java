@@ -20,6 +20,10 @@ public class NameMapperProbKB {
 	private String RDF_TYPE_NAME;
 	private String OWL_THING_NAME;
 	
+	public String getOwlThingId() {
+		return OWL_THING_NAME.substring(ProbKBData.CLS_LENGTH);
+	}
+
 	public TreeSet<String> getEntClasses() {
 		return entClasses;
 	}
@@ -62,14 +66,15 @@ public class NameMapperProbKB {
 	
 	public void addEntClass(String entName, String className) {
 		entClasses.add(entName + "#" + className);
+		entClasses.add(entName + "#" + OWL_THING_NAME);
 		// add an rdf:type relationship
 		this.addRelationship(RDF_TYPE_NAME, entName, Type.ENTITY.toString() + "-" + className.substring(ProbKBData.CLS_LENGTH));
 		// add rdf:type owl:Thing
 		this.addRelationship(RDF_TYPE_NAME, entName, Type.ENTITY.toString() + "-" + OWL_THING_NAME.substring(ProbKBData.CLS_LENGTH));
 	}
 
-	public void addRelClass(String relName, String className) {
-		relClasses.add(relName + "#" + className);
+	public void addRelClass(String relName, String className, boolean isDomain) {
+		relClasses.add(relName + "#" + className + "#" + isDomain);
 	}
 
 	public void addRelationship(String relName, String name1, String name2) {

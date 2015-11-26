@@ -3,6 +3,7 @@ package org.aksw.mandolin;
 import java.io.File;
 
 import org.aksw.mandolin.amie.RDFToTSV;
+import org.aksw.mandolin.amie.RuleMiner;
 
 /**
  * Mandolin for the ProbKB framework, i.e. CSV file build.
@@ -13,17 +14,12 @@ import org.aksw.mandolin.amie.RDFToTSV;
 public class MandolinProbKB {
 
 	// input datasets
-	public static final String SRC_PATH = "datasets/DBLPL3S.nt";
+	public static final String SRC_PATH = "datasets/DBLPL3S-rdfs.nt"; // TODO revert to DBLPL3S.nt
 	public static final String TGT_PATH = "datasets/LinkedACM.nt";
 	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM.nt";
 	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard.nt";
 
 	public static final String BASE = "eval/10_publi-probkb";
-
-	// TODO delete!
-	public static final String EVIDENCE_DB = BASE + "/evidence.db";
-	public static final String QUERY_DB = BASE + "/query.db";
-	public static final String PROG_MLN = BASE + "/prog.mln";
 
 	// ProbKB files
 	public static final String CLASSES_CSV = BASE + "/classes.csv";
@@ -42,6 +38,8 @@ public class MandolinProbKB {
 	private static final int THR_MIN = 80;
 	private static final int THR_MAX = 90;
 	private static final int THR_STEP = 10;
+	
+	private static final String TEMP_OUTPUT = "tmp/DBLPACM.tsv";
 
 	private NameMapperProbKB map;
 
@@ -55,6 +53,8 @@ public class MandolinProbKB {
 	 * @throws Exception 
 	 */
 	private void run() throws Exception {
+		
+		System.out.println("Mandolin started!");
 
 		// create working directory
 		new File(BASE).mkdirs();
@@ -70,7 +70,10 @@ public class MandolinProbKB {
 		
 		ProbKBData.buildCSV(map, BASE);
 		
-		RDFToTSV.run(map, BASE);
+		RDFToTSV.run(map, BASE, TEMP_OUTPUT);
+		RuleMiner.run(map, BASE, TEMP_OUTPUT);
+		
+		System.out.println("Mandolin done.");
 		
 	}
 	

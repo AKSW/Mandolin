@@ -11,6 +11,7 @@ import org.apache.jena.riot.system.StreamRDF;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
 import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
@@ -18,21 +19,24 @@ import com.hp.hpl.jena.vocabulary.XSD;
  *
  */
 public class Evidence {
-	
+
 	/**
+	 * @param map
 	 * @param SRC_PATH
 	 * @param TGT_PATH
+	 * @param LNK_PATH
 	 * @param THR_MIN
 	 * @param THR_MAX
 	 * @param THR_STEP
 	 */
-	public static void build(final NameMapperProbKB map, final String SRC_PATH, final String TGT_PATH, 
-			final String LNK_PATH, final int THR_MIN, final int THR_MAX, final int THR_STEP) {
-		
+	public static void build(final NameMapperProbKB map, final String SRC_PATH,
+			final String TGT_PATH, final String LNK_PATH, final int THR_MIN,
+			final int THR_MAX, final int THR_STEP) {
+
 		// for similarity join
 		final TreeSet<ComparableLiteral> setOfStrings = new TreeSet<>();
 		final Cache cache = new Cache();
-		
+
 		// reader implementation
 		StreamRDF dataStream = new StreamRDF() {
 
@@ -62,29 +66,55 @@ public class Evidence {
 				String p = arg0.getPredicate().getURI();
 				String o = arg0.getObject().toString();
 
-				if(!p.equals(RDF.type.getURI())) {
+				// now check for non-instantiations...
+				if (!p.equals(RDF.type.getURI())) {
+					// it is supposed that the map contains only classes
+					// and instances of these classes (see Classes.build)
 					String relName = map.add(p, Type.RELATION);
 					String subjName = map.getName(s);
-					if(subjName == null) // not found => entity
-						subjName = map.add(s, Type.ENTITY);
 					String objName = map.getName(o);
-					if(objName == null) // not found => entity
-						objName = map.add(o, Type.ENTITY);
-					
-					// if subject is a class...
-					if(subjName.startsWith(Type.CLASS.name())) {
-						// if object is a class...
-						if(objName.startsWith(Type.CLASS.name())) {
-							map.addRelClass(relName, objName);
-						}
-					} else {
-						// if subject is not a class...
-						if(!objName.startsWith(Type.CLASS.name())) {
-							map.addRelationship(relName, subjName, objName);
-						}
+
+					// domain/range specification
+					if (p.equals(RDFS.domain.getURI())) {
+						subjName = map.add(s, Type.RELATION);
+						// property name, target class, is domain
+						map.addRelClass(subjName, objName, true);
 					}
+					if (p.equals(RDFS.range.getURI())) {
+						subjName = map.add(s, Type.RELATION);
+						// property name, target class, is range
+						map.addRelClass(subjName, objName, false);
+					}
+
+					// if subject or object are not found, it means that they
+					// have not been instantiated earlier (see Classes.build)
+					if (subjName == null)
+						// not found => instance subject, create entity
+						subjName = map.add(s, Type.ENTITY);
+					else {
+						// create entity form for class
+						if(subjName.startsWith(Type.CLASS.toString()))
+							subjName = Type.ENTITY.toString() + "-" + subjName.substring(ProbKBData.CLS_LENGTH);
+						// FIXME create stable entity form for properties 
+						if(subjName.startsWith(Type.RELATION.toString()))
+							subjName = Type.ENTITY.toString() + "-" + Integer.parseInt(subjName.substring(ProbKBData.REL_LENGTH)) + 10000;
 						
-						
+					}
+					if (objName == null)
+						// not found => instance/datatype object, create entity
+						objName = map.add(o, Type.ENTITY);
+					else {
+						// create entity form for class
+						if(objName.startsWith(Type.CLASS.toString()))
+							objName = Type.ENTITY.toString() + "-" + objName.substring(ProbKBData.CLS_LENGTH);
+						// FIXME create stable entity form for properties
+						if(objName.startsWith(Type.RELATION.toString()))
+							objName = Type.ENTITY.toString() + "-" + Integer.parseInt(objName.substring(ProbKBData.REL_LENGTH)) + 10000;
+					}
+
+					// property, subject (entity), object (entity) names
+					map.addRelationship(relName, subjName, objName);
+
 				}
 
 				if (arg0.getObject().isLiteral()) {
@@ -111,11 +141,11 @@ public class Evidence {
 		RDFDataMgr.parse(dataStream, SRC_PATH);
 		RDFDataMgr.parse(dataStream, TGT_PATH);
 		RDFDataMgr.parse(dataStream, LNK_PATH);
-						
+
 		// call similarity join
-		SimilarityJoin.build(map, setOfStrings, cache, THR_MIN, THR_MAX, THR_STEP);
+		SimilarityJoin.build(map, setOfStrings, cache, THR_MIN, THR_MAX,
+				THR_STEP);
 
 	}
-
 
 }

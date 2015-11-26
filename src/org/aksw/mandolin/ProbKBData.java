@@ -3,6 +3,7 @@ package org.aksw.mandolin;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -98,17 +99,46 @@ public class ProbKBData {
 	}
 	
 	
+	/**
+	 * Domain and range information, as required by ProbKB.
+	 * 
+	 * @throws IOException
+	 */
 	private static void relClasses() throws IOException {
 		
-		CSVWriter writer = new CSVWriter(new FileWriter(new File(base + "/relClasses.csv"))); 
+		HashMap<String, String[]> entries = new HashMap<>();
+		
+		String owlThing = map.getOwlThingId();
+		
+		// set defaults
+		for(String prop : map.getNamesByType(Type.RELATION)) {
+			String rel = prop.substring(REL_LENGTH);
+			entries.put(rel, new String[] {rel, owlThing, owlThing});
+		}
 		
 		for(String line : map.getRelClasses()) {
 			String[] arr = line.split("#");
-			// class_id+"|"+class_id
-			String id1 = arr[0].substring(CLS_LENGTH);
-			String id2 = arr[1].substring(CLS_LENGTH);
-			writer.writeNext(new String[] {id1, id2});
+			// rel_id+"#"+class_id+"#"+is_domain
+			String rel = arr[0].substring(REL_LENGTH);
+			String cl = arr[1].substring(CLS_LENGTH);
+			Boolean isDomain = Boolean.parseBoolean(arr[2]);
+			
+			String[] obj;
+			if(entries.containsKey(rel))
+				obj = entries.get(rel);
+			else {
+				obj = new String[] {rel, owlThing, owlThing};
+				entries.put(rel, obj);
+			}
+			obj[isDomain ? 1 : 2] = cl;
+			System.out.println((isDomain ? "domain" : "range") + " => " + Arrays.toString(obj));
+			
 		}
+		
+		CSVWriter writer = new CSVWriter(new FileWriter(new File(base + "/relClasses.csv"))); 
+		
+		for(String entry : entries.keySet())
+			writer.writeNext(entries.get(entry));
 		
 		writer.close();
 		
