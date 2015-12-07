@@ -1,4 +1,4 @@
-package org.aksw.mandolin.rockit;
+package org.aksw.mandolin.rockit.pre;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +16,7 @@ import jp.ndca.similarity.join.Tokenizer;
 
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
-import org.aksw.mandolin.rockit.NameMapperRockit.RockitType;
+import org.aksw.mandolin.rockit.pre.NameMapperRockit.RockitType;
 import org.aksw.mandolin.semantifier.Commons;
 import org.aksw.mandolin.util.URLs;
 import org.apache.jena.riot.RDFDataMgr;

@@ -1,4 +1,4 @@
-package org.aksw.mandolin.rockit;
+package org.aksw.mandolin.rockit.pre;
 
 import java.util.HashMap;
 import java.util.TreeSet;

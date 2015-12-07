@@ -14,6 +14,7 @@ publications-*/
 old/
 tmp/
 eval/
+!src/org/aksw/mandolin/eval
 
 .DS_Store
 *.log
