@@ -18,3 +18,5 @@ eval/
 
 .DS_Store
 *.log
+*.lp
+*.mps
