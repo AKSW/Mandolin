@@ -19,7 +19,7 @@ public class MandolinProbKB {
 	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM.nt";
 	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard.nt";
 
-	public static final String BASE = "eval/10_publi-probkb";
+	public static final String BASE = "eval/0001";
 
 	// ProbKB files
 	public static final String CLASSES_CSV = BASE + "/classes.csv";
