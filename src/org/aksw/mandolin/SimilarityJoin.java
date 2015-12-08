@@ -21,7 +21,7 @@ import org.aksw.mandolin.semantifier.Commons;
  *
  */
 public class SimilarityJoin {
-
+	
 	public static void build(NameMapperProbKB map, TreeSet<ComparableLiteral> setOfStrings,
 			Cache cache, final int THR_MIN, final int THR_MAX, final int THR_STEP) {
 		
@@ -53,9 +53,7 @@ public class SimilarityJoin {
 			for (Entry<StringItem, StringItem> entry : result) {
 				ComparableLiteral lit1 = dataset.get(entry.getKey().getId());
 				ComparableLiteral lit2 = dataset.get(entry.getValue().getId());
-//				TODO make it dynamic...
-				String rel = (thr == 90) ? Commons.SIMILAR_TO_90.getURI() :
-					Commons.SIMILAR_TO_80.getURI();
+				String rel = Commons.getSimilarTo(thr);
 				map.addRelationship(map.add(rel, Type.RELATION), map.getName(lit1.getUri()), map.getName(lit2.getUri()));
 //				System.out.println(lit1.getUri() + " <=> " + lit2.getUri());
 //				System.out.println(lit1.getVal() + " <=> " + lit2.getVal());

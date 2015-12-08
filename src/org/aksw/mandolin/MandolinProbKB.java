@@ -14,7 +14,7 @@ import org.aksw.mandolin.amie.RuleMiner;
 public class MandolinProbKB {
 
 	// input datasets
-	public static final String SRC_PATH = "datasets/DBLPL3S-rdfs.nt"; // TODO revert to DBLPL3S.nt
+	public static final String SRC_PATH = "datasets/DBLPL3S.nt"; 
 	public static final String TGT_PATH = "datasets/LinkedACM.nt";
 	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM.nt";
 	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard.nt";
