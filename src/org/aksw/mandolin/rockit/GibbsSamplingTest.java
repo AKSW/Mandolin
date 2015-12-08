@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import com.googlecode.rockit.app.Parameters;
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSLiteral;
@@ -15,15 +14,15 @@ import com.googlecode.rockit.app.solver.pojo.Literal;
 import com.googlecode.rockit.exception.ParseException;
 import com.googlecode.rockit.exception.ReadOrWriteToFileException;
 import com.googlecode.rockit.exception.SolveException;
+import com.googlecode.rockit.javaAPI.HerbrandUniverse;
 import com.googlecode.rockit.javaAPI.Model;
 import com.googlecode.rockit.parser.SyntaxReader;
 
 /**
- * @author Bernd Opitz <jopitz@mail.uni-mannheim.de>
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class LaunchInference {
+public class GibbsSamplingTest {
 
 	/**
 	 * MLN file.
@@ -48,11 +47,11 @@ public class LaunchInference {
 	public static void main(String[] args) throws ParseException, IOException,
 			SolveException, SQLException, ReadOrWriteToFileException {
 
-		new LaunchInference().run();
+		new GibbsSamplingTest().run();
 
 	}
 
-	public LaunchInference() throws ReadOrWriteToFileException, ParseException,
+	public GibbsSamplingTest() throws ReadOrWriteToFileException, ParseException,
 			IOException {
 
 		Parameters.readPropertyFile();
@@ -77,12 +76,15 @@ public class LaunchInference {
 		solver = null; // free memory
 		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(iterations,
 				clauses, evidence, consistentStartingPoints);
-
-		HashMap<String, Double> gibbs_result = new HashMap<String, Double>();
+		
+		HerbrandUniverse u = HerbrandUniverse.getInstance();
 		for (GIBBSLiteral l : gibbsOutput) {
-			gibbs_result.put(l.getName(), l.return_my_probability(iterations));
-			System.out.println(l.getName() + ": " + l.return_my_probability(iterations));
-			System.out.println("swap? " + l.is_it_possible_to_swap_me());
+			String[] name = l.getName().split("\\|");
+			String p = name[0];
+			String x = u.getConstant(name[1]);
+			String y = u.getConstant(name[2]);
+			System.out.println(p + "(" + x + ", " + y + ") = " + l.return_my_probability(iterations));
+			System.out.println("\tswap? " + l.is_it_possible_to_swap_me());
 		}
 
 	}
