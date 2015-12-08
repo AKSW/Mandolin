@@ -134,6 +134,11 @@
 			<version>9.4-1205-jdbc42</version>
 		</dependency>
 		<dependency>
+			<groupId>it.tsoru.ppjoinhandler</groupId>
+			<artifactId>ppjoin-handler</artifactId>
+			<version>0.1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>com.googlecode.rockit</groupId>
 			<artifactId>tsoru-rockit</artifactId>
 			<version>0.5.277</version>
