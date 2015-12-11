@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.aksw.mandolin.model.PredictionLiteral;
+
 import com.googlecode.rockit.app.Parameters;
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSLiteral;
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSSampler;
@@ -14,7 +16,6 @@ import com.googlecode.rockit.app.solver.pojo.Literal;
 import com.googlecode.rockit.exception.ParseException;
 import com.googlecode.rockit.exception.ReadOrWriteToFileException;
 import com.googlecode.rockit.exception.SolveException;
-import com.googlecode.rockit.javaAPI.HerbrandUniverse;
 import com.googlecode.rockit.javaAPI.Model;
 import com.googlecode.rockit.parser.SyntaxReader;
 
@@ -45,7 +46,7 @@ public class GibbsSampling {
 	/**
 	 * The number of iterations for sampling.
 	 */
-	private int iterations = 5000000;
+	public static final int ITERATIONS = 5000000;
 	private GIBBSSampler gibbsSampler;
 
 	public static void main(String[] args) {
@@ -55,6 +56,7 @@ public class GibbsSampling {
 			new GibbsSampling("eval/11_publi-mln/prog.mln",
 					"eval/11_publi-mln/evidence.db")
 					.inferAfterGroundingByRockIt();
+//					.inferAfterGroundingByProbKB();
 		} catch (ParseException | SolveException | SQLException
 				| ReadOrWriteToFileException | IOException e) {
 			e.printStackTrace();
@@ -82,16 +84,28 @@ public class GibbsSampling {
 	 * @throws ParseException
 	 * @throws SolveException
 	 * @throws SQLException
+	 * @throws IOException 
 	 */
 	public void inferAfterGroundingByProbKB() throws ParseException,
-			SolveException, SQLException {
+			SolveException, SQLException, IOException {
 
 		System.out.println("Input: " + this.input);
 
 		// TODO make the following three collections out of ProbKB input
+		
+//		+++ STARTING POINTS +++
+//		Prop2|alb|nob
 		ArrayList<String> consistentStartingPoints = null;
+		
+//		+++ CLAUSES +++
+//		Clause [weight=0.0, restriction=[[Prop2|b|e]], hard=true]
 		ArrayList<Clause> clauses = null;
+		
+//		+++ EVIDENCE +++
+//		[Prop2|2db|h0e]
 		Collection<Literal> evidence = null;
+		
+		System.out.println(evidence);
 
 		// call Gibbs sampler
 		gibbsSampling(consistentStartingPoints, clauses, evidence);
@@ -116,8 +130,17 @@ public class GibbsSampling {
 		StandardSolver solver = new StandardSolver(model);
 		// ground MLN and retrieve Clauses
 		ArrayList<String> consistentStartingPoints = solver.solve();
+		System.out.println("+++ STARTING POINTS +++");
+		for(String s : consistentStartingPoints)
+			System.out.println(s);
 		ArrayList<Clause> clauses = solver.getAllClauses();
+		System.out.println("+++ CLAUSES +++");
+		for(Clause c : clauses)
+			System.out.println(c);
 		Collection<Literal> evidence = solver.getEvidenceAxioms();
+		System.out.println("+++ EVIDENCE +++");
+		for(Literal l : evidence)
+			System.out.println(l);
 		solver = null; // free memory
 
 		// call Gibbs sampler
@@ -140,24 +163,18 @@ public class GibbsSampling {
 			throws SQLException, SolveException, ParseException {
 
 		gibbsSampler = new GIBBSSampler();
-		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(iterations,
+		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(ITERATIONS,
 				clauses, evidence, consistentStartingPoints);
 
 		// TODO remove me later
-		System.out.println("");
+		System.out.println();
 		for (Clause c : clauses) {
 			System.out.println(c);
 		}
 
-		HerbrandUniverse u = HerbrandUniverse.getInstance();
 		for (GIBBSLiteral l : gibbsOutput) {
-			String[] name = l.getName().split("\\|");
-			String p = name[0];
-			String x = u.getConstant(name[1]);
-			String y = u.getConstant(name[2]);
-			System.out.println(p + "(" + x + ", " + y + ") = "
-					+ l.return_my_probability(iterations));
-			System.out.println("\tswap? " + l.is_it_possible_to_swap_me());
+			PredictionLiteral lit = new PredictionLiteral(l);
+			System.out.println(lit);
 		}
 
 		// TODO return something evaluable
