@@ -16,14 +16,15 @@ public class PredictionSet extends TreeSet<PredictionLiteral> {
 	/**
 	 * Internal name only.
 	 */
-	private String target;
+	private String aim;
 	
-	public PredictionSet(String target) {
-		this.target = target;
+	public PredictionSet(String aim) {
+		this.aim = aim;
+		System.out.println("Created prediction set with aim: "+aim);
 	}
 	
 	public String getTarget() {
-		return target;
+		return aim;
 	}
 
 }

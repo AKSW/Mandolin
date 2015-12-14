@@ -4,12 +4,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
 
 import com.googlecode.rockit.app.solver.pojo.Clause;
 import com.googlecode.rockit.app.solver.pojo.Literal;
 import com.googlecode.rockit.exception.ParseException;
 import com.googlecode.rockit.exception.SolveException;
+import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
  * Manager for the Gibbs-Sampling inference. Ground rules can be extracted from
@@ -19,17 +21,18 @@ import com.googlecode.rockit.exception.SolveException;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class ProbKBGibbsSampling extends GibbsSampling {
+public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 
 	public static void main(String[] args) {
 
-		PredictionSet ps = new ProbKBGibbsSampling().infer();
-		// TODO
+		PredictionSet ps = new ProbKBToRockitGibbsSampling(OWL.sameAs.getURI()).infer();
+		for(PredictionLiteral lit : ps)
+			System.out.println(lit);
 
 	}
 
-	public ProbKBGibbsSampling() {
-		super();
+	public ProbKBToRockitGibbsSampling(String aim) {
+		super(aim);
 	}
 
 	/**

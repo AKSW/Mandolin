@@ -4,8 +4,12 @@ import java.io.File;
 
 import org.aksw.mandolin.amie.RDFToTSV;
 import org.aksw.mandolin.amie.RuleMiner;
-import org.aksw.mandolin.inference.ProbKBGibbsSampling;
+import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
+import org.aksw.mandolin.inference.RockitGroundingAndGibbsSampling;
+import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
+
+import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
  * Mandolin for the ProbKB framework, i.e. CSV file build.
@@ -23,6 +27,20 @@ public class MandolinProbKB {
 
 	public static final String BASE = "eval/0001";
 
+	public static final int TRAINING_SIZE = Integer.MAX_VALUE; // TODO restore:
+																// (int) (47 *
+																// 0.9);
+	
+	// thresholds for similarity joins among datatype values
+	private static final int THR_MIN = 80;
+	private static final int THR_MAX = 90;
+	private static final int THR_STEP = 10;
+	
+	// TODO this is a temporary constant which should become variable like the above...
+	private static final String AIM_RELATION = OWL.sameAs.getURI();
+	
+	// -------------------------------------------------------------------------
+	
 	// ProbKB files
 	public static final String CLASSES_CSV = BASE + "/classes.csv";
 	public static final String ENTCLASSES_CSV = BASE + "/entClasses.csv";
@@ -32,15 +50,6 @@ public class MandolinProbKB {
 	public static final String RELATIONSHIPS_CSV = BASE + "/relationships.csv";
 	public static final String RELCLASSES_CSV = BASE + "/relClasses.csv";
 
-	public static final int TRAINING_SIZE = Integer.MAX_VALUE; // TODO restore:
-																// (int) (47 *
-																// 0.9);
-
-	// thresholds for similarity joins among datatype values
-	private static final int THR_MIN = 80;
-	private static final int THR_MAX = 90;
-	private static final int THR_STEP = 10;
-	
 	private static final String TEMP_OUTPUT = "tmp/DBLPACM.tsv";
 
 	private NameMapperProbKB map;
@@ -75,10 +84,15 @@ public class MandolinProbKB {
 		RDFToTSV.run(map, BASE, TEMP_OUTPUT);
 		RuleMiner.run(map, BASE, TEMP_OUTPUT);
 		
-		// TODO launch grounding from PGSQL console
+		// TODO update SQL file dynamically and launch grounding from PGSQL console
 		
 		// TODO launch inference
-		PredictionSet pset = new ProbKBGibbsSampling().infer();
+		PredictionSet pset = new ProbKBToRockitGibbsSampling(AIM_RELATION).infer();
+//		PredictionSet pset = new RockitGroundingAndGibbsSampling(AIM_RELATION, "eval/11_publi-mln/prog.mln",
+//				"eval/11_publi-mln/evidence.db").infer();
+		System.out.println("+++ INFERRED +++");
+		for(PredictionLiteral lit : pset)
+			System.out.println(lit);
 		
 		System.out.println("Mandolin done.");
 		
