@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.aksw.mandolin.NameMapperProbKB;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
 
@@ -25,7 +26,7 @@ public abstract class RockitGibbsSampling {
 
 	protected static SyntaxReader reader;
 	
-	protected String aim;
+	protected NameMapperProbKB map;
 
 	// Sampling only
 	/**
@@ -34,10 +35,10 @@ public abstract class RockitGibbsSampling {
 	public static final int ITERATIONS = 5000000;
 	protected GIBBSSampler gibbsSampler;
 
-	protected RockitGibbsSampling(String aim) {
+	protected RockitGibbsSampling(NameMapperProbKB map) {
 		super();
 		
-		this.aim = aim;
+		this.map = map;
 		
 		try {
 			Parameters.readPropertyFile();
@@ -67,7 +68,7 @@ public abstract class RockitGibbsSampling {
 			ArrayList<Clause> clauses, Collection<Literal> evidence)
 			throws SQLException, SolveException, ParseException {
 
-		PredictionSet ps = new PredictionSet(aim);
+		PredictionSet ps = new PredictionSet(map.getAim());
 
 		gibbsSampler = new GIBBSSampler();
 		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(ITERATIONS,

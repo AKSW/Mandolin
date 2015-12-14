@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.aksw.mandolin.ProbKBData;
+
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
@@ -41,7 +43,8 @@ public class PostgreDB {
 	 * A factor graph is composed by factors connected with one, two, or three
 	 * clauses (i.e., relationships).
 	 * 
-	 * @param n size of the restriction, i.e. number of clauses (1, 2, 3).
+	 * @param n
+	 *            size of the restriction, i.e. number of clauses (1, 2, 3).
 	 * @return
 	 */
 	public ResultSet factors(int n) {
@@ -99,9 +102,20 @@ public class PostgreDB {
 		}
 	}
 
-	public ResultSet evidence() {
-		// TODO Auto-generated method stub
-		return null;
+	public ResultSet evidence(String aimName) {
+
+		int aimNumber = Integer.parseInt(aimName
+				.substring(ProbKBData.REL_LENGTH));
+
+		ResultSet rs = null;
+		try {
+			rs = st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
+					+ aimNumber + ";");
+
+		} catch (SQLException ex) {
+			lgr.log(Level.WARNING, ex.getMessage(), ex);
+		}
+		return rs;
 	}
 
 }

@@ -56,7 +56,7 @@ public class MandolinProbKB {
 
 	public MandolinProbKB() {
 
-		map = new NameMapperProbKB();
+		map = new NameMapperProbKB(AIM_RELATION);
 
 	}
 
@@ -87,7 +87,7 @@ public class MandolinProbKB {
 		// TODO update SQL file dynamically and launch grounding from PGSQL console
 		
 		// TODO launch inference
-		PredictionSet pset = new ProbKBToRockitGibbsSampling(AIM_RELATION).infer();
+		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 //		PredictionSet pset = new RockitGroundingAndGibbsSampling(AIM_RELATION, "eval/11_publi-mln/prog.mln",
 //				"eval/11_publi-mln/evidence.db").infer();
 		System.out.println("+++ INFERRED +++");

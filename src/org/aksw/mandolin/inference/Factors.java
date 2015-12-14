@@ -42,23 +42,45 @@ public class Factors {
 
 	/**
 	 * Preprocess factors from ProbKB for RockIt.
+	 * @param aimName 
 	 */
-	public void preprocess() {
+	public void preprocess(String aimName) {
 		
 		db = new PostgreDB();
 		db.connect();
 
 		buildClauses();
-		buildEvidence();
+		buildEvidence(aimName);
+		buildStartingPoints();
 		
 		db.close();
 	}
 	
-	private void buildEvidence() {
+	/**
+	 * I have no idea how to build this.
+	 */
+	private void buildStartingPoints() {
+		// TODO Auto-generated method stub
+		consistentStartingPoints = new ArrayList<>();
+	}
+
+	private void buildEvidence(String aimName) {
 		
 		evidence = new ArrayList<>();
+		ResultSet rs = db.evidence(aimName);
+		try {
+			while(rs.next()) {
+				String a1 = u.getKey("Res" + rs.getInt("ent1"));
+				String b1 = u.getKey("Res" + rs.getInt("ent2"));
+				evidence.add(new Literal(aimName + "|" + a1 + "|" + b1, true));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
-		ResultSet rs = db.evidence();
+		System.out.println("EVIDENCE");
+		for(Literal l : evidence)
+			System.out.println(l);
 		
 	}
 

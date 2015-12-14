@@ -19,6 +19,7 @@ public class NameMapperProbKB {
 	
 	private String RDF_TYPE_NAME;
 	private String OWL_THING_NAME;
+	private String AIM_NAME;
 	
 	public String getOwlThingId() {
 		return OWL_THING_NAME.substring(ProbKBData.CLS_LENGTH);
@@ -50,8 +51,11 @@ public class NameMapperProbKB {
 	
 	private HashMap<Type, Integer> count = new HashMap<>();
 	
-	public NameMapperProbKB() {
+	private String aimURI;
+	
+	public NameMapperProbKB(String aimURI) {
 		super();
+		
 		for(Type t : Type.values()) {
 			count.put(t, 1);
 			listByType.put(t, new TreeSet<>());
@@ -62,6 +66,10 @@ public class NameMapperProbKB {
 		// same for owl:Thing
 		OWL_THING_NAME = this.add(OWL.Thing.getURI(), Type.CLASS);
 		System.out.println("Alias for owl:Thing is " + OWL_THING_NAME);
+		
+		this.aimURI = aimURI;
+		AIM_NAME = this.add(aimURI, Type.RELATION);
+		System.out.println("Alias for AIM ("+aimURI+") is " + AIM_NAME);
 	}
 	
 	public void addEntClass(String entName, String className) {
@@ -137,6 +145,14 @@ public class NameMapperProbKB {
 			if(ec.startsWith(entityName+"#"))
 				return ec.substring(ProbKBData.CLS_LENGTH);
 		return OWL_THING_NAME.substring(ProbKBData.CLS_LENGTH);
+	}
+
+	public String getAim() {
+		return aimURI;
+	}
+
+	public String getAimName() {
+		return AIM_NAME;
 	}
 	
 }

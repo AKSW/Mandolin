@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.aksw.mandolin.NameMapperProbKB;
 import org.aksw.mandolin.model.PredictionSet;
 
 import com.googlecode.rockit.app.solver.StandardSolver;
@@ -37,22 +38,24 @@ public class RockitGroundingAndGibbsSampling extends RockitGibbsSampling {
 	 * DB file.
 	 */
 	private String groundings;
-	
+
 	private Model model;
 
 	public static void main(String[] args) throws ReadOrWriteToFileException,
 			ParseException, IOException {
 
 		// launch test
-		new RockitGroundingAndGibbsSampling(OWL.sameAs.getURI(), "eval/11_publi-mln/prog.mln",
+		new RockitGroundingAndGibbsSampling(new NameMapperProbKB(
+				OWL.sameAs.getURI()), "eval/11_publi-mln/prog.mln",
 				"eval/11_publi-mln/evidence.db").infer();
 
 	}
 
-	public RockitGroundingAndGibbsSampling(String aim, String input, String groundings)
-			throws ReadOrWriteToFileException, ParseException, IOException {
-		super(aim);
-		
+	public RockitGroundingAndGibbsSampling(NameMapperProbKB map, String input,
+			String groundings) throws ReadOrWriteToFileException,
+			ParseException, IOException {
+		super(map);
+
 		this.input = input;
 		this.groundings = groundings;
 

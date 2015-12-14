@@ -9,6 +9,8 @@ import org.aksw.mandolin.Evidence;
 import org.aksw.mandolin.NameMapperProbKB;
 import org.aksw.mandolin.NameMapperProbKB.Type;
 
+import com.hp.hpl.jena.vocabulary.OWL;
+
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
@@ -31,7 +33,7 @@ public class Evaluation {
 	private static final int THR_MAX = 90;
 	private static final int THR_STEP = 10;
 
-	private static NameMapperProbKB map = new NameMapperProbKB();
+	private static NameMapperProbKB map = new NameMapperProbKB(OWL.sameAs.getURI());
 
 	/**
 	 * @param args
