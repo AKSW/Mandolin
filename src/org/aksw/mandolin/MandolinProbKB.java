@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.aksw.mandolin.amie.RDFToTSV;
 import org.aksw.mandolin.amie.RuleMiner;
+import org.aksw.mandolin.inference.ProbKBGibbsSampling;
+import org.aksw.mandolin.model.PredictionSet;
 
 /**
  * Mandolin for the ProbKB framework, i.e. CSV file build.
@@ -72,6 +74,11 @@ public class MandolinProbKB {
 		
 		RDFToTSV.run(map, BASE, TEMP_OUTPUT);
 		RuleMiner.run(map, BASE, TEMP_OUTPUT);
+		
+		// TODO launch grounding from PGSQL console
+		
+		// TODO launch inference
+		PredictionSet pset = new ProbKBGibbsSampling().infer();
 		
 		System.out.println("Mandolin done.");
 		

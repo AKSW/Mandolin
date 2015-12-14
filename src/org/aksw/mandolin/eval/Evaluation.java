@@ -47,21 +47,21 @@ public class Evaluation {
 		PostgreDB db = new PostgreDB();
 		db.connect();
 
-		db.linksAbove(100.0);
+//		db.factors(100.0);
 
 		ResultSet rs = null;
 
 		int tp = 0, fp = 0;
 
-		while ((rs = db.next()) != null) {
-
-			// TODO
-			if (evaluate(rs))
-				tp++;
-			else
-				fp++;
-
-		}
+//		while ((rs = db.next()) != null) {
+//
+//			// TODO
+//			if (evaluate(rs))
+//				tp++;
+//			else
+//				fp++;
+//
+//		}
 
 		System.out.println("TP = " + tp);
 		System.out.println("FP = " + fp);

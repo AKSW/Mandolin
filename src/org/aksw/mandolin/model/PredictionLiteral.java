@@ -1,6 +1,6 @@
 package org.aksw.mandolin.model;
 
-import org.aksw.mandolin.rockit.GibbsSampling;
+import org.aksw.mandolin.inference.ProbKBGibbsSampling;
 
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSLiteral;
 import com.googlecode.rockit.javaAPI.HerbrandUniverse;
@@ -26,7 +26,7 @@ public class PredictionLiteral implements Comparable<PredictionLiteral> {
 	}
 
 	public PredictionLiteral(GIBBSLiteral l) {
-		this(l.getName(), l.return_my_probability(GibbsSampling.ITERATIONS));
+		this(l.getName(), l.return_my_probability(ProbKBGibbsSampling.ITERATIONS));
 	}
 
 	public String getP() {
@@ -46,7 +46,7 @@ public class PredictionLiteral implements Comparable<PredictionLiteral> {
 	}
 
 	public String toString() {
-		return id + " = " + prob;
+		return "P[ " + id + " = true ] = " + prob;
 	}
 
 	@Override

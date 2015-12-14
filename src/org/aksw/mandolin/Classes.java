@@ -20,9 +20,6 @@ public class Classes {
 	 * @param map 
 	 * @param SRC_PATH
 	 * @param TGT_PATH
-	 * @param THR_MIN
-	 * @param THR_MAX
-	 * @param THR_STEP
 	 */
 	public static void build(final NameMapperProbKB map, final String SRC_PATH, final String TGT_PATH) {
 		
