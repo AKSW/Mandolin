@@ -15,6 +15,7 @@ old/
 tmp/
 eval/
 !src/org/aksw/mandolin/eval
+pgsql/db/
 
 .DS_Store
 *.log
