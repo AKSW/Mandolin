@@ -1,13 +1,7 @@
+-- WARNING: This file is not used. Check `load-*.sql` files instead.
+
 SET work_mem='4GB';
 SET enable_mergejoin=OFF;
-
--- import csv
-COPY probkb.classes FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/classes.csv' DELIMITERS ',' CSV;
-COPY probkb.entities FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/entities.csv' DELIMITERS ',' CSV;
-COPY probkb.relations FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/relations.csv' DELIMITERS ',' CSV;
-COPY probkb.entClasses FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/entClasses.csv' DELIMITERS ',' CSV;
-COPY probkb.relClasses FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/relClasses.csv' DELIMITERS ',' CSV;
-COPY probkb.functionals FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/functionals.csv' DELIMITERS ',' CSV;
 
 -- generate random types for 0 typed entities
 --INSERT INTO entClasses
@@ -16,6 +10,13 @@ COPY probkb.functionals FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/f
 --        EXCEPT
 --      SELECT ent FROM entClasses) tt;
 
+-- import csv
+COPY probkb.classes FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/classes.csv' DELIMITERS ',' CSV;
+COPY probkb.entities FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/entities.csv' DELIMITERS ',' CSV;
+COPY probkb.relations FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/relations.csv' DELIMITERS ',' CSV;
+COPY probkb.entClasses FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/entClasses.csv' DELIMITERS ',' CSV;
+COPY probkb.relClasses FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/relClasses.csv' DELIMITERS ',' CSV;
+COPY probkb.functionals FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/functionals.csv' DELIMITERS ',' CSV;
 COPY probkb.extractions FROM '/Users/tom/PhD/srl/Mandolin/eval/10_publi-probkb/relationships.csv' DELIMITERS ',' CSV;
 
 -- build relationships table with type information
