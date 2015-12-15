@@ -5,8 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class PostgreDB {
 
-	private static Logger lgr = Logger.getLogger(PostgreDB.class.getName());
+	private final static Logger lgr = LogManager.getLogger(PostgreDB.class.getName());
 	private Connection con = null;
 	private Statement st = null;
 
@@ -33,7 +34,7 @@ public class PostgreDB {
 			st = con.createStatement();
 
 		} catch (SQLException ex) {
-			lgr.log(Level.SEVERE, ex.getMessage(), ex);
+			lgr.fatal(ex.getMessage(), ex);
 		}
 	}
 
@@ -78,7 +79,7 @@ public class PostgreDB {
 								+ "where f.id1 = rs1.id and f.id2 = rs2.id and f.id3 = rs3.id;");
 			}
 		} catch (SQLException ex) {
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
+			lgr.warn(ex.getMessage(), ex);
 		}
 
 		return factors;
@@ -96,7 +97,7 @@ public class PostgreDB {
 			}
 
 		} catch (SQLException ex) {
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
+			lgr.warn(ex.getMessage(), ex);
 		}
 	}
 
@@ -108,7 +109,7 @@ public class PostgreDB {
 					+ aimNumber + ";");
 
 		} catch (SQLException ex) {
-			lgr.log(Level.WARNING, ex.getMessage(), ex);
+			lgr.warn(ex.getMessage(), ex);
 		}
 		return rs;
 	}

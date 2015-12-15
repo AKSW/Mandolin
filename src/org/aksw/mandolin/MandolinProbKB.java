@@ -86,7 +86,6 @@ public class MandolinProbKB {
 		
 		// TODO update SQL file dynamically and launch grounding from PGSQL console
 		
-		// TODO launch inference
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 //		PredictionSet pset = new RockitGroundingAndGibbsSampling(AIM_RELATION, "eval/11_publi-mln/prog.mln",
 //				"eval/11_publi-mln/evidence.db").infer();
