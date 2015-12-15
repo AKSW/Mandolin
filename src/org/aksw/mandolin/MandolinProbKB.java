@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.aksw.mandolin.amie.RDFToTSV;
 import org.aksw.mandolin.amie.RuleMiner;
+import org.aksw.mandolin.grounding.Grounding;
 import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
-import org.aksw.mandolin.inference.RockitGroundingAndGibbsSampling;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
 
@@ -84,7 +84,7 @@ public class MandolinProbKB {
 		RDFToTSV.run(map, BASE, TEMP_OUTPUT);
 		RuleMiner.run(map, BASE, TEMP_OUTPUT);
 		
-		// TODO update SQL file dynamically and launch grounding from PGSQL console
+		Grounding.ground(BASE);
 		
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 //		PredictionSet pset = new RockitGroundingAndGibbsSampling(AIM_RELATION, "eval/11_publi-mln/prog.mln",

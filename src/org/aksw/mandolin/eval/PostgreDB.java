@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.aksw.mandolin.util.Bundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,9 +26,11 @@ public class PostgreDB {
 
 	public void connect() {
 
-		String url = "jdbc:postgresql://localhost/probkb";
-		String user = "tom";
-		String password = "";
+		String host = Bundle.getString("pgsql_url");
+		String db = Bundle.getString("pgsql_database");
+		String url = "jdbc:postgresql://"+host+"/"+db;
+		String user = Bundle.getString("pgsql_username");
+		String password = Bundle.getString("pgsql_password");
 
 		try {
 			con = DriverManager.getConnection(url, user, password);

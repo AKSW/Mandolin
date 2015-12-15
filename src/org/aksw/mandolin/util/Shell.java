@@ -50,21 +50,7 @@ public class Shell {
 	 * @return
 	 */
 	public static String execute(String command) {
-		StringBuffer sb = new StringBuffer();
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(command);
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
-
-			String line = "";
-			while ((line = reader.readLine()) != null)
-				sb.append(line);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return sb.toString();
+		return execute(command, false);
 	}
 
 	/**
