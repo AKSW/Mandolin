@@ -1,6 +1,7 @@
 package org.aksw.mandolin;
 
 import java.io.File;
+import java.util.TreeSet;
 
 import org.aksw.mandolin.amie.RDFToTSV;
 import org.aksw.mandolin.amie.RuleMiner;
@@ -90,21 +91,37 @@ public class Mandolin {
 		Grounding.ground(BASE);
 		
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
-
-		System.out.println("+++ INFERRED +++");
-		for(PredictionLiteral lit : pset) {
-			if(lit.getProb() > 0.9) {
-				System.out.println(lit);
-				System.out.println("=>" + map.getURI(lit.getX()));
-				System.out.println("  " + map.getURI(lit.getP()));
-				System.out.println("  " + map.getURI(lit.getY()));
-			}
-		}
+		
+		// TODO filter only aim relation from pset!
+		
+		eval(pset);
 		
 		System.out.println("Mandolin done.");
 		
 	}
 	
+
+	/**
+	 * XXX Temporary routine for tracing results...
+	 * @param pset
+	 */
+	private void eval(PredictionSet pset) {
+		
+		TreeSet<String> rel = map.getRelationships();
+		
+		System.out.println("+++ INFERRED +++");
+		for(PredictionLiteral lit : pset) {
+			if(lit.getProb() > 0.9) {
+				System.out.println(lit);
+				System.out.println("=> " + map.getURI(lit.getX()));
+				System.out.println("   " + map.getURI(lit.getP()));
+				System.out.println("   " + map.getURI(lit.getY()));
+				if(!rel.contains(lit.getP()+"#"+lit.getX()+"#"+lit.getY()) &&
+						!lit.getP().equals("RELATION15"))
+					System.out.println("   PREDICTION");
+			}
+		}
+	}
 
 	public NameMapper getMap() {
 		return map;
