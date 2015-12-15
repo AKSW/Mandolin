@@ -91,8 +91,14 @@ public class MandolinProbKB {
 //		PredictionSet pset = new RockitGroundingAndGibbsSampling(AIM_RELATION, "eval/11_publi-mln/prog.mln",
 //				"eval/11_publi-mln/evidence.db").infer();
 		System.out.println("+++ INFERRED +++");
-		for(PredictionLiteral lit : pset)
-			System.out.println(lit);
+		for(PredictionLiteral lit : pset) {
+			if(lit.getProb() > 0.9) {
+				System.out.println(lit);
+				System.out.println("=>" + map.getURI(lit.getX()));
+				System.out.println("  " + map.getURI(lit.getP()));
+				System.out.println("  " + map.getURI(lit.getY()));
+			}
+		}
 		
 		System.out.println("Mandolin done.");
 		

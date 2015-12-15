@@ -46,9 +46,6 @@ public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 		Factors factors = Factors.getInstance();
 		factors.preprocess(map.getAimName());
 
-		// TODO remove me!
-		System.exit(0);
-
 		// +++ STARTING POINTS +++
 		// Prop2|alb|nob
 		ArrayList<String> consistentStartingPoints = factors

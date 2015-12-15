@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.aksw.mandolin.ProbKBData;
-
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
@@ -102,10 +100,7 @@ public class PostgreDB {
 		}
 	}
 
-	public ResultSet evidence(String aimName) {
-
-		int aimNumber = Integer.parseInt(aimName
-				.substring(ProbKBData.REL_LENGTH));
+	public ResultSet evidence(int aimNumber) {
 
 		ResultSet rs = null;
 		try {

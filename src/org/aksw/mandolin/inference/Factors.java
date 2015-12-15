@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.aksw.mandolin.ProbKBData;
+import org.aksw.mandolin.NameMapperProbKB.Type;
 import org.aksw.mandolin.eval.PostgreDB;
 
 import com.googlecode.rockit.app.solver.pojo.Clause;
@@ -25,9 +27,9 @@ public class Factors {
 	private ArrayList<String> consistentStartingPoints;
 	private ArrayList<Clause> clauses;
 	private Collection<Literal> evidence;
-	
+
 	private PostgreDB db;
-	
+
 	private static HerbrandUniverse u = HerbrandUniverse.getInstance();
 
 	protected Factors() {
@@ -42,50 +44,51 @@ public class Factors {
 
 	/**
 	 * Preprocess factors from ProbKB for RockIt.
-	 * @param aimName 
+	 * 
+	 * @param aimName
 	 */
 	public void preprocess(String aimName) {
-		
+
 		db = new PostgreDB();
 		db.connect();
 
 		buildClauses();
 		buildEvidence(aimName);
-		buildStartingPoints();
-		
+
 		db.close();
-	}
-	
-	/**
-	 * I have no idea how to build this.
-	 */
-	private void buildStartingPoints() {
-		// TODO Auto-generated method stub
-		consistentStartingPoints = new ArrayList<>();
 	}
 
 	private void buildEvidence(String aimName) {
-		
 		evidence = new ArrayList<>();
-		ResultSet rs = db.evidence(aimName);
+		consistentStartingPoints = new ArrayList<>();
+
+		int aimNumber = Integer.parseInt(aimName
+				.substring(ProbKBData.REL_LENGTH));
+		
+		ResultSet rs = db.evidence(aimNumber);
 		try {
-			while(rs.next()) {
-				String a1 = u.getKey("Res" + rs.getInt("ent1"));
-				String b1 = u.getKey("Res" + rs.getInt("ent2"));
-				evidence.add(new Literal(aimName + "|" + a1 + "|" + b1, true));
+			while (rs.next()) {
+				String a1 = u.getKey(Type.ENTITY.name() + rs.getInt("ent1"));
+				String b1 = u.getKey(Type.ENTITY.name() + rs.getInt("ent2"));
+				String string = aimName + "|" + a1 + "|" + b1;
+				// As the Semantic Web deals only with true statements,
+				// all literals are set to true and belong to the starting
+				// points.
+				consistentStartingPoints.add(string);
+				evidence.add(new Literal(string, true));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("EVIDENCE");
-		for(Literal l : evidence)
+		for (Literal l : evidence)
 			System.out.println(l);
-		
+
 	}
 
 	private void buildClauses() {
-		
+
 		clauses = new ArrayList<>();
 
 		for (int i = 1; i <= 3; i++) {
@@ -97,24 +100,25 @@ public class Factors {
 					boolean positive = true;
 
 					// first restriction
-					String r1 = "Prop" + rs.getInt("r1");
-					String a1 = u.getKey("Res" + rs.getInt("a1"));
-					String b1 = u.getKey("Res" + rs.getInt("b1"));
+					String r1 = Type.RELATION.name() + rs.getInt("r1");
+					String a1 = u.getKey(Type.ENTITY.name() + rs.getInt("a1"));
+					String b1 = u.getKey(Type.ENTITY.name() + rs.getInt("b1"));
 					lit.add(new Literal(r1 + "|" + a1 + "|" + b1, positive));
-					
-					if(i >= 1) {
+
+					if (i >= 1) {
 						// second restriction
-						String r2 = "Prop" + rs.getInt("r2");
-						String a2 = u.getKey("Res" + rs.getInt("a2"));
-						String b2 = u.getKey("Res" + rs.getInt("b2"));
+						String r2 = Type.RELATION.name() + rs.getInt("r2");
+						String a2 = u.getKey(Type.ENTITY.name() + rs.getInt("a2"));
+						String b2 = u.getKey(Type.ENTITY.name() + rs.getInt("b2"));
 						lit.add(new Literal(r2 + "|" + a2 + "|" + b2, positive));
-						
-						if(i >= 2) {
+
+						if (i >= 2) {
 							// third restriction
-							String r3 = "Prop" + rs.getInt("r3");
-							String a3 = u.getKey("Res" + rs.getInt("a3"));
-							String b3 = u.getKey("Res" + rs.getInt("b3"));
-							lit.add(new Literal(r3 + "|" + a3 + "|" + b3, positive));
+							String r3 = Type.RELATION.name() + rs.getInt("r3");
+							String a3 = u.getKey(Type.ENTITY.name() + rs.getInt("a3"));
+							String b3 = u.getKey(Type.ENTITY.name() + rs.getInt("b3"));
+							lit.add(new Literal(r3 + "|" + a3 + "|" + b3,
+									positive));
 						}
 					}
 
