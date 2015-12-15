@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.aksw.mandolin.NameMapperProbKB.Type;
+import org.aksw.mandolin.NameMapper.Type;
 
 import com.opencsv.CSVWriter;
 
@@ -22,9 +22,9 @@ public class ProbKBData {
 	public final static int REL_LENGTH = Type.RELATION.name().length();
 	
 	private static String base;
-	private static NameMapperProbKB map;
+	private static NameMapper map;
 	
-	public static void buildCSV(NameMapperProbKB theMap, String theBase) throws IOException {
+	public static void buildCSV(NameMapper theMap, String theBase) throws IOException {
 		
 		base = theBase;
 		map = theMap;

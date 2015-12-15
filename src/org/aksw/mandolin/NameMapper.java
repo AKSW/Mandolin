@@ -10,7 +10,7 @@ import com.hp.hpl.jena.vocabulary.RDF;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class NameMapperProbKB {
+public class NameMapper {
 	
 	private HashMap<String, String> mlnToUri = new HashMap<>();
 	private HashMap<String, String> uriToMln = new HashMap<>();
@@ -53,7 +53,7 @@ public class NameMapperProbKB {
 	
 	private String aimURI;
 	
-	public NameMapperProbKB(String aimURI) {
+	public NameMapper(String aimURI) {
 		super();
 		
 		for(Type t : Type.values()) {

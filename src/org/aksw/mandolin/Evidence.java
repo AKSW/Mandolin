@@ -2,7 +2,7 @@ package org.aksw.mandolin;
 
 import java.util.TreeSet;
 
-import org.aksw.mandolin.NameMapperProbKB.Type;
+import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
 import org.apache.jena.riot.RDFDataMgr;
@@ -29,7 +29,7 @@ public class Evidence {
 	 * @param THR_MAX
 	 * @param THR_STEP
 	 */
-	public static void build(final NameMapperProbKB map, final String SRC_PATH,
+	public static void build(final NameMapper map, final String SRC_PATH,
 			final String TGT_PATH, final String LNK_PATH, final int THR_MIN,
 			final int THR_MAX, final int THR_STEP) {
 

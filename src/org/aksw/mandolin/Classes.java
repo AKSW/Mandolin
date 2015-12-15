@@ -1,6 +1,6 @@
 package org.aksw.mandolin;
 
-import org.aksw.mandolin.NameMapperProbKB.Type;
+import org.aksw.mandolin.NameMapper.Type;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
@@ -21,7 +21,7 @@ public class Classes {
 	 * @param SRC_PATH
 	 * @param TGT_PATH
 	 */
-	public static void build(final NameMapperProbKB map, final String SRC_PATH, final String TGT_PATH) {
+	public static void build(final NameMapper map, final String SRC_PATH, final String TGT_PATH) {
 		
 		// reader implementation
 		StreamRDF dataStream = new StreamRDF() {

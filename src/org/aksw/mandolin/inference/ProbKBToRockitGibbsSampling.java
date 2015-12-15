@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.aksw.mandolin.NameMapperProbKB;
+import org.aksw.mandolin.NameMapper;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
 
@@ -27,13 +27,13 @@ public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 	public static void main(String[] args) {
 
 		PredictionSet ps = new ProbKBToRockitGibbsSampling(
-				new NameMapperProbKB(OWL.sameAs.getURI())).infer();
+				new NameMapper(OWL.sameAs.getURI())).infer();
 		for (PredictionLiteral lit : ps)
 			System.out.println(lit);
 
 	}
 
-	public ProbKBToRockitGibbsSampling(NameMapperProbKB map) {
+	public ProbKBToRockitGibbsSampling(NameMapper map) {
 		super(map);
 	}
 

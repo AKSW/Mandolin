@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.aksw.mandolin.NameMapperProbKB;
+import org.aksw.mandolin.NameMapper;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
 
@@ -26,7 +26,7 @@ public abstract class RockitGibbsSampling {
 
 	protected static SyntaxReader reader;
 	
-	protected NameMapperProbKB map;
+	protected NameMapper map;
 
 	// Sampling only
 	/**
@@ -35,7 +35,7 @@ public abstract class RockitGibbsSampling {
 	public static final int ITERATIONS = 5000000;
 	protected GIBBSSampler gibbsSampler;
 
-	protected RockitGibbsSampling(NameMapperProbKB map) {
+	protected RockitGibbsSampling(NameMapper map) {
 		super();
 		
 		this.map = map;

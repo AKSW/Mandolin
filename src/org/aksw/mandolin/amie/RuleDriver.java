@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import javatools.datatypes.ByteString;
 
-import org.aksw.mandolin.NameMapperProbKB;
+import org.aksw.mandolin.NameMapper;
 import org.aksw.mandolin.ProbKBData;
 
 import amie.rules.Rule;
@@ -23,7 +23,7 @@ import com.opencsv.CSVWriter;
  */
 public class RuleDriver {
 	
-	private NameMapperProbKB map;
+	private NameMapper map;
 	private String base;
 
 	private static final String HEAD_LEFT = "?a";
@@ -31,7 +31,7 @@ public class RuleDriver {
 	
 	private HashMap<String, ArrayList<String[]>> csvContent = new HashMap<>();
 	
-	public RuleDriver(NameMapperProbKB map, String base) {
+	public RuleDriver(NameMapper map, String base) {
 		super();
 		this.map = map;
 		this.base = base;

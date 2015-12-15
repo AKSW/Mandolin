@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.aksw.mandolin.ProbKBData;
-import org.aksw.mandolin.NameMapperProbKB.Type;
+import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.eval.PostgreDB;
 
 import com.googlecode.rockit.app.solver.pojo.Clause;

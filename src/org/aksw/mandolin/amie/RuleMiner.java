@@ -1,6 +1,6 @@
 package org.aksw.mandolin.amie;
 
-import org.aksw.mandolin.NameMapperProbKB;
+import org.aksw.mandolin.NameMapper;
 
 import javatools.datatypes.ByteString;
 import amie.rules.Rule;
@@ -11,7 +11,7 @@ import amie.rules.Rule;
  */
 public class RuleMiner {
 
-	public static void run(NameMapperProbKB map, String base, String output) throws Exception {
+	public static void run(NameMapper map, String base, String output) throws Exception {
 		
 		AmieHandler h = new AmieHandler(output);
 		h.run();

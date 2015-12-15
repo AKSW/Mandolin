@@ -11,7 +11,7 @@ import jp.ndca.similarity.join.PPJoin;
 import jp.ndca.similarity.join.StringItem;
 import jp.ndca.similarity.join.Tokenizer;
 
-import org.aksw.mandolin.NameMapperProbKB.Type;
+import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
 import org.aksw.mandolin.semantifier.Commons;
@@ -22,7 +22,7 @@ import org.aksw.mandolin.semantifier.Commons;
  */
 public class SimilarityJoin {
 	
-	public static void build(NameMapperProbKB map, TreeSet<ComparableLiteral> setOfStrings,
+	public static void build(NameMapper map, TreeSet<ComparableLiteral> setOfStrings,
 			Cache cache, final int THR_MIN, final int THR_MAX, final int THR_STEP) {
 		
 		PPJoin ppjoin = new PPJoin();

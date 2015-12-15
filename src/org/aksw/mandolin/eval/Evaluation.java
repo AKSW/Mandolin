@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 import org.aksw.mandolin.Classes;
 import org.aksw.mandolin.Evidence;
-import org.aksw.mandolin.NameMapperProbKB;
-import org.aksw.mandolin.NameMapperProbKB.Type;
+import org.aksw.mandolin.NameMapper;
+import org.aksw.mandolin.NameMapper.Type;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 
@@ -33,7 +33,7 @@ public class Evaluation {
 	private static final int THR_MAX = 90;
 	private static final int THR_STEP = 10;
 
-	private static NameMapperProbKB map = new NameMapperProbKB(OWL.sameAs.getURI());
+	private static NameMapper map = new NameMapper(OWL.sameAs.getURI());
 
 	/**
 	 * @param args
