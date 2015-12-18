@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-import org.aksw.mandolin.Mandolin;
-import org.aksw.mandolin.NameMapper;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
@@ -22,17 +20,10 @@ public class RDFToTSV {
 
 	public static void main(String[] args) throws Exception {
 		
-		run(Mandolin.BASE);
+		run("eval/0001");
 		
 	}
 	
-	public static void run(NameMapper map, String base, String output) throws Exception {
-
-		run(output, Mandolin.SRC_PATH, Mandolin.TGT_PATH,
-				Mandolin.GOLD_STANDARD_PATH);
-
-	}
-
 	public static void run(String outputFile, String... inputFile)
 			throws FileNotFoundException {
 

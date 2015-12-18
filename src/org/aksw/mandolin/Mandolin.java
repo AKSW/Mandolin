@@ -1,7 +1,6 @@
 package org.aksw.mandolin;
 
 import java.io.File;
-import java.util.TreeSet;
 
 import org.aksw.mandolin.amie.RDFToTSV;
 import org.aksw.mandolin.amie.RuleMiner;
@@ -13,8 +12,8 @@ import org.aksw.mandolin.model.PredictionSet;
 import com.hp.hpl.jena.vocabulary.OWL;
 
 /**
- * The final pipeline for MANDOLIN, a scalable combination of several
- * statistical-relational-learning approaches to predict RDF links of any type
+ * The final pipeline for MANDOLIN, a scalable join of several
+ * statistical-relational-learning algorithms to predict RDF links of any type
  * (i.e., triples) in one or more RDF datasets using rule mining of Horn
  * clauses, Markov Logic Networks, and Gibbs Sampling.
  * 
@@ -24,37 +23,25 @@ import com.hp.hpl.jena.vocabulary.OWL;
 public class Mandolin {
 
 	// input datasets
-	public static final String SRC_PATH = "datasets/DBLPL3S.nt"; 
-	public static final String TGT_PATH = "datasets/LinkedACM.nt";
-	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM.nt";
-	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard.nt";
+	private String SRC_PATH = "datasets/DBLPL3S.nt";
+	private String TGT_PATH = "datasets/LinkedACM.nt";
+	private String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-closure.nt";
 
-	public static final String BASE = "eval/0001";
+	private String BASE = "eval/0001";
 
-	public static final int TRAINING_SIZE = Integer.MAX_VALUE; // TODO restore:
-																// (int) (47 *
-																// 0.9);
-	
 	// thresholds for similarity joins among datatype values
-	private static final int THR_MIN = 80;
-	private static final int THR_MAX = 90;
-	private static final int THR_STEP = 10;
-	
-	// TODO this is a temporary constant which should become variable like the above...
-	private static final String AIM_RELATION = OWL.sameAs.getURI();
-	
-	// -------------------------------------------------------------------------
-	
-	// ProbKB files
-	public static final String CLASSES_CSV = BASE + "/classes.csv";
-	public static final String ENTCLASSES_CSV = BASE + "/entClasses.csv";
-	public static final String ENTITIES_CSV = BASE + "/entities.csv";
-	public static final String FUNCTIONALS_CSV = BASE + "/functionals.csv";
-	public static final String RELATIONS_CSV = BASE + "/relations.csv";
-	public static final String RELATIONSHIPS_CSV = BASE + "/relationships.csv";
-	public static final String RELCLASSES_CSV = BASE + "/relClasses.csv";
+	private int THR_MIN = 80;
+	private int THR_MAX = 90;
+	private int THR_STEP = 10;
 
-	private static final String TEMP_OUTPUT = "tmp/DBLPACM.tsv";
+	// TODO this is a temporary constant which should become variable like the
+	// above...
+	private String AIM_RELATION = OWL.sameAs.getURI();
+
+	// -------------------------------------------------------------------------
+
+	private String TEMP_OUTPUT = "tmp/temp_" + ((int) Math.random() * 100000)
+			+ ".tsv";
 
 	private NameMapper map;
 
@@ -64,61 +51,74 @@ public class Mandolin {
 
 	}
 
+	public Mandolin(String src, String tgt, String lnk, String base, String aim) {
+		this.SRC_PATH = src;
+		this.TGT_PATH = tgt;
+		this.LINKSET_PATH = lnk;
+		this.BASE = base;
+		this.AIM_RELATION = aim;
+	}
+
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private void run() throws Exception {
-		
+
 		System.out.println("Mandolin started!");
 
 		// create working directory
 		new File(BASE).mkdirs();
-		
+
 		Classes.build(map, SRC_PATH, TGT_PATH);
-		Evidence.build(map, SRC_PATH, TGT_PATH, GOLD_STANDARD_PATH, THR_MIN, THR_MAX, THR_STEP);
-		
+		Evidence.build(map, SRC_PATH, TGT_PATH, LINKSET_PATH, THR_MIN, THR_MAX,
+				THR_STEP);
+
 		map.pretty();
-		
-		System.out.println("# entClasses: "+map.getEntClasses().size());
-		System.out.println("# relClasses: "+map.getRelClasses().size());
-		System.out.println("# relationships: "+map.getRelationships().size());
-		
+
+		System.out.println("# entClasses: " + map.getEntClasses().size());
+		System.out.println("# relClasses: " + map.getRelClasses().size());
+		System.out.println("# relationships: " + map.getRelationships().size());
+
 		ProbKBData.buildCSV(map, BASE);
-		
-		RDFToTSV.run(map, BASE, TEMP_OUTPUT);
+
+		RDFToTSV.run(TEMP_OUTPUT, SRC_PATH, TGT_PATH, LINKSET_PATH);
 		RuleMiner.run(map, BASE, TEMP_OUTPUT);
-		
+
 		Grounding.ground(BASE);
-		
+
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
-		
-		// TODO filter only aim relation from pset!
-		
+
 		eval(pset);
-		
+
 		System.out.println("Mandolin done.");
-		
+
 	}
-	
 
 	/**
 	 * XXX Temporary routine for tracing results...
+	 * 
 	 * @param pset
 	 */
 	private void eval(PredictionSet pset) {
-		
-		TreeSet<String> rel = map.getRelationships();
-		
+
+		// TreeSet<String> rel = map.getRelationships();
+		String aimName = map.getAimName();
+
 		System.out.println("+++ INFERRED +++");
-		for(PredictionLiteral lit : pset) {
-			if(lit.getProb() > 0.9) {
+		for (PredictionLiteral lit : pset) {
+			// filter only aim relation from pset
+			if (!lit.getP().equals(aimName))
+				continue;
+			if (lit.getProb() > 0.9) {
 				System.out.println(lit);
 				System.out.println("=> " + map.getURI(lit.getX()));
 				System.out.println("   " + map.getURI(lit.getP()));
 				System.out.println("   " + map.getURI(lit.getY()));
-				if(!rel.contains(lit.getP()+"#"+lit.getX()+"#"+lit.getY()) &&
-						!lit.getP().equals("RELATION15"))
-					System.out.println("   PREDICTION");
+				// if(!rel.contains(lit.getP()+"#"+lit.getX()+"#"+lit.getY()) &&
+				// !lit.getP().equals("RELATION15")) {
+				// System.out.println("   PREDICTION");
+				// }
+				System.out.println();
 			}
 		}
 	}
@@ -129,8 +129,18 @@ public class Mandolin {
 
 	public static void main(String[] args) throws Exception {
 
-		new Mandolin().run();
+		if (args.length > 0) {
+			// set values
+			new Mandolin(args[0], // source path
+					args[1], // target path (could be an empty dataset)
+					args[2], // linkset path (could be an empty dataset)
+					args[3], // base workspace
+					args[4] // aim relation URI
+			).run();
+		} else {
+			// default values
+			new Mandolin().run();
+		}
 
 	}
-
 }

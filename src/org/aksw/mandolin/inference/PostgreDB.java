@@ -1,4 +1,4 @@
-package org.aksw.mandolin.eval;
+package org.aksw.mandolin.inference;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
