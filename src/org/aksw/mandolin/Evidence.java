@@ -29,9 +29,8 @@ public class Evidence {
 	 * @param THR_MAX
 	 * @param THR_STEP
 	 */
-	public static void build(final NameMapper map, final String SRC_PATH,
-			final String TGT_PATH, final String LNK_PATH, final int THR_MIN,
-			final int THR_MAX, final int THR_STEP) {
+	public static void build(final NameMapper map, final String BASE,
+			final int THR_MIN, final int THR_MAX, final int THR_STEP) {
 
 		// for similarity join
 		final TreeSet<ComparableLiteral> setOfStrings = new TreeSet<>();
@@ -93,23 +92,33 @@ public class Evidence {
 						subjName = map.add(s, Type.ENTITY);
 					else {
 						// create entity form for class
-						if(subjName.startsWith(Type.CLASS.toString()))
-							subjName = Type.ENTITY.toString() + "-" + subjName.substring(ProbKBData.CLS_LENGTH);
-						// FIXME create stable entity form for properties 
-						if(subjName.startsWith(Type.RELATION.toString()))
-							subjName = Type.ENTITY.toString() + "-" + Integer.parseInt(subjName.substring(ProbKBData.REL_LENGTH)) + 10000;
-						
+						if (subjName.startsWith(Type.CLASS.toString()))
+							subjName = Type.ENTITY.toString() + "-"
+									+ subjName.substring(ProbKBData.CLS_LENGTH);
+						// FIXME create stable entity form for properties
+						if (subjName.startsWith(Type.RELATION.toString()))
+							subjName = Type.ENTITY.toString()
+									+ "-"
+									+ Integer.parseInt(subjName
+											.substring(ProbKBData.REL_LENGTH))
+									+ 10000;
+
 					}
 					if (objName == null)
 						// not found => instance/datatype object, create entity
 						objName = map.add(o, Type.ENTITY);
 					else {
 						// create entity form for class
-						if(objName.startsWith(Type.CLASS.toString()))
-							objName = Type.ENTITY.toString() + "-" + objName.substring(ProbKBData.CLS_LENGTH);
+						if (objName.startsWith(Type.CLASS.toString()))
+							objName = Type.ENTITY.toString() + "-"
+									+ objName.substring(ProbKBData.CLS_LENGTH);
 						// FIXME create stable entity form for properties
-						if(objName.startsWith(Type.RELATION.toString()))
-							objName = Type.ENTITY.toString() + "-" + Integer.parseInt(objName.substring(ProbKBData.REL_LENGTH)) + 10000;
+						if (objName.startsWith(Type.RELATION.toString()))
+							objName = Type.ENTITY.toString()
+									+ "-"
+									+ Integer.parseInt(objName
+											.substring(ProbKBData.REL_LENGTH))
+									+ 10000;
 					}
 
 					// property, subject (entity), object (entity) names
@@ -138,9 +147,7 @@ public class Evidence {
 
 		};
 
-		RDFDataMgr.parse(dataStream, SRC_PATH);
-		RDFDataMgr.parse(dataStream, TGT_PATH);
-		RDFDataMgr.parse(dataStream, LNK_PATH);
+		RDFDataMgr.parse(dataStream, BASE + "/model.nt");
 
 		// call similarity join
 		SimilarityJoin.build(map, setOfStrings, cache, THR_MIN, THR_MAX,

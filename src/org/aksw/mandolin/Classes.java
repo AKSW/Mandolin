@@ -21,7 +21,7 @@ public class Classes {
 	 * @param SRC_PATH
 	 * @param TGT_PATH
 	 */
-	public static void build(final NameMapper map, final String SRC_PATH, final String TGT_PATH) {
+	public static void build(final NameMapper map, final String BASE) {
 		
 		// reader implementation
 		StreamRDF dataStream = new StreamRDF() {
@@ -73,8 +73,7 @@ public class Classes {
 
 		};
 
-		RDFDataMgr.parse(dataStream, SRC_PATH);
-		RDFDataMgr.parse(dataStream, TGT_PATH);
+		RDFDataMgr.parse(dataStream, BASE + "/model.nt");
 		
 	}
 

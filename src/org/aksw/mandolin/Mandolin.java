@@ -8,6 +8,7 @@ import org.aksw.mandolin.grounding.Grounding;
 import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
+import org.aksw.mandolin.reasoner.PelletReasoner;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 
@@ -23,10 +24,9 @@ import com.hp.hpl.jena.vocabulary.OWL;
 public class Mandolin {
 
 	// input datasets
-	private String SRC_PATH = "datasets/DBLPL3S.nt";
-	private String TGT_PATH = "datasets/LinkedACM.nt";
-	private String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM-closure.nt";
-
+	private String[] INPUT_PATHS = new String[] { "datasets/DBLPL3S.nt",
+			"datasets/LinkedACM.nt", "linksets/DBLPL3S-LinkedACM-closure.nt"
+	};
 	private String BASE = "eval/0001";
 
 	// thresholds for similarity joins among datatype values
@@ -51,12 +51,19 @@ public class Mandolin {
 
 	}
 
-	public Mandolin(String src, String tgt, String lnk, String base, String aim) {
-		this.SRC_PATH = src;
-		this.TGT_PATH = tgt;
-		this.LINKSET_PATH = lnk;
+	/**
+	 * @param input
+	 *            comma-separated paths
+	 * @param base
+	 *            workspace path
+	 * @param aim
+	 *            aim relation URI
+	 */
+	public Mandolin(String input, String base, String aim) {
 		this.BASE = base;
 		this.AIM_RELATION = aim;
+
+		INPUT_PATHS = input.split(",");
 	}
 
 	/**
@@ -68,10 +75,12 @@ public class Mandolin {
 
 		// create working directory
 		new File(BASE).mkdirs();
+		
+		Validator.run(BASE, INPUT_PATHS);
+		PelletReasoner.run(BASE, INPUT_PATHS);
 
-		Classes.build(map, SRC_PATH, TGT_PATH);
-		Evidence.build(map, SRC_PATH, TGT_PATH, LINKSET_PATH, THR_MIN, THR_MAX,
-				THR_STEP);
+		Classes.build(map, BASE);
+		Evidence.build(map, BASE, THR_MIN, THR_MAX, THR_STEP);
 
 		map.pretty();
 
@@ -81,7 +90,7 @@ public class Mandolin {
 
 		ProbKBData.buildCSV(map, BASE);
 
-		RDFToTSV.run(TEMP_OUTPUT, SRC_PATH, TGT_PATH, LINKSET_PATH);
+		RDFToTSV.run(TEMP_OUTPUT);
 		RuleMiner.run(map, BASE, TEMP_OUTPUT);
 
 		Grounding.ground(BASE);
@@ -131,11 +140,9 @@ public class Mandolin {
 
 		if (args.length > 0) {
 			// set values
-			new Mandolin(args[0], // source path
-					args[1], // target path (could be an empty dataset)
-					args[2], // linkset path (could be an empty dataset)
-					args[3], // base workspace
-					args[4] // aim relation URI
+			new Mandolin(args[0], // paths, comma-separated
+					args[1], // base workspace
+					args[2] // aim relation URI
 			).run();
 		} else {
 			// default values
