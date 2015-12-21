@@ -24,7 +24,7 @@ public class PelletReasoner {
 
 	public static void main(String[] args) {
 		// usageWithDefaultModel();
-		run("eval/0001", new String[] { "datasets/DBLPL3S.nt" });
+		run("eval/0001");
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class PelletReasoner {
 	 * @param base
 	 * @param datasetPaths
 	 */
-	public static void run(String base, String[] datasetPaths) {
+	public static void run(String base) {
 
 		Reasoner reasoner = PelletReasonerFactory.theInstance().create();
 		OntModel emptyModel = ModelFactory
@@ -41,14 +41,13 @@ public class PelletReasoner {
 		InfModel model = ModelFactory.createInfModel(reasoner, emptyModel);
 
 		String path = System.getProperty("user.dir");
-		for (String d : datasetPaths)
-			RDFDataMgr.read(model, "file://" + path + "/" + d);
+		RDFDataMgr.read(model, "file://" + path + "/" + base + "/model.nt");
 
 		printIterator(model.validate().getReports(), "Validation Results");
 
 		try {
 			RDFDataMgr.write(
-					new FileOutputStream(new File(base + "/model.nt")), model,
+					new FileOutputStream(new File(base + "/model-fwc.nt")), model,
 					Lang.NT);
 			System.out.println("Model generated.");
 		} catch (FileNotFoundException e) {
@@ -115,7 +114,7 @@ public class PelletReasoner {
 
 	}
 
-	public static void printIterator(Iterator<?> i, String header) {
+	private static void printIterator(Iterator<?> i, String header) {
 		System.out.println(header);
 
 		if (i.hasNext()) {

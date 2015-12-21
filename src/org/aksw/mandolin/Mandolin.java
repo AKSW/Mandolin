@@ -28,20 +28,14 @@ public class Mandolin {
 			"datasets/LinkedACM.nt", "linksets/DBLPL3S-LinkedACM-closure.nt"
 	};
 	private String BASE = "eval/0001";
+	private String AIM_RELATION = OWL.sameAs.getURI();
 
 	// thresholds for similarity joins among datatype values
 	private int THR_MIN = 80;
 	private int THR_MAX = 90;
 	private int THR_STEP = 10;
 
-	// TODO this is a temporary constant which should become variable like the
-	// above...
-	private String AIM_RELATION = OWL.sameAs.getURI();
-
 	// -------------------------------------------------------------------------
-
-	private String TEMP_OUTPUT = "tmp/temp_" + ((int) Math.random() * 100000)
-			+ ".tsv";
 
 	private NameMapper map;
 
@@ -76,10 +70,14 @@ public class Mandolin {
 		// create working directory
 		new File(BASE).mkdirs();
 		
+//		// inputs -> model.nt
 		Validator.run(BASE, INPUT_PATHS);
-		PelletReasoner.run(BASE, INPUT_PATHS);
-
+//		// model.nt -> model-fwc.nt
+//		PelletReasoner.run(BASE);
+		
+		// model-fwc.nt -> map (classes)
 		Classes.build(map, BASE);
+		// model-fwc.nt -> map (other)
 		Evidence.build(map, BASE, THR_MIN, THR_MAX, THR_STEP);
 
 		map.pretty();
@@ -88,13 +86,18 @@ public class Mandolin {
 		System.out.println("# relClasses: " + map.getRelClasses().size());
 		System.out.println("# relationships: " + map.getRelationships().size());
 
+		// map -> KB description csv
 		ProbKBData.buildCSV(map, BASE);
 
-		RDFToTSV.run(TEMP_OUTPUT);
-		RuleMiner.run(map, BASE, TEMP_OUTPUT);
+		// model-fwc.nt -> model.tsv
+		RDFToTSV.run(BASE);
+		// model.tsv -> MLN csv
+		RuleMiner.run(map, BASE);
 
+		// csv -> Postgre factors
 		Grounding.ground(BASE);
 
+		// Postgre factors -> predictions
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 
 		eval(pset);

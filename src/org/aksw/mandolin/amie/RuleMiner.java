@@ -11,9 +11,9 @@ import amie.rules.Rule;
  */
 public class RuleMiner {
 
-	public static void run(NameMapper map, String base, String output) throws Exception {
+	public static void run(NameMapper map, String base) throws Exception {
 		
-		AmieHandler h = new AmieHandler(output);
+		AmieHandler h = new AmieHandler(base + "/model.tsv");
 		h.run();
 		
 		RuleDriver driver = new RuleDriver(map, base);

@@ -24,10 +24,10 @@ public class RDFToTSV {
 		
 	}
 	
-	public static void run(String outputFile, String... inputFile)
+	public static void run(String base)
 			throws FileNotFoundException {
 
-		PrintWriter pw = new PrintWriter(new File(outputFile));
+		PrintWriter pw = new PrintWriter(new File(base + "/model.tsv"));
 
 		StreamRDF stream = new StreamRDF() {
 
@@ -60,9 +60,7 @@ public class RDFToTSV {
 
 		};
 
-		for (String input : inputFile) {
-			RDFDataMgr.parse(stream, input);
-		}
+		RDFDataMgr.parse(stream, base + "/model-fwc.nt");
 
 		pw.close();
 
