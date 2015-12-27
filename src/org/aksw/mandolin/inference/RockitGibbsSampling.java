@@ -32,7 +32,7 @@ public abstract class RockitGibbsSampling {
 	/**
 	 * The number of iterations for sampling.
 	 */
-	public static final int ITERATIONS = 5000000;
+	public static final int ITERATIONS = -1;
 	protected GIBBSSampler gibbsSampler;
 
 	protected RockitGibbsSampling(NameMapper map) {
