@@ -1,5 +1,7 @@
 package org.aksw.mandolin;
 
+import java.util.TreeSet;
+
 import org.aksw.mandolin.NameMapper.Type;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
@@ -24,6 +26,9 @@ public class Classes {
 	 * @param TGT_PATH
 	 */
 	public static void build(final NameMapper map, final String BASE) {
+		
+//		final CollectionCache properties = new CollectionCache();
+//		final CollectionCache classes = new CollectionCache();
 		
 		// reader implementation
 		StreamRDF dataStream = new StreamRDF() {
@@ -68,8 +73,14 @@ public class Classes {
 						String entName = map.add(s, Type.ENTITY);
 						map.addEntClass(entName, className);
 					}
+//					// save class
+//					// TODO this could be extended to all properties with domain or range = rdfs:Class
+//					classes.set.add(o);
 				}
 
+//				// save property
+//				properties.set.add(p);
+				// count triples
 				size.value++;
 			}
 

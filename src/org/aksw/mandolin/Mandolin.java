@@ -37,6 +37,14 @@ public class Mandolin {
 	private int THR_MAX = 90;
 	private int THR_STEP = 10;
 	
+	/**
+	 * Enable ontology import.
+	 */
+	private boolean ENABLE_ONT = true;
+	
+	/**
+	 * Enable forward chain.
+	 */
 	private boolean ENABLE_FWC = true;
 
 	// -------------------------------------------------------------------------
@@ -73,6 +81,11 @@ public class Mandolin {
 
 		// create working directory
 		new File(BASE).mkdirs();
+		
+		if(ENABLE_ONT) {
+			// TODO ontology importer
+			OntoImporter.run(BASE, INPUT_PATHS);
+		}
 		
 //		// inputs -> model.nt
 		Validator.run(BASE, INPUT_PATHS, ENABLE_FWC);
