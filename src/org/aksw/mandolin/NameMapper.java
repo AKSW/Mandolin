@@ -101,12 +101,33 @@ public class NameMapper {
 
 	public void addRelationship(String relName, String name1, String name2) {
 		if(relName.startsWith(Type.ENTITY.toString())) {
-			String idr = String.valueOf(Integer.parseInt(relName.substring(ProbKBData.ENT_LENGTH)) + cDelta);
-			System.out.println(relName+" => "+idr);
-			relName = Type.RELATION.toString() + idr;
+			String before = relName;
+			relName = entityToRelationForm(relName);
+			// some properties had been recognised as entities before
+			String uri = mlnToUri.get(before);
+			mlnToUri.put(relName, uri);
+			uriToMln.put(uri, relName);
 		}
-
 		relationships.add(relName + "#" + name1 + "#" + name2);
+	}
+
+	public String entityToRelationForm(String relName) {
+		String idr = String.valueOf(Integer.parseInt(relName.substring(ProbKBData.ENT_LENGTH)) + cDelta);
+		System.out.println(relName+" => "+idr);
+		relName = Type.RELATION.toString() + idr;
+		return relName;
+	}
+
+	public String relationToEntityForm(String relName) {
+		String idr = String.valueOf(Integer.parseInt(relName.substring(ProbKBData.REL_LENGTH)) + cDelta);
+		System.out.println(relName+" => "+idr);
+		relName = Type.ENTITY.toString() + idr;
+		return relName;
+	}
+
+	public String classToEntityForm(String className) {
+		return Type.ENTITY.toString() + "-"
+				+ className.substring(ProbKBData.CLS_LENGTH);
 	}
 
 	/**

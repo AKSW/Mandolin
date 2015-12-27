@@ -8,7 +8,6 @@ import java.util.Iterator;
 import org.aksw.mandolin.util.Timer;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.mindswap.pellet.jena.PelletInfGraph;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -17,7 +16,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ValidityReport;
 import com.hp.hpl.jena.shared.Lock;
-import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>

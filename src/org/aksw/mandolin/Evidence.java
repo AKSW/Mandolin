@@ -70,9 +70,6 @@ public class Evidence {
 					// it is supposed that the map contains only classes
 					// and instances of these classes (see Classes.build)
 					String relName = map.add(p, Type.RELATION);
-					// TODO remove!
-					if(p.equals("http://purl.org/dc/elements/1.1/title"))
-						System.out.println(" ===> " + relName + "\t" + p);
 					String subjName = map.getName(s);
 					String objName = map.getName(o);
 
@@ -96,15 +93,10 @@ public class Evidence {
 					else {
 						// create entity form for class
 						if (subjName.startsWith(Type.CLASS.toString()))
-							subjName = Type.ENTITY.toString() + "-"
-									+ subjName.substring(ProbKBData.CLS_LENGTH);
-						// FIXME create stable entity form for properties
+							subjName = map.classToEntityForm(subjName);
+						// create stable entity form for properties
 						if (subjName.startsWith(Type.RELATION.toString()))
-							subjName = Type.ENTITY.toString()
-									+ "-"
-									+ (Integer.parseInt(subjName
-											.substring(ProbKBData.REL_LENGTH))
-									+ 10000);
+							subjName = map.relationToEntityForm(subjName);
 
 					}
 					if (objName == null)
@@ -113,15 +105,10 @@ public class Evidence {
 					else {
 						// create entity form for class
 						if (objName.startsWith(Type.CLASS.toString()))
-							objName = Type.ENTITY.toString() + "-"
-									+ objName.substring(ProbKBData.CLS_LENGTH);
-						// FIXME create stable entity form for properties
+							objName = map.classToEntityForm(objName);
+						// create stable entity form for properties
 						if (objName.startsWith(Type.RELATION.toString()))
-							objName = Type.ENTITY.toString()
-									+ "-"
-									+ (Integer.parseInt(objName
-											.substring(ProbKBData.REL_LENGTH))
-									+ 10000);
+							objName = map.relationToEntityForm(objName);
 					}
 
 					// property, subject (entity), object (entity) names
