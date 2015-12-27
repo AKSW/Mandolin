@@ -70,6 +70,9 @@ public class Evidence {
 					// it is supposed that the map contains only classes
 					// and instances of these classes (see Classes.build)
 					String relName = map.add(p, Type.RELATION);
+					// TODO remove!
+					if(p.equals("http://purl.org/dc/elements/1.1/title"))
+						System.out.println(" ===> " + relName + "\t" + p);
 					String subjName = map.getName(s);
 					String objName = map.getName(o);
 
@@ -99,9 +102,9 @@ public class Evidence {
 						if (subjName.startsWith(Type.RELATION.toString()))
 							subjName = Type.ENTITY.toString()
 									+ "-"
-									+ Integer.parseInt(subjName
+									+ (Integer.parseInt(subjName
 											.substring(ProbKBData.REL_LENGTH))
-									+ 10000;
+									+ 10000);
 
 					}
 					if (objName == null)
@@ -116,9 +119,9 @@ public class Evidence {
 						if (objName.startsWith(Type.RELATION.toString()))
 							objName = Type.ENTITY.toString()
 									+ "-"
-									+ Integer.parseInt(objName
+									+ (Integer.parseInt(objName
 											.substring(ProbKBData.REL_LENGTH))
-									+ 10000;
+									+ 10000);
 					}
 
 					// property, subject (entity), object (entity) names
@@ -147,7 +150,7 @@ public class Evidence {
 
 		};
 
-		RDFDataMgr.parse(dataStream, BASE + "/model.nt");
+		RDFDataMgr.parse(dataStream, BASE + "/model-fwc.nt");
 
 		// call similarity join
 		SimilarityJoin.build(map, setOfStrings, cache, THR_MIN, THR_MAX,

@@ -24,8 +24,10 @@ import com.hp.hpl.jena.vocabulary.OWL;
 public class Mandolin {
 
 	// input datasets
-	private String[] INPUT_PATHS = new String[] { "datasets/DBLPL3S.nt",
-			"datasets/LinkedACM.nt", "linksets/DBLPL3S-LinkedACM-closure.nt"
+	private String[] INPUT_PATHS = new String[] { 
+			"datasets/DBLPL3S-100.nt",
+			"datasets/LinkedACM-100.nt", 
+			"linksets/DBLPL3S-LinkedACM-100.nt",
 	};
 	private String BASE = "eval/0001";
 	private String AIM_RELATION = OWL.sameAs.getURI();
@@ -34,6 +36,8 @@ public class Mandolin {
 	private int THR_MIN = 80;
 	private int THR_MAX = 90;
 	private int THR_STEP = 10;
+	
+	private boolean ENABLE_FWC = true;
 
 	// -------------------------------------------------------------------------
 
@@ -71,9 +75,11 @@ public class Mandolin {
 		new File(BASE).mkdirs();
 		
 //		// inputs -> model.nt
-		Validator.run(BASE, INPUT_PATHS);
-//		// model.nt -> model-fwc.nt
-//		PelletReasoner.run(BASE);
+		Validator.run(BASE, INPUT_PATHS, ENABLE_FWC);
+		if(ENABLE_FWC) {
+			// model.nt -> model-fwc.nt
+			PelletReasoner.run(BASE);
+		}
 		
 		// model-fwc.nt -> map (classes)
 		Classes.build(map, BASE);

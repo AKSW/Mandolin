@@ -52,6 +52,7 @@ public class NameMapper {
 	private HashMap<Type, Integer> count = new HashMap<>();
 	
 	private String aimURI;
+	private int cDelta;
 	
 	public NameMapper(String aimURI) {
 		super();
@@ -72,6 +73,12 @@ public class NameMapper {
 		System.out.println("Alias for AIM ("+aimURI+") is " + AIM_NAME);
 	}
 	
+	/**
+	 * Add the instantiation of an entity. Duality class-entity: a class with ID=x has an entity counterpart with ID=-x.
+	 * 
+	 * @param entName
+	 * @param className
+	 */
 	public void addEntClass(String entName, String className) {
 		entClasses.add(entName + "#" + className);
 		entClasses.add(entName + "#" + OWL_THING_NAME);
@@ -81,11 +88,24 @@ public class NameMapper {
 		this.addRelationship(RDF_TYPE_NAME, entName, Type.ENTITY.toString() + "-" + OWL_THING_NAME.substring(ProbKBData.CLS_LENGTH));
 	}
 
+	/**
+	 * Add domain or range for a relation.
+	 * 
+	 * @param relName
+	 * @param className
+	 * @param isDomain
+	 */
 	public void addRelClass(String relName, String className, boolean isDomain) {
 		relClasses.add(relName + "#" + className + "#" + isDomain);
 	}
 
 	public void addRelationship(String relName, String name1, String name2) {
+		if(relName.startsWith(Type.ENTITY.toString())) {
+			String idr = String.valueOf(Integer.parseInt(relName.substring(ProbKBData.ENT_LENGTH)) + cDelta);
+			System.out.println(relName+" => "+idr);
+			relName = Type.RELATION.toString() + idr;
+		}
+
 		relationships.add(relName + "#" + name1 + "#" + name2);
 	}
 
@@ -153,6 +173,11 @@ public class NameMapper {
 
 	public String getAimName() {
 		return AIM_NAME;
+	}
+
+	public void setCollisionDelta(int cDelta) {
+		System.out.println("Collision delta: "+cDelta);
+		this.cDelta = cDelta;
 	}
 	
 }

@@ -16,6 +16,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  */
 public class Classes {
 	
+	private final static Cache size = new Cache();
+	
 	/**
 	 * @param map 
 	 * @param SRC_PATH
@@ -68,14 +70,30 @@ public class Classes {
 					}
 				}
 
-
+				size.value++;
 			}
 
 		};
 
-		RDFDataMgr.parse(dataStream, BASE + "/model.nt");
+		RDFDataMgr.parse(dataStream, BASE + "/model-fwc.nt");
 		
+		map.setCollisionDelta(collisionDelta());
+		
+	}
+	
+	/**
+	 * Compute the upper bound for the order of magnitude of entities and return the sum to add to avoid ID collision.
+	 * 
+	 * @return
+	 */
+	public static int collisionDelta() {
+		int upper = (int) Math.log10(size.value * 2) + 1;
+		return (int) Math.pow(10, upper);
 	}
 
 
+}
+
+class Cache {
+	int value = 0;
 }

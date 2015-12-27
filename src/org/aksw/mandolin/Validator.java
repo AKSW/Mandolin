@@ -13,6 +13,7 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -20,11 +21,13 @@ import com.hp.hpl.jena.sparql.core.Quad;
  */
 public class Validator {
 
-	public static void run(String base, String[] input) {
+	public static void run(String base, String[] input, boolean enableFwc) {
+		
+		String file = enableFwc ? "model.nt" : "model-fwc.nt";
 		
 		final FileOutputStream output;
 		try {
-			output = new FileOutputStream(new File(base + "/model-fwc.nt")); // TODO revert to model.nt
+			output = new FileOutputStream(new File(base + "/" + file));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return;
@@ -58,17 +61,20 @@ public class Validator {
 			
 			@Override
 			public void triple(Triple triple) {
-				if(triple.getObject().isLiteral()) {
-					Node node = triple.getObject();
+				Node node = triple.getObject();
+				if(node.isLiteral()) {
 					if(!node.getLiteral().isWellFormed()) {
-						System.out.println("Discarding bad-formed literal: "+node);
-						// known issue
-						if(node.getLiteralDatatypeURI().equals("http://www.w3.org/2001/XMLSchema#gYear")) {
-							Integer year = Integer.parseInt(node.getLiteral().toString().substring(0, 4));
-							writer.triple(new Triple(triple.getSubject(), triple.getPredicate(), 
-									NodeFactory.createLiteral(year+"#gYear")));
+						// known issue: fix gYear literals
+						if(node.getLiteralDatatypeURI() != null) {
+							if(node.getLiteralDatatypeURI().equals(XSD.gYear.getURI()) || 
+									node.getLiteralDatatypeURI().equals(XSD.gYear.getLocalName())) {
+								Node newNode = NodeFactory.createLiteral(
+										node.getLiteral().toString().substring(0, 4) + "^^" + XSD.gYear);
+								triple = new Triple(triple.getSubject(), triple.getPredicate(), 
+										newNode);
+								System.out.println("Bad-formed literal: "+node+" - Using: "+newNode);
+							}
 						}
-						return;
 					}
 				}
 				writer.triple(triple);

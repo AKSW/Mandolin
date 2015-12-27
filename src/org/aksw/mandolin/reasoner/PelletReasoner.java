@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.aksw.mandolin.util.Timer;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.mindswap.pellet.jena.PelletInfGraph;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -15,6 +16,8 @@ import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ValidityReport;
+import com.hp.hpl.jena.shared.Lock;
+import com.hp.hpl.jena.vocabulary.ReasonerVocabulary;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -43,7 +46,10 @@ public class PelletReasoner {
 		String path = System.getProperty("user.dir");
 		RDFDataMgr.read(model, "file://" + path + "/" + base + "/model.nt");
 
-		printIterator(model.validate().getReports(), "Validation Results");
+		ValidityReport report = model.validate();
+		printIterator(report.getReports(), "Validation Results");
+
+		model.enterCriticalSection(Lock.READ);
 
 		try {
 			RDFDataMgr.write(
@@ -52,7 +58,10 @@ public class PelletReasoner {
 			System.out.println("Model generated.");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} finally {
+		    model.leaveCriticalSection() ;
 		}
+
 
 	}
 

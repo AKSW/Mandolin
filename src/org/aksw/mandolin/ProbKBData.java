@@ -159,6 +159,10 @@ public class ProbKBData {
 			String id3 = arr[2].substring(ENT_LENGTH);
 			
 			System.out.println(line);
+//			if(arr[0].startsWith(Type.ENTITY.toString())) {
+//				id1 = String.valueOf(Integer.parseInt(arr[0].substring(ENT_LENGTH)) + 10000);
+//				System.out.println("rel = "+id1);
+//			}
 			
 			writer.writeNext(new String[] {id1, id2, id3, "1.0", "http://"});
 		}
