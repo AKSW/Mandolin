@@ -37,27 +37,30 @@ public class PelletReasoner {
 	public static void run(String base) {
 
 		Reasoner reasoner = PelletReasonerFactory.theInstance().create();
-		OntModel emptyModel = ModelFactory
-				.createOntologyModel(PelletReasonerFactory.THE_SPEC);
-		InfModel model = ModelFactory.createInfModel(reasoner, emptyModel);
+		OntModel ontModel = ModelFactory
+				.createOntologyModel(PelletReasonerFactory.THE_SPEC);		
+		InfModel infModel = ModelFactory.createInfModel(reasoner, ontModel);
 
 		String path = System.getProperty("user.dir");
-		RDFDataMgr.read(model, "file://" + path + "/" + base + "/model.nt");
+		RDFDataMgr.read(infModel, "file://" + path + "/" + base + "/model.nt");
+		
+		System.out.println("Model size = "+ontModel.size());
+		System.out.println("Inferred model size = "+infModel.size());
 
-		ValidityReport report = model.validate();
+		ValidityReport report = infModel.validate();
 		printIterator(report.getReports(), "Validation Results");
 
-		model.enterCriticalSection(Lock.READ);
+		infModel.enterCriticalSection(Lock.READ);
 
 		try {
 			RDFDataMgr.write(
-					new FileOutputStream(new File(base + "/model-fwc.nt")), model,
+					new FileOutputStream(new File(base + "/model-fwc.nt")), infModel,
 					Lang.NT);
 			System.out.println("Model generated.");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
-		    model.leaveCriticalSection() ;
+		    infModel.leaveCriticalSection() ;
 		}
 
 

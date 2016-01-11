@@ -87,8 +87,8 @@ public class Mandolin {
 			OntoImporter.run(BASE, INPUT_PATHS);
 		}
 		
-//		// inputs -> model.nt
-		Validator.run(BASE, INPUT_PATHS, ENABLE_FWC);
+		// inputs -> model.nt
+		Validator.run(BASE, INPUT_PATHS, ENABLE_FWC, ENABLE_ONT);
 		if(ENABLE_FWC) {
 			// model.nt -> model-fwc.nt
 			PelletReasoner.run(BASE);
