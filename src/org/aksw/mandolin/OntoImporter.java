@@ -3,15 +3,23 @@ package org.aksw.mandolin;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.NameMapper.Type;
+import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotException;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
 
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -59,7 +67,7 @@ public class OntoImporter {
 
 			@Override
 			public void finish() {
-				writer.finish();
+//				writer.finish();
 			}
 
 			@Override
@@ -108,10 +116,36 @@ public class OntoImporter {
 		System.out.println("# classes collected = "+classes.set.size());
 		System.out.println("# properties collected = "+properties.set.size());
 		
-		// TODO
-		// visit URIs in classes and properties
-		// save wanted part of RDF files
-		// append NT files to model...
+		// ontology importer
+		for(String uri : classes.set) {
+			System.out.println("Crawling <"+uri+">...");
+			Model model = ModelFactory.createDefaultModel();
+			// visit URIs in classes and properties
+			String path = BASE + "/temp-file.rdf";
+			File file = new File(path);
+			try {
+				FileUtils.copyURLToFile(new URL(uri), file);
+			} catch (IOException e) {
+				System.out.println("Cannot download "+uri+".");
+				continue;
+			}
+			try {
+				RDFDataMgr.read(model, path, Lang.RDFXML);
+			} catch (RiotException e) {
+				System.out.println("Cannot interpret "+uri+".");
+				continue;
+			}
+			System.out.println("\tstatements: "+model.size());
+			StmtIterator list = model.listStatements();
+			// append NT files to model...
+			while(list.hasNext()) {
+				// save wanted part of RDF files
+				Triple t = list.next().asTriple();
+				System.out.println("\t"+t);
+				writer.triple(t);
+			}
+		}
+		writer.finish();
 
 	}
 

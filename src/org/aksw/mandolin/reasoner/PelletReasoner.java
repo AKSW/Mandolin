@@ -45,11 +45,12 @@ public class PelletReasoner {
 		RDFDataMgr.read(infModel, "file://" + path + "/" + base + "/model.nt");
 		
 		System.out.println("Model size = "+ontModel.size());
-		System.out.println("Inferred model size = "+infModel.size());
 
 		ValidityReport report = infModel.validate();
 		printIterator(report.getReports(), "Validation Results");
 
+		System.out.println("Inferred model size = "+infModel.size());
+		
 		infModel.enterCriticalSection(Lock.READ);
 
 		try {
