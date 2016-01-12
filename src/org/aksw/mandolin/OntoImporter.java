@@ -42,7 +42,7 @@ public class OntoImporter {
 
 		final FileOutputStream output;
 		try {
-			output = new FileOutputStream(new File(BASE + "/model.nt"));
+			output = new FileOutputStream(new File(BASE + "/model-tmp.nt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return;
@@ -59,6 +59,7 @@ public class OntoImporter {
 
 			@Override
 			public void finish() {
+				writer.finish();
 			}
 
 			@Override
@@ -71,6 +72,7 @@ public class OntoImporter {
 
 			@Override
 			public void start() {
+				writer.start();
 			}
 
 			@Override
@@ -102,7 +104,7 @@ public class OntoImporter {
 		
 		for(String path : paths)
 			RDFDataMgr.parse(dataStream, path);
-
+		
 		System.out.println("# classes collected = "+classes.set.size());
 		System.out.println("# properties collected = "+properties.set.size());
 		

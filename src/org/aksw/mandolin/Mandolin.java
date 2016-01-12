@@ -78,16 +78,17 @@ public class Mandolin {
 	private void run() throws Exception {
 
 		System.out.println("Mandolin started!");
+		printInfo();
 
 		// create working directory
 		new File(BASE).mkdirs();
 		
 		if(ENABLE_ONT) {
-			// TODO ontology importer
+			// inputs -> model-tmp.nt
 			OntoImporter.run(BASE, INPUT_PATHS);
 		}
 		
-		// inputs -> model.nt
+		// inputs (or model-tmp.nt) -> model.nt (or model-fwc.nt)
 		Validator.run(BASE, INPUT_PATHS, ENABLE_FWC, ENABLE_ONT);
 		if(ENABLE_FWC) {
 			// model.nt -> model-fwc.nt
@@ -123,6 +124,20 @@ public class Mandolin {
 
 		System.out.println("Mandolin done.");
 
+	}
+
+	/**
+	 * 
+	 */
+	private void printInfo() {
+		System.out.println("BASE = "+BASE);
+		System.out.println("INPUT_PATHS:");
+		for(String ip : INPUT_PATHS)
+			System.out.println("\t" + ip);
+		System.out.println("ONTO_IMPORT = "+ENABLE_ONT);
+		System.out.println("FORWARD_CHAIN = "+ENABLE_FWC);
+		System.out.println("THR = [min="+THR_MIN+", step="+THR_STEP+", max="+THR_MAX+"]");
+		System.out.println();
 	}
 
 	/**

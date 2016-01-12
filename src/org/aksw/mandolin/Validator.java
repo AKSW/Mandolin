@@ -21,10 +21,7 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class Validator {
 
-	
 	/**
-	 * FIXME implement two different routines for enableOnt!
-	 * 
 	 * @param base
 	 * @param input
 	 * @param enableFwc
@@ -32,19 +29,17 @@ public class Validator {
 	 */
 	public static void run(String base, String[] input, boolean enableFwc, boolean enableOnt) {
 		
-		if(!enableOnt) {
-			String file = enableFwc ? "model.nt" : "model-fwc.nt";
-			
-			final FileOutputStream output;
-			try {
-				output = new FileOutputStream(new File(base + "/" + file));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return;
-			}
-			final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
+		String outputFile = enableFwc ? "model.nt" : "model-fwc.nt";
+		
+		final FileOutputStream output;
+		try {
+			output = new FileOutputStream(new File(base + "/" + outputFile));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
 		}
 		
+		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);		
 		
 		StreamRDF dataStream = new StreamRDF() {
 
@@ -88,19 +83,20 @@ public class Validator {
 						}
 					}
 				}
-				if(!enableOnt)
-					writer.triple(triple);
+				writer.triple(triple);
 			}
 			
 		};
 		
-		if(!enableOnt) {
+		if(enableOnt) {
+			String inputFile = base + "/model-tmp.nt";
+			RDFDataMgr.parse(dataStream, inputFile);
+			
+			new File(inputFile).delete();
+		} else {
 			for(String path : input)
 				RDFDataMgr.parse(dataStream, path);
-		} else {
-			RDFDataMgr.parse(dataStream, base + "/model.nt");
 		}
-		
 	}
 	
 	
