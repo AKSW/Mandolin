@@ -8,24 +8,36 @@ import java.util.Iterator;
 import org.aksw.mandolin.util.Timer;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.system.StreamRDF;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.NodeFactory;
+import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.InfModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ValidityReport;
 import com.hp.hpl.jena.shared.Lock;
+import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 /**
+ * Pellet-Jena reasoner. The inferred closure model is saved in file; it will
+ * not be available as an in-memory object.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
 public class PelletReasoner {
 
 	public static void main(String[] args) {
-		// usageWithDefaultModel();
-		run("eval/0001");
+		testThis();
+//		 run("eval/0001");
 	}
 
 	/**
@@ -38,90 +50,141 @@ public class PelletReasoner {
 
 		Reasoner reasoner = PelletReasonerFactory.theInstance().create();
 		OntModel ontModel = ModelFactory
-				.createOntologyModel(PelletReasonerFactory.THE_SPEC);		
+				.createOntologyModel(PelletReasonerFactory.THE_SPEC);
 		InfModel infModel = ModelFactory.createInfModel(reasoner, ontModel);
 
 		String path = System.getProperty("user.dir");
 		RDFDataMgr.read(infModel, "file://" + path + "/" + base + "/model.nt");
-		
-		System.out.println("Model size = "+ontModel.size());
+
+		System.out.println("Model size = " + ontModel.size());
 
 		ValidityReport report = infModel.validate();
 		printIterator(report.getReports(), "Validation Results");
 
-		System.out.println("Inferred model size = "+infModel.size());
-		
+		System.out.println("Inferred model size = " + infModel.size());
+
 		infModel.enterCriticalSection(Lock.READ);
 
 		try {
-			RDFDataMgr.write(
-					new FileOutputStream(new File(base + "/model-fwc.nt")), infModel,
-					Lang.NT);
+			RDFDataMgr.write(new FileOutputStream(new File(base
+					+ "/model-fwc.nt")), infModel, Lang.NT);
 			System.out.println("Model generated.");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
-		    infModel.leaveCriticalSection();
+			infModel.leaveCriticalSection();
 		}
 
 		new File(base + "/model.nt").delete();
 
 	}
 
-	public static void usageWithDefaultModel() {
-		System.out.println("Results with OWL Model");
-		System.out.println("----------------------------");
-		System.out.println();
-
+	private static void testThis() {
+		
 		Timer t = new Timer();
-		// ontology that will be used
-		// String ns = "http://www.aktors.org/ontology/portal#";
 
-		// create Pellet reasoner
 		Reasoner reasoner = PelletReasonerFactory.theInstance().create();
-
-		// create an empty model
-		OntModel emptyModel = ModelFactory
+		OntModel ontModel = ModelFactory
 				.createOntologyModel(PelletReasonerFactory.THE_SPEC);
-
-		// create an inferencing model using Pellet reasoner
-		InfModel model = ModelFactory.createInfModel(reasoner, emptyModel);
-
-		// read the file
-		// model.read
-
+		InfModel infModel = ModelFactory.createInfModel(reasoner, ontModel);
+		
 		t.lap();
 
 		String path = System.getProperty("user.dir");
 
-		RDFDataMgr.read(model, "file://" + path + "/datasets/DBLPL3S.nt");
-		RDFDataMgr.read(model, "file://" + path + "/datasets/LinkedACM.nt");
-		RDFDataMgr.read(model, "file://" + path
-				+ "/linksets/DBLPL3S-LinkedACM.nt");
+		String[] paths = { "file://" + path + "/datasets/DBLPL3S-100.nt",
+				"file://" + path + "/datasets/LinkedACM-100.nt",
+				"file://" + path + "/linksets/DBLPL3S-LinkedACM-100.nt" };
+
+		StreamRDF dataStream = new StreamRDF() {
+
+			@Override
+			public void start() {
+			}
+
+			@Override
+			public void quad(Quad quad) {
+			}
+
+			@Override
+			public void base(String base) {
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+
+			@Override
+			public void finish() {
+			}
+
+			@Override
+			public void triple(Triple triple) {
+				Node node = triple.getObject();
+				if (node.isLiteral()) {
+					if (!node.getLiteral().isWellFormed()) {
+						// known issue: fix gYear literals
+						if (node.getLiteralDatatypeURI() != null) {
+							if (node.getLiteralDatatypeURI().equals(
+									XSD.gYear.getURI())
+									|| node.getLiteralDatatypeURI().equals(
+											XSD.gYear.getLocalName())) {
+								Node newNode = NodeFactory.createLiteral(node
+										.getLiteral().toString()
+										.substring(0, 4)
+										+ "^^" + XSD.gYear);
+								triple = new Triple(triple.getSubject(),
+										triple.getPredicate(), newNode);
+								System.out.println("Bad-formed literal: "
+										+ node + " - Using: " + newNode);
+							}
+						}
+					}
+				}
+
+				Resource s = infModel.createResource(triple.getSubject()
+						.getURI());
+				Property p = infModel.createProperty(triple.getPredicate()
+						.getURI());
+				RDFNode o = infModel.asRDFNode(triple.getObject());
+
+				infModel.add(s, p, o);
+			}
+
+		};
+
+		for (String p : paths)
+			RDFDataMgr.parse(dataStream, p);
 
 		t.lap();
 
-		// print validation report
-		ValidityReport report = model.validate();
+		System.out.println("Model size = " + ontModel.size());
+
+		ValidityReport report = infModel.validate();
+		printIterator(report.getReports(), "Validation Results");
+
+		System.out.println("Inferred model size = " + infModel.size());
+
+		infModel.enterCriticalSection(Lock.READ);
+
+		try {
+			RDFDataMgr.write(new FileOutputStream(new File("tmp/test-this.nt")),
+					infModel, Lang.NT);
+			System.out.println("Model generated.");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			infModel.leaveCriticalSection();
+		}
 
 		t.lap();
 
-		// print superclasses
-		// Resource c = model
-		// .getResource("http://dblp.l3s.de/d2r/resource/publications/conf/sigmod/BohmBKK01");
-		// printIterator(model.listObjectsOfProperty(c, OWL.sameAs),
-		// "All sameAs of " + c.getLocalName());
-
-		System.out.println();
-
-		t.lap();
-
-		System.out.println("Reasoner init: " + t.getLapMillis(0));
-		System.out.println("Model load: " + t.getLapMillis(1));
-		System.out.println("Model load (per triple): " + t.getLapMillis(1)
-				/ model.size());
-		System.out.println("Validation: " + t.getLapMillis(2));
-		System.out.println("Query for 1 resource: " + t.getLapMillis(3));
+		System.out.println("Reasoner init (ms): " + t.getLapMillis(0));
+		System.out.println("Model load (ms): " + t.getLapMillis(1));
+		System.out.println("Model load (ms/triple): " + t.getLapMillis(1)
+				/ infModel.size());
+		System.out.println("Validation (ms): " + t.getLapMillis(2));
+		System.out.println("Save inferred model (ms): " + t.getLapMillis(3));
 		printIterator(report.getReports(), "Validation Results");
 
 	}
@@ -133,7 +196,7 @@ public class PelletReasoner {
 			while (i.hasNext())
 				System.out.println(i.next());
 		} else
-			System.out.println("<EMPTY>");
+			System.out.println("<Nothing to say.>");
 
 		System.out.println();
 	}
