@@ -60,9 +60,10 @@ public class PelletReasoner {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
-		    infModel.leaveCriticalSection() ;
+		    infModel.leaveCriticalSection();
 		}
 
+		new File(base + "/model.nt").delete();
 
 	}
 

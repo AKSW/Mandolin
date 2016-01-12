@@ -97,6 +97,9 @@ public class Validator {
 			for(String path : input)
 				RDFDataMgr.parse(dataStream, path);
 		}
+		
+		if(!enableFwc)
+			new File(base + "/model.nt").delete();
 	}
 	
 	
