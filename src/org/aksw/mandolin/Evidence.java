@@ -5,6 +5,7 @@ import java.util.TreeSet;
 import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
+import org.aksw.mandolin.util.URIHandler;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
@@ -61,7 +62,7 @@ public class Evidence {
 
 			@Override
 			public void triple(Triple arg0) {
-				String s = arg0.getSubject().getURI();
+				String s = URIHandler.parse(arg0.getSubject());
 				String p = arg0.getPredicate().getURI();
 				String o = arg0.getObject().toString();
 

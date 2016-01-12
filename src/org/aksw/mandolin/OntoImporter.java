@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.util.PrettyRandom;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -67,7 +68,6 @@ public class OntoImporter {
 
 			@Override
 			public void finish() {
-//				writer.finish();
 			}
 
 			@Override
@@ -121,7 +121,7 @@ public class OntoImporter {
 			System.out.println("Crawling <"+uri+">...");
 			Model model = ModelFactory.createDefaultModel();
 			// visit URIs in classes and properties
-			String path = BASE + "/temp-file.rdf";
+			String path = BASE + "/temp-file-"+PrettyRandom.get(6)+".rdf";
 			File file = new File(path);
 			try {
 				FileUtils.copyURLToFile(new URL(uri), file);

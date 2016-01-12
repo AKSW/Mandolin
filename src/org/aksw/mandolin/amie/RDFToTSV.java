@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
+import org.aksw.mandolin.util.URIHandler;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 
@@ -33,7 +34,7 @@ public class RDFToTSV {
 
 			@Override
 			public void triple(Triple triple) {
-				pw.write(triple.getSubject().getURI() + "\t"
+				pw.write(URIHandler.parse(triple.getSubject()) + "\t"
 						+ triple.getPredicate().getURI() + "\t"
 						+ triple.getObject().toString() + "\n");
 			}
