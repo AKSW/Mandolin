@@ -1,7 +1,5 @@
 package org.aksw.mandolin;
 
-import java.util.TreeSet;
-
 import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.util.URIHandler;
 import org.apache.jena.riot.RDFDataMgr;
