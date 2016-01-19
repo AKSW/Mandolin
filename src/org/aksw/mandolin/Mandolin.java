@@ -23,28 +23,28 @@ import com.hp.hpl.jena.vocabulary.OWL;
 public class Mandolin {
 
 	// input datasets
-	private String[] INPUT_PATHS = new String[] { 
+	private String[] inputPaths = new String[] { 
 			"datasets/DBLPL3S-100.nt",
 			"datasets/LinkedACM-100.nt", 
 			"linksets/DBLPL3S-LinkedACM-100.nt",
 	};
-	private String BASE = "eval/0001";
-	private String AIM_RELATION = OWL.sameAs.getURI();
+	private String workspace = "eval/0001";
+	private String aimRelation = OWL.sameAs.getURI();
 
 	// thresholds for similarity joins among datatype values
-	private int THR_MIN = 80;
-	private int THR_MAX = 90;
-	private int THR_STEP = 10;
+	private int thrMin = 80;
+	private int thrMax = 90;
+	private int thrStep = 10;
 	
 	/**
 	 * Enable ontology import.
 	 */
-	private boolean ENABLE_ONT = true;
+	private boolean enableOnt = true;
 	
 	/**
 	 * Enable forward chain.
 	 */
-	private boolean ENABLE_FWC = true;
+	private boolean enableFwc = true;
 
 	// -------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ public class Mandolin {
 	public Mandolin() {
 		super();
 		
-		map = new NameMapper(AIM_RELATION);
+		map = new NameMapper(aimRelation);
 		
 	}
 
@@ -73,16 +73,16 @@ public class Mandolin {
 	public Mandolin(String workspace, String[] inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc) {
 		super();
 		
-		this.BASE = workspace;
-		this.INPUT_PATHS = inputPaths;
-		this.AIM_RELATION = aimRelation;
-		this.THR_MIN = thrMin;
-		this.THR_STEP = thrStep;
-		this.THR_MAX = thrMax;
-		this.ENABLE_ONT = enableOnt;
-		this.ENABLE_FWC = enableFwc;
+		this.workspace = workspace;
+		this.inputPaths = inputPaths;
+		this.aimRelation = aimRelation;
+		this.thrMin = thrMin;
+		this.thrStep = thrStep;
+		this.thrMax = thrMax;
+		this.enableOnt = enableOnt;
+		this.enableFwc = enableFwc;
 
-		map = new NameMapper(AIM_RELATION);
+		map = new NameMapper(aimRelation);
 
 	}
 
@@ -95,10 +95,10 @@ public class Mandolin {
 	 *            aim relation URI
 	 */
 	public Mandolin(String input, String base, String aim) {
-		this.BASE = base;
-		this.AIM_RELATION = aim;
+		this.workspace = base;
+		this.aimRelation = aim;
 
-		INPUT_PATHS = input.split(",");
+		inputPaths = input.split(",");
 	}
 
 	/**
@@ -110,24 +110,24 @@ public class Mandolin {
 		printInfo();
 
 		// create working directory
-		new File(BASE).mkdirs();
+		new File(workspace).mkdirs();
 		
-		if(ENABLE_ONT) {
+		if(enableOnt) {
 			// inputs -> model-tmp.nt
-			OntoImporter.run(BASE, INPUT_PATHS);
+			OntoImporter.run(workspace, inputPaths);
 		}
 		
 		// inputs (or model-tmp.nt) -> model.nt (or model-fwc.nt)
-		Validator.run(BASE, INPUT_PATHS, ENABLE_FWC, ENABLE_ONT);
-		if(ENABLE_FWC) {
+		Validator.run(workspace, inputPaths, enableFwc, enableOnt);
+		if(enableFwc) {
 			// model.nt -> model-fwc.nt
-			PelletReasoner.run(BASE);
+			PelletReasoner.run(workspace);
 		}
 		
 		// model-fwc.nt -> map (classes)
-		Classes.build(map, BASE);
+		Classes.build(map, workspace);
 		// model-fwc.nt -> map (other)
-		Evidence.build(map, BASE, THR_MIN, THR_MAX, THR_STEP);
+		Evidence.build(map, workspace, thrMin, thrMax, thrStep);
 
 		map.pretty();
 
@@ -136,26 +136,26 @@ public class Mandolin {
 		System.out.println("# relationships: " + map.getRelationships().size());
 
 		// map -> KB description csv
-		ProbKBData.buildCSV(map, BASE);
+		ProbKBData.buildCSV(map, workspace);
 
 		// model-fwc.nt -> model.tsv
-		RDFToTSV.run(BASE);
+		RDFToTSV.run(workspace);
 		// model.tsv -> MLN csv
-		RuleMiner.run(map, BASE);
+		RuleMiner.run(map, workspace);
 
 		// csv -> Postgre factors
-		Grounding.ground(BASE);
+		Grounding.ground(workspace);
 
 		// Postgre factors -> predictions
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 
 //		eval(pset);
-		pset.saveTo(BASE + "/predictions.dat");
+		pset.saveTo(workspace + "/predictions.dat");
 		
 		for(int th=0; th<=10; th+=1) {
 			double theta = th / 10.0;
 			System.out.println("\ntheta = "+theta);
-			pset.saveLinkset(map, theta, BASE + "/output_" + theta + ".nt");
+			pset.saveLinkset(map, theta, workspace + "/output_" + theta + ".nt");
 		}
 
 		System.out.println("Mandolin done.");
@@ -166,13 +166,13 @@ public class Mandolin {
 	 * 
 	 */
 	private void printInfo() {
-		System.out.println("BASE = "+BASE);
+		System.out.println("BASE = "+workspace);
 		System.out.println("INPUT_PATHS:");
-		for(String ip : INPUT_PATHS)
+		for(String ip : inputPaths)
 			System.out.println("\t" + ip);
-		System.out.println("ONTO_IMPORT = "+ENABLE_ONT);
-		System.out.println("FORWARD_CHAIN = "+ENABLE_FWC);
-		System.out.println("THR = [min="+THR_MIN+", step="+THR_STEP+", max="+THR_MAX+"]");
+		System.out.println("ONTO_IMPORT = "+enableOnt);
+		System.out.println("FORWARD_CHAIN = "+enableFwc);
+		System.out.println("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
 		System.out.println();
 	}
 
