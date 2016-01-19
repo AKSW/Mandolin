@@ -1,12 +1,16 @@
-package org.aksw.mandolin.model;
 
+package org.aksw.mandolin.model;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.TreeSet;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class PredictionSet extends TreeSet<PredictionLiteral> {
+public class PredictionSet extends TreeSet<PredictionLiteral> implements Serializable {
 	
 	/**
 	 * 
@@ -23,8 +27,20 @@ public class PredictionSet extends TreeSet<PredictionLiteral> {
 		System.out.println("Created prediction set with aim: "+aim);
 	}
 	
-	public String getTarget() {
+	public String getAim() {
 		return aim;
+	}
+	
+	public void saveTo(String path) {
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream(path));
+			oos.writeObject(this);
+			oos.close();
+			System.out.println("Predictions saved to "+path);
+		} catch (IOException e) {
+			System.out.println("Cannot save "+this.toString()+": "+e.getMessage());
+		}
 	}
 
 }

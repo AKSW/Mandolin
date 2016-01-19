@@ -50,8 +50,38 @@ public class Mandolin {
 	// -------------------------------------------------------------------------
 
 	private NameMapper map;
-
+	
+	/**
+	 * Use demo values.
+	 */
 	public Mandolin() {
+		super();
+		
+		map = new NameMapper(AIM_RELATION);
+		
+	}
+
+	/**
+	 * @param workspace
+	 * @param inputPaths
+	 * @param aimRelation
+	 * @param thrMin
+	 * @param thrStep
+	 * @param thrMax
+	 * @param enableOnt
+	 * @param enableFwc
+	 */
+	public Mandolin(String workspace, String[] inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc) {
+		super();
+		
+		this.BASE = workspace;
+		this.INPUT_PATHS = inputPaths;
+		this.AIM_RELATION = aimRelation;
+		this.THR_MIN = thrMin;
+		this.THR_STEP = thrStep;
+		this.THR_MAX = thrMax;
+		this.ENABLE_ONT = enableOnt;
+		this.ENABLE_FWC = enableFwc;
 
 		map = new NameMapper(AIM_RELATION);
 
@@ -120,7 +150,8 @@ public class Mandolin {
 		// Postgre factors -> predictions
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 
-		eval(pset);
+//		eval(pset);
+		pset.saveTo(BASE + "/pset.dat");
 
 		System.out.println("Mandolin done.");
 

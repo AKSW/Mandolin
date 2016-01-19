@@ -1,5 +1,7 @@
 package org.aksw.mandolin.model;
 
+import java.io.Serializable;
+
 import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
 
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSLiteral;
@@ -9,7 +11,12 @@ import com.googlecode.rockit.javaAPI.HerbrandUniverse;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class PredictionLiteral implements Comparable<PredictionLiteral> {
+public class PredictionLiteral implements Comparable<PredictionLiteral>, Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4558540244149162506L;
 	
 	private static HerbrandUniverse u = HerbrandUniverse.getInstance();
 	private String p, x, y;
