@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.TreeSet;
 
-import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.util.PrettyRandom;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
@@ -39,6 +38,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *
  */
 public class OntoImporter {
+	
+	private static final Lang[] LANG_ATTEMPTS = {Lang.RDFXML, Lang.TTL, Lang.NT};
 
 	/**
 	 * @param BASE
@@ -121,28 +122,49 @@ public class OntoImporter {
 			System.out.println("Crawling <"+uri+">...");
 			Model model = ModelFactory.createDefaultModel();
 			// visit URIs in classes and properties
-			String path = BASE + "/temp-file-"+PrettyRandom.get(6)+".rdf";
+			String path = BASE + "/temp-file-" + PrettyRandom.get(6) + "";
 			File file = new File(path);
 			try {
 				FileUtils.copyURLToFile(new URL(uri), file);
 			} catch (IOException e) {
-				System.out.println("Cannot download "+uri+".");
+				System.out.println("Cannot download <"+uri+">.");
 				continue;
 			}
-			try {
-				RDFDataMgr.read(model, path, Lang.RDFXML);
-			} catch (RiotException e) {
-				System.out.println("Cannot interpret "+uri+".");
-				continue;
+			System.out.println("Saved to "+path+".");
+			for(Lang lang : LANG_ATTEMPTS) {
+				try {
+					System.out.println("Trying with "+lang);
+					RDFDataMgr.read(model, path, lang);
+					break;
+				} catch (RiotException e) {
+					System.out.println("Cannot interpret <"+uri+"> using "+lang+".");
+				}
 			}
-			System.out.println("\tstatements: "+model.size());
+			System.out.println("\t# statements: "+model.size());
 			StmtIterator list = model.listStatements();
 			// append NT files to model...
 			while(list.hasNext()) {
 				// save wanted part of RDF files
-				Triple t = list.next().asTriple();
-				System.out.println("\t"+t);
-				writer.triple(t);
+				Statement stmt = list.next();
+				
+				System.out.println("\t"+stmt);
+				
+				boolean imprt = stmt.getPredicate().getURI().equals(uri);
+				
+				if(!imprt)
+					if(stmt.getSubject().isURIResource())
+						if(stmt.getSubject().getURI().equals(uri))
+							imprt = true;
+				if(!imprt)
+					if(stmt.getObject().isURIResource())
+						if(stmt.getObject().asResource().getURI().equals(uri))
+							imprt = true;
+				
+				if(imprt) {
+					Triple t = stmt.asTriple();
+					System.out.println("\t"+t);
+					writer.triple(t);
+				}
 			}
 		}
 		writer.finish();

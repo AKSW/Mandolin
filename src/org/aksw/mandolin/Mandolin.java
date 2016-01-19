@@ -40,7 +40,7 @@ public class Mandolin {
 	/**
 	 * Enable ontology import.
 	 */
-	private boolean ENABLE_ONT = false;
+	private boolean ENABLE_ONT = true;
 	
 	/**
 	 * Enable forward chain.
