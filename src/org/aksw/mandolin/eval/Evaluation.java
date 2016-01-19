@@ -1,60 +1,130 @@
 package org.aksw.mandolin.eval;
 
-import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.TreeSet;
 
-import org.aksw.mandolin.Classes;
-import org.aksw.mandolin.Evidence;
-import org.aksw.mandolin.NameMapper;
-import org.aksw.mandolin.NameMapper.Type;
-import org.aksw.mandolin.inference.PostgreDB;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.system.StreamRDF;
 
-import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.sparql.core.Quad;
 
 /**
- * XXX The gold standard path (links to be predicted) is here, not in Mandolin.
- * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
 public class Evaluation {
-
-	// input datasets
-	public static final String SRC_PATH = "datasets/DBLPL3S.nt";
-	public static final String TGT_PATH = "datasets/LinkedACM.nt";
-	public static final String LINKSET_PATH = "linksets/DBLPL3S-LinkedACM.nt";
-	public static final String GOLD_STANDARD_PATH = "linksets/DBLPL3S-LinkedACM-GoldStandard.nt";
-
-	public static final String BASE = "eval/10_publi-probkb";
-
-	// thresholds for similarity joins among datatype values
-	private static final int THR_MIN = 80;
-	private static final int THR_MAX = 90;
-	private static final int THR_STEP = 10;
 	
-	// TODO
-	private int TRAINING_SIZE = Integer.MAX_VALUE;
+	private String psetPath, hsetPath;
+	
+	private int tp, fp, fn;
+	private double pre, rec, f1;
 
-	private static NameMapper map = new NameMapper(OWL.sameAs.getURI());
+	public Evaluation(String psetPath, String hsetPath) {
+		super();
+		this.psetPath = psetPath;
+		this.hsetPath = hsetPath;
+	}
+	
+	public void run() {
+		
+		TreeSet<String> spoP = read(psetPath);
+		TreeSet<String> spoH = read(hsetPath);
+		
+		System.out.println(spoP);
+		System.out.println(spoH);
+		
+		TreeSet<String> fpSet = new TreeSet<>(spoP);
+		fpSet.removeAll(spoH);
+		fp = fpSet.size();
 
-	/**
-	 * @param args
-	 */
+		TreeSet<String> fnSet = new TreeSet<>(spoH);
+		fnSet.removeAll(spoP);
+		fn = fnSet.size();
+		
+		tp = spoP.size() - fp;
+		
+		System.out.println("TP = "+tp+"; FP = "+fp+"; FN = "+fn);
+		
+		pre = (double) tp / (tp + fp);
+		rec = (double) tp / (tp + fn);
+		f1 = (pre + rec) == 0d ? 0d : 2 * pre * rec / (pre + rec);
+		
+		System.out.println("f1 = "+f1+"; pre = "+pre+"; rec = "+rec);
+		
+	}
+
+	private TreeSet<String> read(String path) {
+		
+		TreeSet<String> spo = new TreeSet<>();
+		
+		StreamRDF dataStream = new StreamRDF() {
+
+			@Override
+			public void start() {
+			}
+
+			@Override
+			public void triple(Triple triple) {
+				spo.add(triple.toString());
+			}
+
+			@Override
+			public void quad(Quad quad) {
+			}
+
+			@Override
+			public void base(String base) {
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+
+			@Override
+			public void finish() {
+			}
+			
+		};
+		
+		RDFDataMgr.parse(dataStream, path);
+		
+		return spo;
+	}
+	
+	public String getPsetPath() {
+		return psetPath;
+	}
+
+	public String getHsetPath() {
+		return hsetPath;
+	}
+
+	public int getTp() {
+		return tp;
+	}
+
+	public int getFp() {
+		return fp;
+	}
+
+	public int getFn() {
+		return fn;
+	}
+
+	public double getPre() {
+		return pre;
+	}
+
+	public double getRec() {
+		return rec;
+	}
+
+	public double getF1() {
+		return f1;
+	}
+
 	public static void main(String[] args) {
-
-
-		int tp = 0, fp = 0;
-
-//			TODO
-//			if (evaluate(rs))
-//				tp++;
-//			else
-//				fp++;
-
-		System.out.println("TP = " + tp);
-		System.out.println("FP = " + fp);
-
+		new Evaluation("linksets/DBLPL3S-LinkedACM-100.nt", "eval/0001/output_0.9.nt").run();
 	}
 
 }
