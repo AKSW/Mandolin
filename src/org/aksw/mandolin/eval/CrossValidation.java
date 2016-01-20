@@ -3,6 +3,8 @@ package org.aksw.mandolin.eval;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 import org.aksw.mandolin.Mandolin;
 import org.aksw.mandolin.model.Cache;
@@ -62,15 +64,72 @@ public class CrossValidation {
 		// divide aim relations (setP) and base dataset (setM) from original dataset (setD)
 		divide(setPath, inputPaths, aimRelation);
 		
-		// TODO split aim relations into N_FOLDS folds
+		// partition aim relations into N_FOLDS folds
+		partition(setPath, partitionPath);
 		
-		// TODO create training/test sets
+		// TODO create training/test sets, appending setM
 		
 		// TODO for each fold, launch Mandolin
 		
 		
 		
 //		Mandolin m = new Mandolin(workspace, inputPaths, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc);
+		
+	}
+
+	private static void partition(String setPath, String partitionPath) {
+		
+		final FileOutputStream[] output = new FileOutputStream[N_FOLDS];
+		StreamRDF[] out = new StreamRDF[N_FOLDS];
+		for(int i=0; i<N_FOLDS; i++) {
+			try {
+				output[i] = new FileOutputStream(new File(partitionPath + "/" + i + ".nt"));
+				out[i] = StreamRDFWriter.getWriterStream(output[i], Lang.NT);
+				out[i].start();
+			} catch (FileNotFoundException e) {
+				System.out.println(e.getMessage());
+				return;
+			}
+		}
+		
+		final Cache count = new Cache();
+		
+		StreamRDF dataStream = new StreamRDF() {
+
+			@Override
+			public void start() {
+			}
+
+			@Override
+			public void triple(Triple triple) {
+				out[count.count % N_FOLDS].triple(triple);
+				count.count++;
+			}
+
+			@Override
+			public void quad(Quad quad) {
+			}
+
+			@Override
+			public void base(String base) {
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+
+			@Override
+			public void finish() {
+			}
+			
+		};
+
+		RDFDataMgr.parse(dataStream, setPath + "/setP.nt");
+		
+		for(int i=0; i<N_FOLDS; i++) {
+			out[i].finish();
+			System.out.println("File "+partitionPath + "/" + i + ".nt created.");
+		}
 		
 	}
 
@@ -84,7 +143,7 @@ public class CrossValidation {
 			setP = new FileOutputStream(new File(workspace + "/setP.nt"));
 			setM = new FileOutputStream(new File(workspace + "/setM.nt"));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 			return;
 		}
 		
