@@ -61,20 +61,20 @@ public class Mandolin {
 	}
 
 	/**
-	 * @param workspace
-	 * @param inputPaths
-	 * @param aimRelation
+	 * @param workspace workspace path
+	 * @param csInputPaths comma-separated input paths
+	 * @param aimRelation aim relation URI
 	 * @param thrMin
 	 * @param thrStep
 	 * @param thrMax
 	 * @param enableOnt
 	 * @param enableFwc
 	 */
-	public Mandolin(String workspace, String[] inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc) {
+	public Mandolin(String workspace, String csInputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc) {
 		super();
 		
 		this.workspace = workspace;
-		this.inputPaths = inputPaths;
+		this.inputPaths = csInputPaths.split(",");
 		this.aimRelation = aimRelation;
 		this.thrMin = thrMin;
 		this.thrStep = thrStep;
@@ -84,21 +84,6 @@ public class Mandolin {
 
 		map = new NameMapper(aimRelation);
 
-	}
-
-	/**
-	 * @param input
-	 *            comma-separated paths
-	 * @param base
-	 *            workspace path
-	 * @param aim
-	 *            aim relation URI
-	 */
-	public Mandolin(String input, String base, String aim) {
-		this.workspace = base;
-		this.aimRelation = aim;
-
-		inputPaths = input.split(",");
 	}
 
 	/**
@@ -183,16 +168,7 @@ public class Mandolin {
 
 	public static void main(String[] args) throws Exception {
 
-		if (args.length > 0) {
-			// set values
-			new Mandolin(args[0], // paths, comma-separated
-					args[1], // base workspace
-					args[2] // aim relation URI
-			).run();
-		} else {
-			// default values
-			new Mandolin().run();
-		}
+		new Mandolin().run();
 
 	}
 }
