@@ -3,10 +3,7 @@ package org.aksw.mandolin.eval;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.Scanner;
 
-import org.aksw.mandolin.Mandolin;
 import org.aksw.mandolin.model.Cache;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -64,10 +61,11 @@ public class CrossValidation {
 		// divide aim relations (setP) and base dataset (setM) from original dataset (setD)
 		divide(setPath, inputPaths, aimRelation);
 		
-		// partition aim relations into N_FOLDS folds
+		// partition aim relations into N_FOLDS parts
 		partition(setPath, partitionPath);
 		
-		// TODO create training/test sets, appending setM
+		// create training/test sets, appending setM
+		fold(setPath, partitionPath, foldPath);
 		
 		// TODO for each fold, launch Mandolin
 		
@@ -75,6 +73,110 @@ public class CrossValidation {
 		
 //		Mandolin m = new Mandolin(workspace, inputPaths, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc);
 		
+	}
+
+	private static void fold(String setPath, String partitionPath, String foldPath) {
+		
+		final FileOutputStream[] output = new FileOutputStream[N_FOLDS];
+		StreamRDF[] out = new StreamRDF[N_FOLDS];
+		for(int i=0; i<N_FOLDS; i++) {
+			try {
+				output[i] = new FileOutputStream(new File(foldPath + "/training" + i + ".nt"));
+				out[i] = StreamRDFWriter.getWriterStream(output[i], Lang.NT);
+				out[i].start();
+			} catch (FileNotFoundException e) {
+				System.out.println(e.getMessage());
+				return;
+			}
+			
+		}
+		
+		for(int i=0; i<N_FOLDS; i++) {
+			
+			for(int j=0; j<N_FOLDS; j++) {
+				
+				if(i != j) {
+					
+					System.out.println("Adding partition "+j+" to fold "+i);
+				
+					final int J = j;
+					
+					StreamRDF dataStream = new StreamRDF() {
+	
+						@Override
+						public void start() {
+						}
+	
+						@Override
+						public void triple(Triple triple) {
+							out[J].triple(triple);
+						}
+	
+						@Override
+						public void quad(Quad quad) {
+						}
+	
+						@Override
+						public void base(String base) {
+						}
+	
+						@Override
+						public void prefix(String prefix, String iri) {
+						}
+	
+						@Override
+						public void finish() {
+						}
+						
+					};
+	
+					RDFDataMgr.parse(dataStream, partitionPath + "/" + j + ".nt");
+					
+				}
+
+			}
+			
+			// append setM
+			final int I = i;
+			
+			StreamRDF dataStream = new StreamRDF() {
+				
+				@Override
+				public void start() {
+				}
+				
+				@Override
+				public void triple(Triple triple) {
+					out[I].triple(triple);
+				}
+				
+				@Override
+				public void quad(Quad quad) {
+				}
+				
+				@Override
+				public void base(String base) {
+				}
+				
+				@Override
+				public void prefix(String prefix, String iri) {
+				}
+				
+				@Override
+				public void finish() {
+				}
+				
+			};
+			
+			RDFDataMgr.parse(dataStream, setPath + "/setM.nt");
+			
+		}
+		
+		for(int i=0; i<N_FOLDS; i++) {
+			out[i].finish();
+			System.out.println("File "+foldPath + "/training" + i + ".nt created.");
+		}
+
 	}
 
 	private static void partition(String setPath, String partitionPath) {
