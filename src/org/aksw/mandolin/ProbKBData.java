@@ -158,7 +158,7 @@ public class ProbKBData {
 			String id2 = arr[1].substring(ENT_LENGTH);
 			String id3 = arr[2].substring(ENT_LENGTH);
 			
-			System.out.println(line);
+//			System.out.println(line);
 //			if(arr[0].startsWith(Type.ENTITY.toString())) {
 //				id1 = String.valueOf(Integer.parseInt(arr[0].substring(ENT_LENGTH)) + 10000);
 //				System.out.println("rel = "+id1);

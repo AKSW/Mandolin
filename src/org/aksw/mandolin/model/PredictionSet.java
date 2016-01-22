@@ -68,6 +68,7 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 		StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
 		writer.start();
 
+		int inf = 0;
 		System.out.println("+++ INFERRED +++");
 		for (PredictionLiteral lit : this) {
 			// filter only aim relation from pset
@@ -78,8 +79,10 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 			// considered as values towards +Infinity (resp. -Infinity),
 			// meaning the associated triples belong to the training set as
 			// positive (resp. negative) examples.
-			if (lit.getProb() > 1.0 || lit.getProb() < 0.0)
+			if (lit.getProb() > 1.0 || lit.getProb() < 0.0) {
+				inf++;
 				continue;
+			}
 			if (lit.getProb() >= theta) {
 				System.out.println(lit);
 				String s = map.getURI(lit.getX());
@@ -90,6 +93,8 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 				writer.triple(t);
 			}
 		}
+		
+		System.out.println("Infinite probabilities found = "+inf);
 
 		writer.finish();
 

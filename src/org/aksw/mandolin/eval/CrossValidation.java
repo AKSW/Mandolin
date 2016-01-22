@@ -3,7 +3,10 @@ package org.aksw.mandolin.eval;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.aksw.mandolin.Mandolin;
 import org.aksw.mandolin.model.Cache;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -36,14 +39,36 @@ public class CrossValidation {
 	 */
 	public static final String FOLD_PATH_SUFFIX = "/cv/folds";
 	
-	public static void main(String[] args) {
+	/**
+	 * A run path is the workspace for a given fold. The fold number will be appended to this.
+	 */
+	public static final String RUN_PATH_SUFFIX = "/cv/run";
+	
+	/**
+	 * @param args
+	 * @throws Exception 
+	 * @throws NumberFormatException 
+	 */
+	public static void main(String[] args) throws NumberFormatException, Exception {
 		
 		run(args[0], args[1], args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]),
 				Boolean.parseBoolean(args[8]));
 		
 	}
 
-	public static void run(String workspace, String inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean reverseCV) {
+	/**
+	 * @param workspace
+	 * @param inputPaths
+	 * @param aimRelation
+	 * @param thrMin
+	 * @param thrStep
+	 * @param thrMax
+	 * @param enableOnt
+	 * @param enableFwc
+	 * @param reverseCV
+	 * @throws Exception 
+	 */
+	public static void run(String workspace, String inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean reverseCV) throws Exception {
 		
 		// announce
 		String cvType = reverseCV ? "reverse " : "";
@@ -67,14 +92,44 @@ public class CrossValidation {
 		// create training/test sets, appending setM
 		fold(setPath, partitionPath, foldPath);
 		
-		// TODO for each fold, launch Mandolin
+		HashMap<Double, ArrayList<Double>> f1s = new HashMap<>();
+		for(int th=0; th<=10; th+=1) {
+			double theta = th / 10.0;
+			f1s.put(theta, new ArrayList<>());
+		}
 		
+		// for each fold, launch Mandolin
+		for(int i=0; i<N_FOLDS; i++) {
+			
+			System.out.println("\n============= FOLD "+i+" =============\n");
+			
+			String runPath = workspace + RUN_PATH_SUFFIX + i;
+			String trainingPath = foldPath + "/training" + i + ".nt";
+			
+			Mandolin m = new Mandolin(runPath, trainingPath, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc);
+			m.run();
+			
+			// each theta has different results
+			for(int th=0; th<=10; th+=1) {
+				double theta = th / 10.0;
+				System.out.println("\ntheta = "+theta);
+				Evaluation eval = new Evaluation(runPath + "/output_" + theta + ".nt", partitionPath + "/" + i + ".nt");
+				eval.run();
+				f1s.get(theta).add(eval.getF1());
+			}
+		}
 		
+		for(Double theta : f1s.keySet())
+			System.out.println("\ntheta = "+theta+"\tf1 = "+f1s.get(theta));
 		
-//		Mandolin m = new Mandolin(workspace, inputPaths, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc);
 		
 	}
 
+	/**
+	 * @param setPath
+	 * @param partitionPath
+	 * @param foldPath
+	 */
 	private static void fold(String setPath, String partitionPath, String foldPath) {
 		
 		final FileOutputStream[] output = new FileOutputStream[N_FOLDS];
@@ -179,6 +234,10 @@ public class CrossValidation {
 
 	}
 
+	/**
+	 * @param setPath
+	 * @param partitionPath
+	 */
 	private static void partition(String setPath, String partitionPath) {
 		
 		final FileOutputStream[] output = new FileOutputStream[N_FOLDS];
@@ -235,6 +294,11 @@ public class CrossValidation {
 		
 	}
 
+	/**
+	 * @param workspace
+	 * @param inputPaths
+	 * @param aimRelation
+	 */
 	private static void divide(String workspace, String inputPaths,
 			String aimRelation) {
 		

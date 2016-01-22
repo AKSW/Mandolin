@@ -78,7 +78,7 @@ public class Validator {
 										node.getLiteral().toString().substring(0, 4) + "^^" + XSD.gYear);
 								triple = new Triple(triple.getSubject(), triple.getPredicate(), 
 										newNode);
-								System.out.println("Bad-formed literal: "+node+" - Using: "+newNode);
+//								System.out.println("Bad-formed literal: "+node+" - Using: "+newNode);
 							}
 						}
 					}

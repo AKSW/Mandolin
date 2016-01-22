@@ -30,13 +30,13 @@ public class Evaluation {
 		TreeSet<String> spoP = read(psetPath);
 		TreeSet<String> spoH = read(hsetPath);
 		
-		System.out.println(spoP);
-		System.out.println(spoH);
+		System.out.println("Predict. = " + spoP);
+		System.out.println("Hidden   = " + spoH);
 		
 		TreeSet<String> fpSet = new TreeSet<>(spoP);
 		fpSet.removeAll(spoH);
 		fp = fpSet.size();
-
+		
 		TreeSet<String> fnSet = new TreeSet<>(spoH);
 		fnSet.removeAll(spoP);
 		fn = fnSet.size();
@@ -45,11 +45,11 @@ public class Evaluation {
 		
 		System.out.println("TP = "+tp+"; FP = "+fp+"; FN = "+fn);
 		
-		pre = (double) tp / (tp + fp);
-		rec = (double) tp / (tp + fn);
+		pre = (tp + fp) == 0 ? 0d : (double) tp / (tp + fp);
+		rec = (tp + fn) == 0 ? 0d : (double) tp / (tp + fn);
 		f1 = (pre + rec) == 0d ? 0d : 2 * pre * rec / (pre + rec);
 		
-		System.out.println("f1 = "+f1+"; pre = "+pre+"; rec = "+rec);
+		System.out.println("F1 = "+f1+"; Pre = "+pre+"; Rec = "+rec);
 		
 	}
 

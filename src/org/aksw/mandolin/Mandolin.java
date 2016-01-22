@@ -50,6 +50,8 @@ public class Mandolin {
 
 	private NameMapper map;
 	
+	private boolean isVerbose = false;
+	
 	/**
 	 * Use demo values.
 	 */
@@ -89,7 +91,7 @@ public class Mandolin {
 	/**
 	 * @throws Exception
 	 */
-	private void run() throws Exception {
+	public void run() throws Exception {
 
 		System.out.println("Mandolin started!");
 		printInfo();
@@ -114,7 +116,8 @@ public class Mandolin {
 		// model-fwc.nt -> map (other)
 		Evidence.build(map, workspace, thrMin, thrMax, thrStep);
 
-		map.pretty();
+		if(isVerbose)
+			map.pretty();
 
 		System.out.println("# entClasses: " + map.getEntClasses().size());
 		System.out.println("# relClasses: " + map.getRelClasses().size());
@@ -164,6 +167,14 @@ public class Mandolin {
 
 	public NameMapper getMap() {
 		return map;
+	}
+	
+	public void setVerbose(boolean v) {
+		this.isVerbose = v;
+	}
+	
+	public boolean isVerbose() {
+		return this.isVerbose;
 	}
 
 	public static void main(String[] args) throws Exception {

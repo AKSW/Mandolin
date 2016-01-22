@@ -135,8 +135,8 @@ public class PelletReasoner {
 										+ "^^" + XSD.gYear);
 								triple = new Triple(triple.getSubject(),
 										triple.getPredicate(), newNode);
-								System.out.println("Bad-formed literal: "
-										+ node + " - Using: " + newNode);
+//								System.out.println("Bad-formed literal: "
+//										+ node + " - Using: " + newNode);
 							}
 						}
 					}
