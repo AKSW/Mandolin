@@ -2,12 +2,12 @@ package org.aksw.mandolin;
 
 import java.io.File;
 
-import org.aksw.mandolin.amie.RDFToTSV;
-import org.aksw.mandolin.amie.RuleMiner;
 import org.aksw.mandolin.grounding.Grounding;
 import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
 import org.aksw.mandolin.model.PredictionSet;
 import org.aksw.mandolin.reasoner.PelletReasoner;
+import org.aksw.mandolin.rulemining.RDFToTSV;
+import org.aksw.mandolin.rulemining.RuleMiner;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 
