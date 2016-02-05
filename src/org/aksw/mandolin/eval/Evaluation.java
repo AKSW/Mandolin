@@ -30,8 +30,12 @@ public class Evaluation {
 		TreeSet<String> spoP = read(psetPath);
 		TreeSet<String> spoH = read(hsetPath);
 		
-		System.out.println("Predict. = " + spoP);
-		System.out.println("Hidden   = " + spoH);
+		System.out.println("Predicted");
+		for(String s : spoP)
+			System.out.println("\t"+s);
+		System.out.println("Hidden");
+		for(String s : spoH)
+			System.out.println("\t"+s);
 		
 		TreeSet<String> fpSet = new TreeSet<>(spoP);
 		fpSet.removeAll(spoH);
@@ -124,7 +128,8 @@ public class Evaluation {
 	}
 
 	public static void main(String[] args) {
-		new Evaluation("linksets/DBLPL3S-LinkedACM-100.nt", "eval/0001/output_0.9.nt").run();
+		new Evaluation("/Users/tom/PhD/srl/Mandolin/eval/0002/cv/run0/output_1.0.nt", 
+				"/Users/tom/PhD/srl/Mandolin/eval/0002/cv/partitions/0.nt").run();
 	}
 
 }
