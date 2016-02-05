@@ -1,4 +1,4 @@
-package org.aksw.mandolin.amie;
+package org.aksw.mandolin.rulemining;
 
 import java.io.File;
 import java.io.FileWriter;
