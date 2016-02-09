@@ -10,9 +10,15 @@ import org.aksw.mandolin.util.URLs;
 import com.opencsv.CSVReader;
 
 /**
+ * Called by BenchmarkSemantifier.
+ * 
+ * @deprecated This was used before learning ACM authors were not linked. Use
+ *             DatasetBuild* instead.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
+@Deprecated
 public class MappingSemantifier {
 
 	public static void run(String srcNs, String tgtNs, String csvFile,

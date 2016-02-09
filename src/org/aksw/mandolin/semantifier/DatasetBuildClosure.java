@@ -19,9 +19,13 @@ import com.hp.hpl.jena.sparql.core.Quad;
  * Given a discovery link (the target link to be discovered), build its
  * reflexive, symmetrical and transitive closure for the gold standard.
  * 
+ * @deprecated Now the closure is implemented in Mandolin through forward-chain
+ *             inference using a reasoner.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
+@Deprecated
 public class DatasetBuildClosure {
 
 	private static final Property DISCOVERY_LINK = Commons.OWL_SAMEAS;
@@ -29,9 +33,9 @@ public class DatasetBuildClosure {
 	private final HashMap<String, TreeSet<String>> closure = new HashMap<>();
 
 	public static void main(String[] args) {
-		
+
 		new DatasetBuildClosure().runReflSymmTransClosure();
-	
+
 	}
 
 	public void runReflSymmTransClosure() {
@@ -95,27 +99,26 @@ public class DatasetBuildClosure {
 		RDFDataMgr.parse(dataStream, Commons.DBLPL3S_NT);
 		RDFDataMgr.parse(dataStream, Commons.LINKEDACM_NT);
 		RDFDataMgr.parse(dataStream, Commons.DBLPL3S_LINKEDACM_NT);
-		
+
 		// clone closure object...
 		HashMap<String, TreeSet<String>> closureClone = new HashMap<>();
 		for (String keyURI : closure.keySet())
-			closureClone.put(keyURI, new TreeSet<>(closure.get(keyURI)));		
+			closureClone.put(keyURI, new TreeSet<>(closure.get(keyURI)));
 		// ...to compute closure of the index
 		for (String keyURI : closure.keySet()) {
-			for(String valURI : closure.get(keyURI)) {
-				for(String valOfVal : closure.get(valURI)) {
+			for (String valURI : closure.get(keyURI)) {
+				for (String valOfVal : closure.get(valURI)) {
 					closureClone.get(keyURI).add(valOfVal);
 				}
 			}
 		}
-		
 
 		Model m = ModelFactory.createDefaultModel();
-		
+
 		for (String keyURI : closureClone.keySet()) {
 			System.out.println(keyURI + "\t" + closureClone.get(keyURI));
-			Resource key = ResourceFactory.createResource(keyURI); 
-			for(String valURI : closureClone.get(keyURI)) {
+			Resource key = ResourceFactory.createResource(keyURI);
+			for (String valURI : closureClone.get(keyURI)) {
 				Resource val = ResourceFactory.createResource(valURI);
 				m.add(key, DISCOVERY_LINK, val);
 			}

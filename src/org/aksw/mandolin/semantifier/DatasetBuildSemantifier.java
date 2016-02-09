@@ -42,7 +42,7 @@ public class DatasetBuildSemantifier {
 		int n = 100;
 
 //		new DatasetBuildSemantifier(n).linkedACM();
-//		new DatasetBuildSemantifier(n).mapping();
+		new DatasetBuildSemantifier(n).mapping();
 		new DatasetBuildSemantifier(n).linkedDBLP();
 
 	}
@@ -131,6 +131,13 @@ public class DatasetBuildSemantifier {
 		
 	}
 
+	/**
+	 * @deprecated Use DatasetBuildSatellites to build LinkedACM.
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws IOException
+	 */
+	@Deprecated
 	public void linkedACM() throws ClassNotFoundException, IOException {
 
 		Model m = ModelFactory.createDefaultModel();

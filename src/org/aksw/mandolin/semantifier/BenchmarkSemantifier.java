@@ -34,9 +34,13 @@ import com.opencsv.CSVWriter;
  * format. This class builds two models starting from the perfect mapping.
  * SPARQL endpoints have to be specified.
  * 
+ * @deprecated This was used before learning ACM authors were not linked. Use
+ *             DatasetBuild* instead.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  * @version 0.2
  */
+@Deprecated
 public class BenchmarkSemantifier {
 
 	String perfMapping, srcNamespace, tgtNamespace, srcEndpoint, tgtEndpoint,

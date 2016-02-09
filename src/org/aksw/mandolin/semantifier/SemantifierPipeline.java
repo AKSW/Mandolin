@@ -3,6 +3,7 @@ package org.aksw.mandolin.semantifier;
 import java.io.IOException;
 
 /**
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
@@ -28,10 +29,11 @@ public class SemantifierPipeline {
 			DatasetBuildSemantifier semr = new DatasetBuildSemantifier(n);
 			semr.linkedDBLP();
 			semr.mapping();
-			semr.linkedACM();
-			System.out.println("SECTION START: CLOSURE");
-			DatasetBuildClosure clsr = new DatasetBuildClosure();
-			clsr.runReflSymmTransClosure();
+//			semr.linkedACM();
+			DatasetBuildSatellites.run();
+//			System.out.println("SECTION START: CLOSURE");
+//			DatasetBuildClosure clsr = new DatasetBuildClosure();
+//			clsr.runReflSymmTransClosure();
 
 		} else
 			System.out.println("Second argument is {part1, part2}.");

@@ -23,6 +23,10 @@ import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
+ * Add datatype properties and satellites (URIs belonging to the CBD) for each
+ * author. The only tolerated predicates for satellites are defined in the
+ * 'predicates' set.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
@@ -33,9 +37,9 @@ public class DatasetBuildSatellites {
 
 	private static final String FILE = "LinkedACM-10.nt";
 	private static final String ARTICLE = "http://www.aktors.org/ontology/portal#Article-Reference";
-	
+
 	private static TreeSet<String> predicates = new TreeSet<>();
-	
+
 	static {
 		// tolerate only these two types of object properties of satellites
 		predicates.add(RDF.type.getURI());
@@ -44,103 +48,110 @@ public class DatasetBuildSatellites {
 
 	public static void main(String[] args) {
 		
+		run();
+		
+	}
+	
+	public static void run() {
+
 		FileOutputStream output;
 		try {
-			output = new FileOutputStream(new File("datasets2/"+FILE));
+			output = new FileOutputStream(new File("datasets2/" + FILE));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return;
 		}
 
-		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
+		final StreamRDF writer = StreamRDFWriter.getWriterStream(output,
+				Lang.NT);
 
-		
 		TreeSet<String> articleIDs = new TreeSet<>();
 		TreeSet<String> satelliteIDs = new TreeSet<>();
-		
-		
+
 		// stream LinkedACM dataset
-		// search for ?s a <http://www.aktors.org/ontology/portal#Article-Reference>
+		// search for ?s a
+		// <http://www.aktors.org/ontology/portal#Article-Reference>
 		// collect article IDs
 		collectWrite(articleIDs, writer);
 
-		System.out.println("file = "+FILE);
-		System.out.println("articles = "+articleIDs.size());
-		
+		System.out.println("file = " + FILE);
+		System.out.println("articles = " + articleIDs.size());
+
 		// for each article ID:
 		// add its CBD and
 		// collect satellite IDs
-		for(String a : articleIDs) {
+		for (String a : articleIDs) {
 			System.out.print(a + "...");
 			cbd(a, writer, articleIDs, satelliteIDs, true);
 			System.out.println(" OK");
 		}
-		
+
 		System.out.println();
-		
-		System.out.println("satellites = "+satelliteIDs.size());
-		
+
+		System.out.println("satellites = " + satelliteIDs.size());
+
 		// for each satellite ID:
 		// launch describe query
 		// write out triples
-		for(String aut : satelliteIDs) {
+		for (String aut : satelliteIDs) {
 			System.out.print(aut + "...");
 			cbd(aut, writer, articleIDs, satelliteIDs, false);
 			System.out.println(" OK");
 		}
-		
+
 		writer.finish();
 		System.out.println("\nDone.");
 
 	}
 
-
-	private static void cbd(String uri, StreamRDF writer, TreeSet<String> articleIDs, TreeSet<String> satelliteIDs, boolean addAll) {
+	private static void cbd(String uri, StreamRDF writer,
+			TreeSet<String> articleIDs, TreeSet<String> satelliteIDs,
+			boolean addAll) {
 		String query = "DESCRIBE <" + uri + ">";
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(ENDPOINT,
 				sparqlQuery, GRAPH);
 		Model m = qexec.execDescribe();
 		StmtIterator it = m.listStatements();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			Triple t = it.next().asTriple();
-			
-			if(addAll) {
+
+			if (addAll) {
 				writer.triple(t);
 				String s = t.getSubject().getURI();
 				boolean isUri = t.getObject().isURI();
-				if(isUri) {
+				if (isUri) {
 					String o = t.getObject().getURI();
-					if(s.equals(uri))
+					if (s.equals(uri))
 						satelliteIDs.add(o);
-					if(o.equals(uri))
+					if (o.equals(uri))
 						satelliteIDs.add(s);
 				}
-				
+
 			} else {
 				String s = t.getSubject().getURI();
 				String p = t.getPredicate().getURI();
 				boolean isUri = t.getObject().isURI();
-				
-				if(!isUri) {
+
+				if (!isUri) {
 					writer.triple(t);
 				} else {
 					String o = t.getObject().getURI();
-					if(articleIDs.contains(o))
+					if (articleIDs.contains(o))
 						writer.triple(t);
-					else if(articleIDs.contains(s))
+					else if (articleIDs.contains(s))
 						writer.triple(t);
-					else if(predicates.contains(p))
+					else if (predicates.contains(p))
 						writer.triple(t);
 				}
 			}
-			
+
 		}
 	}
 
 	private static void collectWrite(TreeSet<String> articleIDs,
 			StreamRDF writer) {
-		
+
 		StreamRDF dataStream = new StreamRDF() {
 
 			@Override
@@ -150,11 +161,11 @@ public class DatasetBuildSatellites {
 
 			@Override
 			public void triple(Triple triple) {
-				
-				if(triple.getPredicate().getURI().equals(RDF.type.getURI()))
-					if(triple.getObject().getURI().equals(ARTICLE))
+
+				if (triple.getPredicate().getURI().equals(RDF.type.getURI()))
+					if (triple.getObject().getURI().equals(ARTICLE))
 						articleIDs.add(triple.getSubject().getURI());
-				
+
 			}
 
 			@Override
@@ -173,11 +184,11 @@ public class DatasetBuildSatellites {
 			public void finish() {
 				// finishes later
 			}
-			
+
 		};
-		
-		RDFDataMgr.parse(dataStream, "datasets/"+FILE);
-		
+
+		RDFDataMgr.parse(dataStream, "datasets/" + FILE);
+
 	}
 
 }
