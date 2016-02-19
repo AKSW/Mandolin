@@ -69,7 +69,9 @@ public class Evaluation {
 
 			@Override
 			public void triple(Triple triple) {
-				spo.add(triple.toString());
+				spo.add(triple.getSubject().getURI()+" "+
+						triple.getPredicate().getURI()+" "+
+						triple.getObject().toString());
 			}
 
 			@Override

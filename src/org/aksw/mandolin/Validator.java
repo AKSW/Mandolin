@@ -103,5 +103,69 @@ public class Validator {
 	}
 	
 	
+	@SuppressWarnings("unused")
+	private static void validate(String in, String out) {
+		
+		final FileOutputStream output;
+		try {
+			output = new FileOutputStream(new File(out));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);		
+		
+		StreamRDF dataStream = new StreamRDF() {
+
+			@Override
+			public void start() {
+				writer.start();
+			}
+
+			@Override
+			public void quad(Quad quad) {
+			}
+
+			@Override
+			public void base(String base) {
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+
+			@Override
+			public void finish() {
+				writer.finish();
+			}
+			
+			@Override
+			public void triple(Triple triple) {
+				Node node = triple.getObject();
+				if(node.isLiteral()) {
+					if(!node.getLiteral().isWellFormed()) {
+						// known issue: fix gYear literals
+						if(node.getLiteralDatatypeURI() != null) {
+							if(node.getLiteralDatatypeURI().equals(XSD.gYear.getURI()) || 
+									node.getLiteralDatatypeURI().equals(XSD.gYear.getLocalName())) {
+								Node newNode = NodeFactory.createLiteral(
+										node.getLiteral().toString().substring(0, 4) + "^^" + XSD.gYear);
+								triple = new Triple(triple.getSubject(), triple.getPredicate(), 
+										newNode);
+//								System.out.println("Bad-formed literal: "+node+" - Using: "+newNode);
+							}
+						}
+					}
+				}
+				writer.triple(triple);
+			}
+			
+		};
+
+		RDFDataMgr.parse(dataStream, in);
+		
+	}
+	
 
 }
