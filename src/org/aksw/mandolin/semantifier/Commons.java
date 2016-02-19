@@ -60,7 +60,6 @@ public class Commons {
 	public static final Property DC_CREATOR = ResourceFactory
 			.createProperty("http://purl.org/dc/elements/1.1/creator");
 	
-	public static final String SIMILAR_TO_PREFIX = "http://mandolin.aksw.org/ontology#similarTo";
 
 	// I/O
 	public static final String DBLP_ACM_CSV = "mappings/dblp-acm.csv";
@@ -79,12 +78,6 @@ public class Commons {
 	public static final String DBLPL3S_NT = "datasets/DBLPL3S.nt";
 
 	
-	public static final String getSimilarTo(int thr) {
-		// no such property
-		if(thr <= 0 || thr >= 100)
-			return null;
-		return SIMILAR_TO_PREFIX + thr;
-	}
 	
 	/**
 	 * Perform SPARQL query against an endpoint on a given graph.

@@ -14,13 +14,41 @@ import jp.ndca.similarity.join.Tokenizer;
 import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
-import org.aksw.mandolin.semantifier.Commons;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
 public class SimilarityJoin {
+	
+	public static final String SIMILAR_PREFIX = "http://mandolin.aksw.org/ontology#similar";
+	
+	public static final String SIMILAR_TO_PREFIX = "http://mandolin.aksw.org/ontology#similarTo";
+	
+	static HashMap<String, String> hashes = new HashMap<>();
+	
+	public static final String similar(int thr, String uri) {
+		
+		String s;
+		
+		if(hashes.containsKey(uri))
+			s = hashes.get(uri);
+		else {
+			s = DigestUtils.sha1Hex(uri);
+			hashes.put(uri, s);
+		}
+		
+		return SIMILAR_PREFIX + thr + "-" + s;
+	}
+	
+	public static final String similarTo(int thr) {
+		// no such property
+		if(thr <= 0 || thr >= 100)
+			return null;
+		return SIMILAR_TO_PREFIX + thr;
+	}
+
 	
 	public static void build(NameMapper map, TreeSet<ComparableLiteral> setOfStrings,
 			Cache cache, final int THR_MIN, final int THR_MAX, final int THR_STEP) {
@@ -45,20 +73,72 @@ public class SimilarityJoin {
 		Arrays.sort(strDatum);
 
 		ppjoin.setUseSortAtExtractPairs(false);
+		
+		// TODO open NT file of similarity joins.
+		
 
 		for (int thr = THR_MIN; thr <= THR_MAX; thr += THR_STEP) {
+			
+			String rel = similarTo(thr);
+			
 //			System.out.println("thr = " + (thr / 100.0));
 			List<Entry<StringItem, StringItem>> result = ppjoin.extractPairs(
 					strDatum, thr / 100.0);
 			for (Entry<StringItem, StringItem> entry : result) {
 				ComparableLiteral lit1 = dataset.get(entry.getKey().getId());
 				ComparableLiteral lit2 = dataset.get(entry.getValue().getId());
-				String rel = Commons.getSimilarTo(thr);
-				map.addRelationship(map.add(rel, Type.RELATION), map.getName(lit1.getUri()), map.getName(lit2.getUri()));
+				String relName = map.add(rel, Type.RELATION);
+				map.addRelationship(relName, 
+						map.getName(lit1.getUri()), map.getName(lit2.getUri()));
+				
+				// TODO add triple and its opposite
+				
+				compositeRelations(map, thr,
+						map.getName(lit1.getUri()), map.getName(lit2.getUri()));
+				
 //				System.out.println(lit1.getUri() + " <=> " + lit2.getUri());
 //				System.out.println(lit1.getVal() + " <=> " + lit2.getVal());
 			}
 		}
+		
+		// TODO close NT file
+		
+	}
+
+
+	private static void compositeRelations(NameMapper map, int thr,
+			String w, String z) {
+		
+		TreeSet<String> rships = map.getRelationships();
+		TreeSet<String> wTree = new TreeSet<>();
+		TreeSet<String> zTree = new TreeSet<>();
+		for(String rship : rships) {
+			String[] rsh = rship.split("#");
+			// w and z can be only in 2nd position, as they are datatypes
+			if(rsh[2].equals(w))
+				wTree.add(rship);
+			if(rsh[2].equals(z))
+				zTree.add(rship);
+		}
+		
+		System.out.println("wTree = " + wTree);
+		System.out.println("zTree = " + zTree);
+		
+		for(String rship : wTree) {
+			String[] rsh = rship.split("#");
+			String rel = rsh[0], subj = rsh[1];
+			
+			String extRelURI = similar(thr, rel);
+			String extRelName = map.add(extRelURI, Type.RELATION);
+			System.out.println(rel + " => "+extRelURI + " => "+extRelName);
+			
+			map.addRelationship(extRelName, subj, z);
+			System.out.println(extRelName + "#"+ subj +"#"+ z);
+			
+			// TODO add composite-relation triple
+			
+		}
+		
 		
 	}
 
