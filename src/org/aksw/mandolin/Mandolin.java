@@ -50,7 +50,7 @@ public class Mandolin {
 
 	private NameMapper map;
 	
-	private boolean isVerbose = false;
+	private boolean isVerbose = true;
 	
 	/**
 	 * Use demo values.

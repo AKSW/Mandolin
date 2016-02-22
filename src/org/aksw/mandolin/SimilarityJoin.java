@@ -17,6 +17,7 @@ import jp.ndca.similarity.join.Tokenizer;
 import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
+import org.aksw.mandolin.reasoner.PelletReasoner;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.StreamRDF;
@@ -148,6 +149,9 @@ public class SimilarityJoin {
 		writer.finish();
 		
 		System.out.println("Triples added after similarity join: TBox="+cTBox+", ABox="+cABox);
+		
+		// computing closure on similarity joins
+		PelletReasoner.closure(BASE + "/model-sim.nt", BASE + "/model-sim-fwc.nt");
 		
 	}
 

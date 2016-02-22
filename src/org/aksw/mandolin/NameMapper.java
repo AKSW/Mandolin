@@ -165,6 +165,14 @@ public class NameMapper {
 		return uriToMln.get(uri);
 	}
 	
+	public boolean containsURI(String name) {
+		return mlnToUri.containsKey(name);
+	}
+
+	public boolean containsName(String uri) {
+		return uriToMln.containsKey(uri);
+	}
+	
 	public TreeSet<String> getNamesByType(Type type) {
 		return listByType.get(type);
 	}

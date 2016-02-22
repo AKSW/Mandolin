@@ -69,6 +69,7 @@ public class Evidence {
 			public void triple(Triple arg0) {
 				String s = URIHandler.parse(arg0.getSubject());
 				String p = arg0.getPredicate().getURI();
+				// TODO if (o.isBlankNode) => URIHandler
 				String o = arg0.getObject().toString();
 
 				// now check for non-instantiations...
@@ -76,8 +77,9 @@ public class Evidence {
 					// it is supposed that the map contains only classes
 					// and instances of these classes (see Classes.build)
 					String relName = map.add(p, Type.RELATION);
-					String subjName = map.getName(s);
-					String objName = map.getName(o);
+					// assume non-instantiated resources are entities
+					String subjName = map.add(s, Type.ENTITY);
+					String objName = map.add(o, Type.ENTITY);
 
 					// domain/range specification
 					if (p.equals(RDFS.domain.getURI())) {
@@ -149,19 +151,98 @@ public class Evidence {
 		SimilarityJoin.build(map, setOfStrings, cache, BASE, THR_MIN, THR_MAX,
 				THR_STEP);
 		
-		// append model-sim to model-fwc
+		// append model-sim-fwc.nt to model-fwc.nt
 		final FileOutputStream output;
 		try {
-			output = new FileOutputStream(new File(BASE + "/model-fwc-sim.nt"));
+			output = new FileOutputStream(new File(BASE + "/model-sim-temp.nt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return;
 		}
 		
 		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
-		// TODO
+		writer.start();
 		
+		StreamRDF reader = new StreamRDF() {
+			
+			@Override
+			public void triple(Triple triple) {
+				writer.triple(triple);
+			}
+			
+			@Override
+			public void start() {
+			}
+			
+			@Override
+			public void quad(Quad quad) {
+			}
+			
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+			
+			@Override
+			public void finish() {
+			}
+			
+			@Override
+			public void base(String base) {
+			}
+			
+		};
+		
+		RDFDataMgr.parse(reader, BASE + "/model-fwc.nt");
 
+		StreamRDF readerSim = new StreamRDF() {
+			
+			@Override
+			public void triple(Triple triple) {
+				writer.triple(triple);
+				String s = triple.getSubject().getURI();
+				String p = triple.getPredicate().getURI();
+				String o = triple.getObject().toString();
+//				String relName = 
+						map.add(p, Type.RELATION);
+//				String name1 = 
+						map.add(s, Type.ENTITY);
+//				String name2 = 
+						map.add(o, Type.ENTITY);
+				
+				// XXX oddly this shall be off
+//				map.addRelationship(relName, name1, name2);
+			}
+			
+			@Override
+			public void start() {
+			}
+			
+			@Override
+			public void quad(Quad quad) {
+			}
+			
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+			
+			@Override
+			public void finish() {
+			}
+			
+			@Override
+			public void base(String base) {
+			}
+			
+		};
+
+		RDFDataMgr.parse(readerSim, BASE + "/model-sim-fwc.nt");
+		
+		writer.finish();
+		
+		// delete old file, rename temp file
+		new File(BASE + "/model-fwc.nt").delete();
+		new File(BASE + "/model-sim-temp.nt").renameTo(new File(BASE + "/model-fwc.nt"));
+		
 	}
 
 }
