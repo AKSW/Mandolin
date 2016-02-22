@@ -27,6 +27,8 @@ public class Evaluation {
 	
 	public void run() {
 		
+		System.out.println("Running evaluation on set "+psetPath+" against set "+hsetPath);
+		
 		TreeSet<String> spoP = read(psetPath);
 		TreeSet<String> spoH = read(hsetPath);
 		

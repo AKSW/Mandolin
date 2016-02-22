@@ -151,7 +151,9 @@ public class CrossValidation {
 				String setE = runPath + "/setE.nt";
 				String allExp = runPath + "/temp_allExp_"+theta+".nt";
 				PelletReasoner.closure(setD, allExp);
-				minus(allExp, triv, setE);
+				String allExpAim = runPath + "/temp_allExpAim_"+theta+".nt";
+				keepOnly(aimRelation, allExp, allExpAim);
+				minus(allExpAim, triv, setE);
 				
 				// evaluation: predicted vs expected links
 				Evaluation eval = new Evaluation(setR, setE);
@@ -164,6 +166,54 @@ public class CrossValidation {
 			System.out.println("\ntheta = "+theta+"\tf1 = "+f1s.get(theta));
 		
 		
+	}
+
+	private static void keepOnly(String relation, String in,
+			String out) {
+
+		final FileOutputStream output;
+		try {
+			output = new FileOutputStream(new File(out));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);		
+		
+		StreamRDF dataStream = new StreamRDF() {
+
+			@Override
+			public void start() {
+				writer.start();
+			}
+
+			@Override
+			public void quad(Quad quad) {
+			}
+
+			@Override
+			public void base(String base) {
+			}
+
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+
+			@Override
+			public void finish() {
+				writer.finish();
+			}
+			
+			@Override
+			public void triple(Triple triple) {
+				if(triple.getPredicate().getURI().equals(relation))
+					writer.triple(triple);
+			}
+			
+		};
+		
+		RDFDataMgr.parse(dataStream, in);		
 	}
 
 	/**
