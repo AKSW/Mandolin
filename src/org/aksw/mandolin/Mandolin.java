@@ -32,8 +32,8 @@ public class Mandolin {
 	private String aimRelation = OWL.sameAs.getURI();
 
 	// thresholds for similarity joins among datatype values
-	private int thrMin = 80;
-	private int thrMax = 90;
+	private int thrMin = 95;
+	private int thrMax = 95;
 	private int thrStep = 10;
 	
 	/**

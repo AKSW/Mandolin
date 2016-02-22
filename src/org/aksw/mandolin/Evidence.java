@@ -1,13 +1,18 @@
 package org.aksw.mandolin;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
 import org.aksw.mandolin.util.URIHandler;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.jena.riot.system.StreamRDFWriter;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
@@ -141,8 +146,21 @@ public class Evidence {
 		RDFDataMgr.parse(dataStream, BASE + "/model-fwc.nt");
 
 		// call similarity join
-		SimilarityJoin.build(map, setOfStrings, cache, THR_MIN, THR_MAX,
+		SimilarityJoin.build(map, setOfStrings, cache, BASE, THR_MIN, THR_MAX,
 				THR_STEP);
+		
+		// append model-sim to model-fwc
+		final FileOutputStream output;
+		try {
+			output = new FileOutputStream(new File(BASE + "/model-fwc-sim.nt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
+		// TODO
+		
 
 	}
 
