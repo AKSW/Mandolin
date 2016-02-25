@@ -39,7 +39,7 @@ public class DatasetBuildSatellites {
 //	private static final String ARTICLE = "http://www.aktors.org/ontology/portal#Article-Reference";
 	
 	private static final String GRAPH = "http://dblp.l3s.de";
-	private static final String FILE = "old-DBLPL3S.nt";
+	private static final String FILE = "DBLPL3S.nt";
 	private static final String ARTICLE = "http://xmlns.com/foaf/0.1/Document";
 
 
@@ -54,9 +54,31 @@ public class DatasetBuildSatellites {
 	public static void main(String[] args) {
 		
 		run();
+		deduplicate();
 		
 	}
 	
+	public static void deduplicate() {
+		
+		File old = new File("datasets2/" + FILE);
+		
+		Model m = RDFDataMgr.loadModel(old.getPath());
+		System.out.println("Model has "+m.size()+" deduplicated triples.");
+		File tmp = new File("datasets2/tmp_" + FILE);
+		try {
+			m.write(new FileOutputStream(tmp), "N-TRIPLE");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		old.delete();
+		tmp.renameTo(old);
+		
+		System.out.println("Done.");
+		
+	}
+
 	public static void run() {
 		
 		new File("datasets2/").mkdirs();
