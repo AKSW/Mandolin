@@ -24,9 +24,9 @@ public class Mandolin {
 
 	// input datasets
 	private String[] inputPaths = new String[] { 
-			"datasets/DBLPL3S-100.nt",
-			"datasets/LinkedACM-100.nt", 
-			"linksets/DBLPL3S-LinkedACM-100.nt",
+			"datasets/DBLPL3S-10.nt",
+			"datasets/LinkedACM-10.nt", 
+			"linksets/DBLPL3S-LinkedACM-10.nt",
 	};
 	private String workspace = "eval/0001";
 	private String aimRelation = OWL.sameAs.getURI();

@@ -33,10 +33,15 @@ import com.hp.hpl.jena.vocabulary.RDF;
 public class DatasetBuildSatellites {
 
 	private static final String ENDPOINT = "http://localhost:8890/sparql";
-	private static final String GRAPH = "http://mandolin.aksw.org/acm";
+	
+//	private static final String GRAPH = "http://mandolin.aksw.org/acm";
+//	private static final String FILE = "LinkedACM-10.nt";
+//	private static final String ARTICLE = "http://www.aktors.org/ontology/portal#Article-Reference";
+	
+	private static final String GRAPH = "http://dblp.l3s.de";
+	private static final String FILE = "old-DBLPL3S.nt";
+	private static final String ARTICLE = "http://xmlns.com/foaf/0.1/Document";
 
-	private static final String FILE = "LinkedACM-10.nt";
-	private static final String ARTICLE = "http://www.aktors.org/ontology/portal#Article-Reference";
 
 	private static TreeSet<String> predicates = new TreeSet<>();
 
@@ -53,6 +58,8 @@ public class DatasetBuildSatellites {
 	}
 	
 	public static void run() {
+		
+		new File("datasets2/").mkdirs();
 
 		FileOutputStream output;
 		try {
@@ -68,9 +75,8 @@ public class DatasetBuildSatellites {
 		TreeSet<String> articleIDs = new TreeSet<>();
 		TreeSet<String> satelliteIDs = new TreeSet<>();
 
-		// stream LinkedACM dataset
-		// search for ?s a
-		// <http://www.aktors.org/ontology/portal#Article-Reference>
+		// stream dataset
+		// search for ?s a <ArticleClass>
 		// collect article IDs
 		collectWrite(articleIDs, writer);
 
@@ -95,8 +101,11 @@ public class DatasetBuildSatellites {
 		// write out triples
 		for (String aut : satelliteIDs) {
 			System.out.print(aut + "...");
-			cbd(aut, writer, articleIDs, satelliteIDs, false);
-			System.out.println(" OK");
+			boolean success = cbd(aut, writer, articleIDs, satelliteIDs, false);
+			if(success)
+				System.out.println(" OK");
+			else
+				System.out.println(" skipped");
 		}
 
 		writer.finish();
@@ -104,14 +113,19 @@ public class DatasetBuildSatellites {
 
 	}
 
-	private static void cbd(String uri, StreamRDF writer,
+	private static boolean cbd(String uri, StreamRDF writer,
 			TreeSet<String> articleIDs, TreeSet<String> satelliteIDs,
 			boolean addAll) {
 		String query = "DESCRIBE <" + uri + ">";
 		Query sparqlQuery = QueryFactory.create(query, Syntax.syntaxARQ);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(ENDPOINT,
 				sparqlQuery, GRAPH);
-		Model m = qexec.execDescribe();
+		Model m;
+		try {
+			m = qexec.execDescribe();
+		} catch (Exception e1) {
+			return false;
+		}
 		StmtIterator it = m.listStatements();
 		while (it.hasNext()) {
 			Triple t = it.next().asTriple();
@@ -147,6 +161,7 @@ public class DatasetBuildSatellites {
 			}
 
 		}
+		return true;
 	}
 
 	private static void collectWrite(TreeSet<String> articleIDs,
