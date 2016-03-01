@@ -108,8 +108,9 @@ public class PostgreDB {
 
 		ResultSet rs = null;
 		try {
-			rs = st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
-					+ aimNumber + ";");
+//			rs = st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
+//					+ aimNumber + ";");
+			rs = st.executeQuery("select rel, ent1, ent2 from probkb.extractions;");
 
 		} catch (SQLException ex) {
 			lgr.warn(ex.getMessage(), ex);

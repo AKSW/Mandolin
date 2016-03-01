@@ -69,6 +69,7 @@ public class Classes {
 						map.add(s, Type.CLASS);
 					} else {
 						// else subject is an entity
+						// XXX subject could be even a property!
 						String entName = map.add(s, Type.ENTITY);
 						map.addEntClass(entName, className);
 					}

@@ -102,7 +102,7 @@ public class RuleDriver {
 	 * @return
 	 */
 	private double toWeight(double pcaConfidence) {
-		return pcaConfidence * 100;
+		return pcaConfidence;
 	}
 
 	/**

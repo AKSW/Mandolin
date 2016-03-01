@@ -69,7 +69,9 @@ public class Factors {
 			while (rs.next()) {
 				String a1 = u.getKey(Type.ENTITY.name() + rs.getInt("ent1"));
 				String b1 = u.getKey(Type.ENTITY.name() + rs.getInt("ent2"));
-				String string = aimName + "|" + a1 + "|" + b1;
+				String r = Type.RELATION.name() + rs.getInt("rel");
+//				String string = aimName + "|" + a1 + "|" + b1;
+				String string = r + "|" + a1 + "|" + b1;
 				// As the Semantic Web deals only with true statements,
 				// all literals are set to true and belong to the starting
 				// points.
@@ -124,8 +126,10 @@ public class Factors {
 					// XXX Since there is a weight, its value is finite
 					// (hard=false).
 					boolean hard = false;
-
-					clauses.add(new Clause(rs.getDouble("weight"), lit, hard));
+					
+					Clause clause = new Clause(rs.getDouble("weight"), lit, hard);
+					clauses.add(clause);
+					System.out.println(clause);
 
 				}
 			} catch (SQLException e) {

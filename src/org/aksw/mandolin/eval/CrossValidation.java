@@ -159,6 +159,9 @@ public class CrossValidation {
 				Evaluation eval = new Evaluation(setR, setE);
 				eval.run();
 				f1s.get(theta).add(eval.getF1());
+				
+				// XXX
+				System.exit(0);
 			}
 		}
 		

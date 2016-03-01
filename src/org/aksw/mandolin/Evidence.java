@@ -14,6 +14,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
 
+import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -70,16 +71,19 @@ public class Evidence {
 				String s = URIHandler.parse(arg0.getSubject());
 				String p = arg0.getPredicate().getURI();
 				// TODO if (o.isBlankNode) => URIHandler
-				String o = arg0.getObject().toString();
+				String o = parse(arg0.getObject());
+				if(o == null)
+					return;
 
+				String relName = map.add(p, Type.RELATION);
+				String subjName = map.add(s, Type.ENTITY);
+				String objName = map.add(o, Type.ENTITY);
+				
 				// now check for non-instantiations...
 				if (!p.equals(RDF.type.getURI())) {
 					// it is supposed that the map contains only classes
 					// and instances of these classes (see Classes.build)
-					String relName = map.add(p, Type.RELATION);
 					// assume non-instantiated resources are entities
-					String subjName = map.add(s, Type.ENTITY);
-					String objName = map.add(o, Type.ENTITY);
 
 					// domain/range specification
 					if (p.equals(RDFS.domain.getURI())) {
@@ -134,11 +138,15 @@ public class Evidence {
 						considerString = dtURI.equals(XSD.xstring.getURI());
 
 					if (considerString) {
-						ComparableLiteral lit = new ComparableLiteral(arg0
-								.getObject().getLiteral().toString(true), arg0
-								.getObject().getLiteral().getValue().toString());
+//						ComparableLiteral lit = new ComparableLiteral(arg0
+//								.getObject().getLiteral().toString(true), arg0
+//								.getObject().getLiteral().getValue().toString());
+						ComparableLiteral lit = new ComparableLiteral(o, o);
+						System.out.println(lit.getVal());
 						setOfStrings.add(lit);
 					}
+					
+					map.addRelationship(relName, subjName, objName);
 				}
 
 			}
@@ -193,7 +201,7 @@ public class Evidence {
 		};
 		
 		RDFDataMgr.parse(reader, BASE + "/model-fwc.nt");
-
+		
 		StreamRDF readerSim = new StreamRDF() {
 			
 			@Override
@@ -201,7 +209,10 @@ public class Evidence {
 				writer.triple(triple);
 				String s = triple.getSubject().getURI();
 				String p = triple.getPredicate().getURI();
-				String o = triple.getObject().toString();
+				
+				String o = parse(triple.getObject());
+				if(o == null)
+					return;
 //				String relName = 
 						map.add(p, Type.RELATION);
 //				String name1 = 
@@ -245,4 +256,14 @@ public class Evidence {
 		
 	}
 
+	private static String parse(Node obj) {
+		if(obj.isURI())
+			return obj.getURI();
+		if(obj.isLiteral())
+			return obj.getLiteralValue().toString();
+		if(obj.isBlank())
+			return obj.getBlankNodeLabel();
+		else return null;
+	}
 }
+
