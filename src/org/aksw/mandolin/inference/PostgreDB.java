@@ -27,8 +27,8 @@ public class PostgreDB {
 	public void connect() {
 
 		String host = Bundle.getString("pgsql_url");
-		String db = Bundle.getString("pgsql_database");
-		String url = "jdbc:postgresql://"+host+"/"+db;
+//		String db = Bundle.getString("pgsql_database");
+		String url = "jdbc:postgresql://"+host+"/probkb";
 		String user = Bundle.getString("pgsql_username");
 		String password = Bundle.getString("pgsql_password");
 
