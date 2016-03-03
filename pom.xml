@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.aksw.mandolin</groupId>
 	<artifactId>Mandolin</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>Mandolin</name>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -29,7 +29,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.aksw.mandolin.Mandolin</mainClass>
+							<mainClass>org.aksw.mandolin.eval.CrossValidation</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

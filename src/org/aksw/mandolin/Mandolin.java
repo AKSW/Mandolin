@@ -22,6 +22,8 @@ import com.hp.hpl.jena.vocabulary.OWL;
  */
 public class Mandolin {
 
+	private static final int THETA_MIN = 10;
+	private static final int THETA_MAX = 10;
 	// input datasets
 	private String[] inputPaths = new String[] { 
 			"datasets/DBLPL3S-10.nt",
@@ -140,7 +142,7 @@ public class Mandolin {
 //		eval(pset);
 		pset.saveTo(workspace + "/predictions.dat");
 		
-		for(int th=0; th<=10; th+=1) {
+		for(int th=THETA_MIN; th<=THETA_MAX; th+=1) {
 			double theta = th / 10.0;
 			System.out.println("\ntheta = "+theta);
 			pset.saveLinkset(map, theta, workspace + "/output_" + theta + ".nt");
