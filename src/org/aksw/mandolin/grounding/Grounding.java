@@ -41,7 +41,8 @@ public class Grounding {
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/drop.sql",
 				// Create db
-				Bundle.getString("pgsql_home") + "/bin/createdb probkb",
+				Bundle.getString("pgsql_home") + "/bin/createdb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432 probkb",
 				// Create the probkb schema and tables.
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
 						+ System.getProperty("user.dir")
@@ -106,9 +107,9 @@ public class Grounding {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
-		
+
 		ground("eval/0001");
-		
+
 	}
 
 }
