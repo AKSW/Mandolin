@@ -26,7 +26,8 @@ public class Grounding {
 	private static void run() {
 		String[] cmd = {
 		// Drop schema
-		Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
+		Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
+				+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 				+ System.getProperty("user.dir") + "/pgsql/sql/run.sql", };
 		for (String c : cmd) {
 			System.out.println("> " + c);
@@ -37,25 +38,30 @@ public class Grounding {
 	private static void generate(String base) {
 		String[] cmd = {
 				// Drop schema
-				Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
+				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/drop.sql",
 				// Create db
-				Bundle.getString("pgsql_home") + "/bin/createdb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432 probkb",
+				Bundle.getString("pgsql_home") + "/bin/createdb probkb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432",
 				// Create the probkb schema and tables.
-				Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
+				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/create.sql",
 				// Create quality control procedures.
-				Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
+				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 						+ System.getProperty("user.dir") + "/pgsql/sql/qc.sql",
 				// Load the files in CSV format.
-				Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
+				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 						+ System.getProperty("user.dir") + "/" + base
 						+ "/load.sql",
 				// Create grounding procedures.
-				Bundle.getString("pgsql_home") + "/bin/psql probkb -f "
+				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/ground.sql" };
 		for (String c : cmd) {
