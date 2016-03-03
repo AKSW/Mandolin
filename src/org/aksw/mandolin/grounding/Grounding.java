@@ -42,9 +42,9 @@ public class Grounding {
 						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/drop.sql",
-				// Create db
-				Bundle.getString("pgsql_home") + "/bin/createdb probkb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432",
+//				// Create db
+//				Bundle.getString("pgsql_home") + "/bin/createdb probkb -h "
+//						+ Bundle.getString("pgsql_url") + " -p 5432",
 				// Create the probkb schema and tables.
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
 						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
