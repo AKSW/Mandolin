@@ -37,7 +37,7 @@ public class PostgreDB {
 			st = con.createStatement();
 
 		} catch (SQLException ex) {
-			lgr.fatal(ex.getMessage(), ex);
+			lgr.fatal(ex.getMessage() + "\n\n" + "Maybe PostgreSQL was not started?" + "\n" + "Open a console and run:" + "\n" + "\tsh pgsql-start.sh");
 		}
 	}
 

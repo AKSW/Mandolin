@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.aksw.mandolin.ProbKBData;
-import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.controller.ProbKBData;
+import org.aksw.mandolin.controller.NameMapper.Type;
 
 import com.googlecode.rockit.app.solver.pojo.Clause;
 import com.googlecode.rockit.app.solver.pojo.Literal;
@@ -106,14 +106,14 @@ public class Factors {
 					String b1 = u.getKey(Type.ENTITY.name() + rs.getInt("b1"));
 					lit.add(new Literal(r1 + "|" + a1 + "|" + b1, positive));
 
-					if (i >= 1) {
+					if (i >= 2) {
 						// second restriction
 						String r2 = Type.RELATION.name() + rs.getInt("r2");
 						String a2 = u.getKey(Type.ENTITY.name() + rs.getInt("a2"));
 						String b2 = u.getKey(Type.ENTITY.name() + rs.getInt("b2"));
 						lit.add(new Literal(r2 + "|" + a2 + "|" + b2, positive));
 
-						if (i >= 2) {
+						if (i >= 3) {
 							// third restriction
 							String r3 = Type.RELATION.name() + rs.getInt("r3");
 							String a3 = u.getKey(Type.ENTITY.name() + rs.getInt("a3"));

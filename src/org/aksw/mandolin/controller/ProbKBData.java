@@ -1,4 +1,4 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.controller;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.controller.NameMapper.Type;
 
 import com.opencsv.CSVWriter;
 

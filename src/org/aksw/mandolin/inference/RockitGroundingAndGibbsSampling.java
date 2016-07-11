@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.aksw.mandolin.NameMapper;
+import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.model.PredictionSet;
 
 import com.googlecode.rockit.app.solver.StandardSolver;

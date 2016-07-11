@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 import javatools.datatypes.ByteString;
 
-import org.aksw.mandolin.NameMapper;
-import org.aksw.mandolin.ProbKBData;
+import org.aksw.mandolin.controller.NameMapper;
+import org.aksw.mandolin.controller.ProbKBData;
 
 import amie.rules.Rule;
 

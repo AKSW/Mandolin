@@ -1,6 +1,6 @@
 package org.aksw.mandolin.rulemining;
 
-import org.aksw.mandolin.NameMapper;
+import org.aksw.mandolin.controller.NameMapper;
 
 import javatools.datatypes.ByteString;
 import amie.rules.Rule;

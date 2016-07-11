@@ -1,6 +1,6 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.controller;
 
-import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.controller.NameMapper.Type;
 import org.aksw.mandolin.util.URIHandler;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;

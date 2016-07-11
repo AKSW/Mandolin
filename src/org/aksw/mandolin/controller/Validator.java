@@ -1,4 +1,4 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;

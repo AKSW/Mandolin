@@ -1,4 +1,4 @@
-package org.aksw.mandolin;
+package org.aksw.mandolin.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ import jp.ndca.similarity.join.PPJoin;
 import jp.ndca.similarity.join.StringItem;
 import jp.ndca.similarity.join.Tokenizer;
 
-import org.aksw.mandolin.NameMapper.Type;
+import org.aksw.mandolin.controller.NameMapper.Type;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
 import org.aksw.mandolin.reasoner.PelletReasoner;

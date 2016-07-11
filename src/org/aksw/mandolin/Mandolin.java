@@ -2,6 +2,12 @@ package org.aksw.mandolin;
 
 import java.io.File;
 
+import org.aksw.mandolin.controller.Classes;
+import org.aksw.mandolin.controller.Evidence;
+import org.aksw.mandolin.controller.NameMapper;
+import org.aksw.mandolin.controller.OntoImporter;
+import org.aksw.mandolin.controller.ProbKBData;
+import org.aksw.mandolin.controller.Validator;
 import org.aksw.mandolin.grounding.Grounding;
 import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
 import org.aksw.mandolin.model.PredictionSet;
