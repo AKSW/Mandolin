@@ -68,28 +68,33 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 
 		StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
 		writer.start();
+		
+		double max = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
+		for (PredictionLiteral lit : this) {
+			if(lit.getProb() > max)
+				max = lit.getProb();
+			if(lit.getProb() < min)
+				min = lit.getProb();
+		}
+		System.out.println("max = "+max+", min = "+min);
+		double delta = max - min;
 
 //		int inf = 0;
 		System.out.println("+++ INFERRED +++");
 		for (PredictionLiteral lit : this) {
+			
 			// filter only aim relation from pset
 			String p = map.getURI(lit.getP());
 			if (!p.equals(aim))
 				continue;
-			// when probabilities are above 1.0 (resp. below 0), they should be
-			// considered as values towards +Infinity (resp. -Infinity),
-			// meaning the associated triples belong to the training set as
-			// positive (resp. negative) examples.
-//			if (lit.getProb() < 0.0) {
-//				inf++;
-//				continue;
-//			}
+			
+			// relative value for probability
+			double relprob = (lit.getProb() - min) / delta;
 				
-//			if (lit.getProb() >= theta) {
-				String prob = 
-//						(lit.getProb() > 1.0) ? 1.0 + "+" : 
-							String.valueOf(lit.getProb());
-				System.out.println(lit);
+			if (relprob >= theta) {
+				String prob = String.valueOf(lit.getProb());
+				System.out.println(lit + " (" + relprob + ")");
 				String s = map.getURI(lit.getX());
 				if(s == null) {
 					int a = NameMapper.parse(lit.getX());
@@ -106,11 +111,9 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 						NodeFactory.createURI(p), NodeFactory.createURI(o));
 				System.out.println(prob + "\t" + t);
 				writer.triple(t);
-//			}
+			}
 		}
 		
-//		System.out.println("Infinite probabilities found = "+inf);
-
 		writer.finish();
 
 	}

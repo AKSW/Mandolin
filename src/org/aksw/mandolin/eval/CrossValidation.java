@@ -49,7 +49,7 @@ public class CrossValidation {
 	 */
 	public static final String RUN_PATH_SUFFIX = "/cv/run";
 
-	private static final int THETA_MIN = 10;
+	private static final int THETA_MIN = 1;
 
 	private static final int THETA_MAX = 10;
 	
@@ -78,7 +78,8 @@ public class CrossValidation {
 	 * @param reverseCV
 	 * @throws Exception 
 	 */
-	public static void run(String workspace, String inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean enableSim, boolean reverseCV) throws Exception {
+	public static void run(String workspace, String inputPaths, String aimRelation, int thrMin, int thrStep, 
+			int thrMax, boolean enableOnt, boolean enableFwc, boolean enableSim, boolean reverseCV) throws Exception {
 		
 		// announce
 		String cvType = reverseCV ? "reverse " : "";
@@ -112,7 +113,7 @@ public class CrossValidation {
 		String setD = setPath + "/setD.nt";
 		
 		// for each fold, launch Mandolin
-		for(int i=0; i<N_FOLDS; i++) {
+		outer: for(int i=0; i<N_FOLDS; i++) {
 			
 			System.out.println("\n============= FOLD "+i+" =============\n");
 			
@@ -162,7 +163,7 @@ public class CrossValidation {
 				f1s.get(theta).add(eval.getF1());
 				
 				// XXX
-				System.exit(0);
+//				break outer;
 			}
 		}
 		

@@ -31,7 +31,7 @@ public class Mandolin {
 
 	private final static Logger logger = LogManager.getLogger(Mandolin.class);
 	
-	private static final int THETA_MIN = 10;
+	private static final int THETA_MIN = 1;
 	private static final int THETA_MAX = 10;
 	// input datasets
 	private String[] inputPaths;
@@ -170,7 +170,6 @@ public class Mandolin {
 		// Postgre factors -> predictions
 		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
 
-//		eval(pset);
 		pset.saveTo(workspace + "/predictions.dat");
 		
 		for(int th=THETA_MIN; th<=THETA_MAX; th+=1) {
@@ -216,6 +215,7 @@ public class Mandolin {
 			
 			new Mandolin().run();
 			
+		// TODO handle all exceptions
 		} catch (PostgreNotStartedException e) {
 			logger.fatal("Mandolin exited with errors (-1).");
 		}
