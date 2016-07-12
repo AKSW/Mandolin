@@ -12,6 +12,10 @@ import amie.rules.Rule;
  *
  */
 public class AmieHandler {
+	
+	public static enum MiningStrategy {
+		HEAD_COVERAGE, SUPPORT;
+	}
 
 	private String ontology;
 	private List<Rule> rules = null;
@@ -21,9 +25,19 @@ public class AmieHandler {
 		this.ontology = ontology;
 	}
 
-	public void run() throws Exception {
+	public void run(MiningStrategy ms) throws Exception {
 
-		AMIE miner = AMIE.getInstance(new String[] { ontology });
+		AMIE miner;
+		switch(ms) {
+		case HEAD_COVERAGE:
+			miner =	AMIE.getInstance(new String[] { ontology });
+			break;
+		case SUPPORT:
+			miner =	AMIE.getInstance(new String[] { ontology, "-pm", "support", "-mins", "0" });
+			break;
+		default:
+			throw new RuntimeException("MiningStrategy does not exist: " + ms.name());
+		}
 		
 		Announce.doing("Starting the mining phase");
 

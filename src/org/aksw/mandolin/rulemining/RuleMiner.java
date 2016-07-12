@@ -1,6 +1,7 @@
 package org.aksw.mandolin.rulemining;
 
 import org.aksw.mandolin.controller.NameMapper;
+import org.aksw.mandolin.rulemining.AmieHandler.MiningStrategy;
 
 import javatools.datatypes.ByteString;
 import amie.rules.Rule;
@@ -14,7 +15,11 @@ public class RuleMiner {
 	public static void run(NameMapper map, String base) throws Exception {
 		
 		AmieHandler h = new AmieHandler(base + "/model.tsv");
-		h.run();
+		
+		h.run(MiningStrategy.HEAD_COVERAGE);
+		if(h.getRules().isEmpty())
+			h.run(MiningStrategy.SUPPORT);
+		
 		
 		RuleDriver driver = new RuleDriver(map, base);
 		for(Rule rule : h.getRules()) {
