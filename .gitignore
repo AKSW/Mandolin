@@ -22,3 +22,7 @@ pgsql/db/
 *.log
 *.lp
 *.mps
+
+lib/
+install-jars.sh
+compile.sh
