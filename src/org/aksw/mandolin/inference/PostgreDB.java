@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.aksw.mandolin.util.Bundle;
+import org.aksw.mandolin.util.PostgreNotStartedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +17,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class PostgreDB {
 
-	private final static Logger lgr = LogManager.getLogger(PostgreDB.class.getName());
+	private final static Logger logger = LogManager.getLogger(PostgreDB.class);
 	private Connection con = null;
 	private Statement st = null;
 
@@ -27,8 +28,8 @@ public class PostgreDB {
 	public void connect() {
 
 		String host = Bundle.getString("pgsql_url");
-//		String db = Bundle.getString("pgsql_database");
-		String url = "jdbc:postgresql://"+host+"/probkb";
+		// String db = Bundle.getString("pgsql_database");
+		String url = "jdbc:postgresql://" + host + "/probkb";
 		String user = Bundle.getString("pgsql_username");
 		String password = Bundle.getString("pgsql_password");
 
@@ -37,8 +38,13 @@ public class PostgreDB {
 			st = con.createStatement();
 
 		} catch (SQLException ex) {
-			lgr.fatal(ex.getMessage() + "\n\n" + "Maybe PostgreSQL was not started?" + "\n" + "Open a console and run:" + "\n" + "\tsh pgsql-start.sh");
+			logger.fatal(ex.getMessage() + "\n\n"
+					+ "Maybe PostgreSQL was not started?" + "\n"
+					+ "Open a console and run:" + "\n" + "\tsh pgsql-start.sh"
+					+ "\n");
+			throw new PostgreNotStartedException();
 		}
+
 	}
 
 	/**
@@ -82,7 +88,7 @@ public class PostgreDB {
 								+ "where f.id1 = rs1.id and f.id2 = rs2.id and f.id3 = rs3.id;");
 			}
 		} catch (SQLException ex) {
-			lgr.warn(ex.getMessage(), ex);
+			logger.warn(ex.getMessage(), ex);
 		}
 
 		return factors;
@@ -100,7 +106,7 @@ public class PostgreDB {
 			}
 
 		} catch (SQLException ex) {
-			lgr.warn(ex.getMessage(), ex);
+			logger.warn(ex.getMessage(), ex);
 		}
 	}
 
@@ -108,12 +114,13 @@ public class PostgreDB {
 
 		ResultSet rs = null;
 		try {
-//			rs = st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
-//					+ aimNumber + ";");
+			// rs =
+			// st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
+			// + aimNumber + ";");
 			rs = st.executeQuery("select rel, ent1, ent2 from probkb.extractions;");
 
 		} catch (SQLException ex) {
-			lgr.warn(ex.getMessage(), ex);
+			logger.warn(ex.getMessage(), ex);
 		}
 		return rs;
 	}

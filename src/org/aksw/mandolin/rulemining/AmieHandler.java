@@ -24,7 +24,7 @@ public class AmieHandler {
 	public void run() throws Exception {
 
 		AMIE miner = AMIE.getInstance(new String[] { ontology });
-
+		
 		Announce.doing("Starting the mining phase");
 
 		long time = System.currentTimeMillis();

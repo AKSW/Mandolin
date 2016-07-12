@@ -14,8 +14,12 @@ import org.aksw.mandolin.model.PredictionSet;
 import org.aksw.mandolin.reasoner.PelletReasoner;
 import org.aksw.mandolin.rulemining.RDFToTSV;
 import org.aksw.mandolin.rulemining.RuleMiner;
+import org.aksw.mandolin.util.PostgreNotStartedException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * The final pipeline for MANDOLIN, a scalable join of several
@@ -28,31 +32,29 @@ import com.hp.hpl.jena.vocabulary.OWL;
  */
 public class Mandolin {
 
+	private final static Logger logger = LogManager.getLogger(Mandolin.class);
+	
 	private static final int THETA_MIN = 10;
 	private static final int THETA_MAX = 10;
 	// input datasets
-	private String[] inputPaths = new String[] { 
-			"datasets/DBLPL3S-10.nt",
-			"datasets/LinkedACM-10.nt", 
-			"linksets/DBLPL3S-LinkedACM-10.nt",
-	};
-	private String workspace = "eval/0001";
-	private String aimRelation = OWL.sameAs.getURI();
+	private String[] inputPaths;
+	private String workspace;
+	private String aimRelation;
 
 	// thresholds for similarity joins among datatype values
-	private int thrMin = 95;
-	private int thrMax = 95;
-	private int thrStep = 10;
+	private int thrMin;
+	private int thrMax;
+	private int thrStep;
 	
 	/**
 	 * Enable ontology import.
 	 */
-	private boolean enableOnt = false;
+	private boolean enableOnt;
 	
 	/**
 	 * Enable forward chain.
 	 */
-	private boolean enableFwc = false;
+	private boolean enableFwc;
 
 	// -------------------------------------------------------------------------
 
@@ -65,7 +67,22 @@ public class Mandolin {
 	 */
 	public Mandolin() {
 		super();
-		
+
+		this.workspace = "eval/0001";
+		this.inputPaths = new String[] { 
+				"datasets/AKSW-one-out.nt",
+//				"datasets/DBLPL3S-10-one-out.nt",
+//				"datasets/LinkedACM-10.nt", 
+//				"linksets/DBLPL3S-LinkedACM-10.nt",
+		};
+//		this.aimRelation = OWL.sameAs.getURI();
+		this.aimRelation = RDF.type.getURI();
+		this.thrMin = 95;
+		this.thrStep = 10;
+		this.thrMax = 95;
+		this.enableOnt = false;
+		this.enableFwc = true;
+
 		map = new NameMapper(aimRelation);
 		
 	}
@@ -187,7 +204,13 @@ public class Mandolin {
 
 	public static void main(String[] args) throws Exception {
 
-		new Mandolin().run();
+		try {
+			
+			new Mandolin().run();
+			
+		} catch (PostgreNotStartedException e) {
+			logger.fatal("Mandolin exited with errors (-1).");
+		}
 
 	}
 }

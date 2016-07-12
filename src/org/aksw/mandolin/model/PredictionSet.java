@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.controller.NameMapper;
+import org.aksw.mandolin.controller.NameMapper.Type;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
@@ -88,7 +89,17 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 				String prob = (lit.getProb() > 1.0) ? 1.0 + "+" : String.valueOf(lit.getProb());
 				System.out.println(lit);
 				String s = map.getURI(lit.getX());
+				if(s == null) {
+					int a = parse(lit.getX());
+					String str = String.valueOf(-a);
+					s = map.getURI(Type.CLASS.name() + str);
+				}
 				String o = map.getURI(lit.getY());
+				if(o == null) {
+					int b = parse(lit.getY());
+					String str = String.valueOf(-b);
+					o = map.getURI(Type.CLASS.name() + str);
+				}
 				Triple t = new Triple(NodeFactory.createURI(s),
 						NodeFactory.createURI(p), NodeFactory.createURI(o));
 				System.out.println(prob + "\t" + t);
@@ -100,6 +111,17 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 
 		writer.finish();
 
+	}
+	
+	private int parse(String string) {
+		String sub = null;
+		if(string.startsWith(Type.CLASS.name()))
+			sub = Type.CLASS.name();
+		if(string.startsWith(Type.ENTITY.name()))
+			sub = Type.ENTITY.name();
+		if(string.startsWith(Type.RELATION.name()))
+			sub = Type.RELATION.name();
+		return Integer.parseInt(string.substring(sub.length()));
 	}
 
 }

@@ -119,7 +119,7 @@ public class ProbKBData {
 		for(String line : map.getRelClasses()) {
 			String[] arr = line.split("#");
 			// rel_id+"#"+class_id+"#"+is_domain
-			String rel = arr[0].substring(REL_LENGTH);
+			String rel = arr[0].startsWith(Type.RELATION.name()) ? arr[0].substring(REL_LENGTH) : arr[0].substring(ENT_LENGTH);
 			String cl = arr[1].substring(CLS_LENGTH);
 			Boolean isDomain = Boolean.parseBoolean(arr[2]);
 			
