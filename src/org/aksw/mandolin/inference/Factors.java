@@ -82,9 +82,10 @@ public class Factors {
 			e.printStackTrace();
 		}
 
-		System.out.println("EVIDENCE");
-		for (Literal l : evidence)
-			System.out.println(l);
+		System.out.println("EVIDENCE SIZE = "+evidence.size());
+//		System.out.println("EVIDENCE");
+//		for (Literal l : evidence)
+//			System.out.println(l);
 
 	}
 
@@ -129,7 +130,7 @@ public class Factors {
 					
 					Clause clause = new Clause(rs.getDouble("weight"), lit, hard);
 					clauses.add(clause);
-					System.out.println(clause);
+//					System.out.println(clause);
 
 				}
 			} catch (SQLException e) {

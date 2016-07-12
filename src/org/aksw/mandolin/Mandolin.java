@@ -84,7 +84,7 @@ public class Mandolin {
 		this.thrMax = 95;
 		this.enableOnt = false;
 		this.enableFwc = false;
-		this.enableSim = false;
+		this.enableSim = true;
 
 		map = new NameMapper(aimRelation);
 		

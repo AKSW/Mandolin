@@ -1,5 +1,6 @@
 package org.aksw.mandolin.rulemining;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javatools.administrative.Announce;
