@@ -55,6 +55,11 @@ public class Mandolin {
 	 * Enable forward chain.
 	 */
 	private boolean enableFwc;
+	
+	/**
+	 * Enable similarity graph enrichment.
+	 */
+	private boolean enableSim;
 
 	// -------------------------------------------------------------------------
 
@@ -76,12 +81,13 @@ public class Mandolin {
 //				"linksets/DBLPL3S-LinkedACM-10.nt",
 		};
 //		this.aimRelation = OWL.sameAs.getURI();
-		this.aimRelation = RDF.type.getURI();
+		this.aimRelation = "http://mandolin.aksw.org/example/topic";
 		this.thrMin = 95;
 		this.thrStep = 10;
 		this.thrMax = 95;
 		this.enableOnt = false;
-		this.enableFwc = true;
+		this.enableFwc = false;
+		this.enableSim = false;
 
 		map = new NameMapper(aimRelation);
 		
@@ -96,8 +102,9 @@ public class Mandolin {
 	 * @param thrMax
 	 * @param enableOnt
 	 * @param enableFwc
+	 * @param enableSim
 	 */
-	public Mandolin(String workspace, String csInputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc) {
+	public Mandolin(String workspace, String csInputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean enableSim) {
 		super();
 		
 		this.workspace = workspace;
@@ -108,6 +115,7 @@ public class Mandolin {
 		this.thrMax = thrMax;
 		this.enableOnt = enableOnt;
 		this.enableFwc = enableFwc;
+		this.enableSim = enableSim;
 
 		map = new NameMapper(aimRelation);
 
@@ -139,7 +147,10 @@ public class Mandolin {
 		// model-fwc.nt -> map (classes)
 		Classes.build(map, workspace);
 		// model-fwc.nt -> map (other)
-		Evidence.build(map, workspace, thrMin, thrMax, thrStep);
+		if(enableSim)
+			Evidence.build(map, workspace, thrMin, thrMax, thrStep);
+		else
+			Evidence.build(map, workspace);
 
 		if(isVerbose)
 			map.pretty();

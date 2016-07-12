@@ -61,7 +61,7 @@ public class CrossValidation {
 	public static void main(String[] args) throws NumberFormatException, Exception {
 		
 		run(args[0], args[1], args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]),
-				Boolean.parseBoolean(args[8]));
+				Boolean.parseBoolean(args[8]), Boolean.parseBoolean(args[9]));
 		
 	}
 
@@ -74,10 +74,11 @@ public class CrossValidation {
 	 * @param thrMax
 	 * @param enableOnt
 	 * @param enableFwc
+	 * @param enableSim
 	 * @param reverseCV
 	 * @throws Exception 
 	 */
-	public static void run(String workspace, String inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean reverseCV) throws Exception {
+	public static void run(String workspace, String inputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean enableSim, boolean reverseCV) throws Exception {
 		
 		// announce
 		String cvType = reverseCV ? "reverse " : "";
@@ -118,7 +119,7 @@ public class CrossValidation {
 			String runPath = workspace + RUN_PATH_SUFFIX + i;
 			String trainingPath = foldPath + "/training" + i + ".nt";
 			
-			Mandolin m = new Mandolin(runPath, trainingPath, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc);
+			Mandolin m = new Mandolin(runPath, trainingPath, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc, enableSim);
 			m.run();
 			
 			// each theta has different results
