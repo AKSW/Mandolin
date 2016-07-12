@@ -1,2 +1,2 @@
-#!/usr/bin/bash
-postgres -D db/
+#!/usr/bin/env bash
+postgres -D db/ &

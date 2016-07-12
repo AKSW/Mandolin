@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-initdb db -E utf8
+pg_ctl stop -D db/
