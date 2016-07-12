@@ -18,9 +18,6 @@ import org.aksw.mandolin.util.PostgreNotStartedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.hp.hpl.jena.vocabulary.OWL;
-import com.hp.hpl.jena.vocabulary.RDF;
-
 /**
  * The final pipeline for MANDOLIN, a scalable join of several
  * statistical-relational-learning algorithms to predict RDF links of any type

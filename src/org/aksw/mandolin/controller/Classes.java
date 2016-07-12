@@ -26,7 +26,7 @@ public class Classes {
 	 */
 	public static void build(final NameMapper map, final String BASE) {
 		
-//		final CollectionCache properties = new CollectionCache();
+		final CollectionCache nodes = new CollectionCache();
 //		final CollectionCache classes = new CollectionCache();
 		
 		// reader implementation
@@ -77,7 +77,14 @@ public class Classes {
 //					// TODO this could be extended to all properties with domain or range = rdfs:Class
 //					classes.set.add(o);
 				}
+				
+				map.add(s, Type.ENTITY);
+				map.add(o, Type.ENTITY);
 
+				// save nodes
+				nodes.set.add(s);
+				nodes.set.add(o);
+				
 //				// save property
 //				properties.set.add(p);
 				// count triples
@@ -87,6 +94,9 @@ public class Classes {
 		};
 
 		RDFDataMgr.parse(dataStream, BASE + "/model-fwc.nt");
+		
+		for(String s : nodes.set)
+			map.addEntClass(map.toName(s), map.getOwlThingName());
 		
 		map.setCollisionDelta(collisionDelta());
 		

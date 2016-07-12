@@ -44,109 +44,106 @@ public class Evidence {
 
 		final TreeSet<ComparableLiteral> setOfStrings = build(map, BASE);
 		
-//		if() {
-	
-			// call similarity join
-			SimilarityJoin.build(map, setOfStrings, cache, BASE, THR_MIN, THR_MAX,
-					THR_STEP);
+		// call similarity join
+		SimilarityJoin.build(map, setOfStrings, cache, BASE, THR_MIN, THR_MAX,
+				THR_STEP);
+		
+		// append model-sim-fwc.nt to model-fwc.nt
+		final FileOutputStream output;
+		try {
+			output = new FileOutputStream(new File(BASE + "/model-sim-temp.nt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
+		writer.start();
+		
+		StreamRDF reader = new StreamRDF() {
 			
-			// append model-sim-fwc.nt to model-fwc.nt
-			final FileOutputStream output;
-			try {
-				output = new FileOutputStream(new File(BASE + "/model-sim-temp.nt"));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				return;
+			@Override
+			public void triple(Triple triple) {
+				writer.triple(triple);
 			}
 			
-			final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
-			writer.start();
+			@Override
+			public void start() {
+			}
 			
-			StreamRDF reader = new StreamRDF() {
-				
-				@Override
-				public void triple(Triple triple) {
-					writer.triple(triple);
-				}
-				
-				@Override
-				public void start() {
-				}
-				
-				@Override
-				public void quad(Quad quad) {
-				}
-				
-				@Override
-				public void prefix(String prefix, String iri) {
-				}
-				
-				@Override
-				public void finish() {
-				}
-				
-				@Override
-				public void base(String base) {
-				}
-				
-			};
+			@Override
+			public void quad(Quad quad) {
+			}
 			
-			RDFDataMgr.parse(reader, BASE + "/model-fwc.nt");
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
 			
-			StreamRDF readerSim = new StreamRDF() {
-				
-				@Override
-				public void triple(Triple triple) {
-					writer.triple(triple);
-					String s = triple.getSubject().getURI();
-					String p = triple.getPredicate().getURI();
-					
-					String o = parse(triple.getObject());
-					if(o == null)
-						return;
-	//				String relName = 
-							map.add(p, Type.RELATION);
-	//				String name1 = 
-							map.add(s, Type.ENTITY);
-	//				String name2 = 
-							map.add(o, Type.ENTITY);
-					
-					// XXX oddly this shall be off
-	//				map.addRelationship(relName, name1, name2);
-				}
-				
-				@Override
-				public void start() {
-				}
-				
-				@Override
-				public void quad(Quad quad) {
-				}
-				
-				@Override
-				public void prefix(String prefix, String iri) {
-				}
-				
-				@Override
-				public void finish() {
-				}
-				
-				@Override
-				public void base(String base) {
-				}
-				
-			};
-	
-			RDFDataMgr.parse(readerSim, BASE + "/model-sim-fwc.nt");
+			@Override
+			public void finish() {
+			}
 			
-			writer.finish();
+			@Override
+			public void base(String base) {
+			}
 			
-			
-			// delete old file, rename temp file
-			new File(BASE + "/model-fwc.nt").delete();
-			new File(BASE + "/model-sim-temp.nt").renameTo(new File(BASE + "/model-fwc.nt"));
+		};
 		
-//		}
+		RDFDataMgr.parse(reader, BASE + "/model-fwc.nt");
+		
+		StreamRDF readerSim = new StreamRDF() {
+			
+			@Override
+			public void triple(Triple triple) {
+				writer.triple(triple);
+				String s = triple.getSubject().getURI();
+				String p = triple.getPredicate().getURI();
+				
+				String o = parse(triple.getObject());
+				if(o == null)
+					return;
+//				String relName = 
+						map.add(p, Type.RELATION);
+//				String name1 = 
+						map.add(s, Type.ENTITY);
+//				String name2 = 
+						map.add(o, Type.ENTITY);
+				
+				// XXX oddly this shall be off
+//				map.addRelationship(relName, name1, name2);
+			}
+			
+			@Override
+			public void start() {
+			}
+			
+			@Override
+			public void quad(Quad quad) {
+			}
+			
+			@Override
+			public void prefix(String prefix, String iri) {
+			}
+			
+			@Override
+			public void finish() {
+			}
+			
+			@Override
+			public void base(String base) {
+			}
+			
+		};
+
+		RDFDataMgr.parse(readerSim, BASE + "/model-sim-fwc.nt");
+		
+		writer.finish();
+		
+		
+		// delete old file, rename temp file
+		new File(BASE + "/model-fwc.nt").delete();
+		new File(BASE + "/model-sim-temp.nt").renameTo(new File(BASE + "/model-fwc.nt"));
+		
 	}
 
 	/**

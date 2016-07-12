@@ -3,6 +3,8 @@ package org.aksw.mandolin.controller;
 import java.util.HashMap;
 import java.util.TreeSet;
 
+import org.supercsv.cellprocessor.ParseBigDecimal;
+
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 
@@ -23,6 +25,10 @@ public class NameMapper {
 	
 	public String getOwlThingId() {
 		return OWL_THING_NAME.substring(ProbKBData.CLS_LENGTH);
+	}
+
+	public String getOwlThingName() {
+		return OWL_THING_NAME;
 	}
 
 	public TreeSet<String> getEntClasses() {
@@ -80,6 +86,13 @@ public class NameMapper {
 	 * @param className
 	 */
 	public void addEntClass(String entName, String className) {
+		
+		if(entName.startsWith(Type.CLASS.name()))
+			entName = classToEntityForm(entName);
+		if(entName.startsWith(Type.RELATION.name()))
+			entName = relationToEntityForm(entName);
+		
+		System.out.println("ENTCLASS: "+entName+", "+className);
 		entClasses.add(entName + "#" + className);
 		entClasses.add(entName + "#" + OWL_THING_NAME);
 		// add an rdf:type relationship
@@ -207,6 +220,27 @@ public class NameMapper {
 	public void setCollisionDelta(int cDelta) {
 		System.out.println("Collision delta: "+cDelta);
 		this.cDelta = cDelta;
+	}
+
+	public String toName(String uri) {
+		String name = uriToMln.get(uri);
+		if(name.startsWith(Type.ENTITY.name()))
+			return name;
+		if(name.startsWith(Type.CLASS.name()))
+			return classToEntityForm(name);
+		// relation
+		return relationToEntityForm(name);
+	}
+
+	public static int parse(String string) {
+		String sub = null;
+		if(string.startsWith(Type.CLASS.name()))
+			sub = Type.CLASS.name();
+		if(string.startsWith(Type.ENTITY.name()))
+			sub = Type.ENTITY.name();
+		if(string.startsWith(Type.RELATION.name()))
+			sub = Type.RELATION.name();
+		return Integer.parseInt(string.substring(sub.length()));
 	}
 	
 }
