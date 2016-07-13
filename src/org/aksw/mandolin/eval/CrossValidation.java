@@ -113,7 +113,8 @@ public class CrossValidation {
 		String setD = setPath + "/setD.nt";
 		
 		// for each fold, launch Mandolin
-		outer: for(int i=0; i<N_FOLDS; i++) {
+//		outer: 
+		for(int i=0; i<N_FOLDS; i++) {
 			
 			System.out.println("\n============= FOLD "+i+" =============\n");
 			
