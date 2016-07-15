@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.TreeSet;
 
 import org.aksw.mandolin.controller.NameMapper;
@@ -101,6 +103,16 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 					String str = String.valueOf(-a);
 					s = map.getURI(Type.CLASS.name() + str);
 				}
+				
+				// filter out illegal triples...
+				try {
+					new URI(s);
+				} catch (URISyntaxException e) {
+					System.out.println("WARNING: A predicted triple has a subject "
+							+ "(" + s + ") which is not an URI. Skipping triple...");
+					continue;
+				}
+				
 				String o = map.getURI(lit.getY());
 				if(o == null) {
 					int b = NameMapper.parse(lit.getY());
