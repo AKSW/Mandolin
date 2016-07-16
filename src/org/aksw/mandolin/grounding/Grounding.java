@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 import org.aksw.mandolin.util.Bundle;
 import org.aksw.mandolin.util.Shell;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -14,6 +16,8 @@ import org.aksw.mandolin.util.Shell;
  */
 public class Grounding {
 
+	private final static Logger logger = LogManager.getLogger(Grounding.class);
+	
 	public static void ground(String base) throws FileNotFoundException {
 		// prepare SQL files
 		prepare(base);
@@ -24,13 +28,16 @@ public class Grounding {
 	}
 
 	private static void run() {
+		
+		logger.info("Grounding...");
+		
 		String[] cmd = {
 		// Drop schema
 		Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
 				+ Bundle.getString("pgsql_url") + " -p 5432 -f "
 				+ System.getProperty("user.dir") + "/pgsql/sql/run.sql", };
 		for (String c : cmd) {
-			System.out.println("> " + c);
+			logger.debug("> " + c);
 			Shell.execute(c, true);
 		}
 	}
@@ -65,7 +72,7 @@ public class Grounding {
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/ground.sql" };
 		for (String c : cmd) {
-			System.out.println("> " + c);
+			logger.debug("> " + c);
 			Shell.execute(c, true);
 		}
 	}
@@ -112,10 +119,10 @@ public class Grounding {
 		in.close();
 	}
 
-	public static void main(String[] args) throws FileNotFoundException {
-
-		ground("eval/0001");
-
-	}
+//	public static void main(String[] args) throws FileNotFoundException {
+//
+//		ground("eval/0001");
+//
+//	}
 
 }

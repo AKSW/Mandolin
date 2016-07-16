@@ -22,6 +22,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
@@ -35,6 +37,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *
  */
 public class SimilarityJoin {
+	
+	private final static Logger logger = LogManager.getLogger(SimilarityJoin.class);
 	
 	public static final String SIMILAR_PREFIX = "http://mandolin.aksw.org/ontology#similar";
 	
@@ -79,7 +83,7 @@ public class SimilarityJoin {
 			dataset.put(i, lit);
 		}
 
-//		System.out.println(cache.stringItems.size());
+		logger.trace(cache.stringItems.size());
 		List<StringItem> stringItems = cache.stringItems;
 
 		StringItem[] strDatum = stringItems.toArray(new StringItem[stringItems
@@ -93,8 +97,8 @@ public class SimilarityJoin {
 		try {
 			output = new FileOutputStream(new File(BASE + "/model-sim.nt"));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return;
+			logger.fatal(e.getMessage());
+			throw new RuntimeException("Cannot open file "+BASE+"/model-sim.nt of similarity joins.");
 		}
 		
 		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
@@ -113,7 +117,7 @@ public class SimilarityJoin {
 			
 			for(int thrj = THR_MIN; thrj < thr; thrj += THR_STEP) {
 				Triple t = new Triple(relNode, RDFS.subPropertyOf.asNode(), NodeFactory.createURI(similarToURI(thrj)));
-				System.out.println(t);
+				logger.trace(t);
 				writer.triple(t);
 				cTBox++;
 			}
@@ -137,8 +141,8 @@ public class SimilarityJoin {
 						lit1.getUri(), lit2.getUri());
 				cABox += c;
 				
-//				System.out.println(lit1.getUri() + " <=> " + lit2.getUri());
-//				System.out.println(lit1.getVal() + " <=> " + lit2.getVal());
+				logger.trace(lit1.getUri() + " <=> " + lit2.getUri());
+				logger.trace(lit1.getVal() + " <=> " + lit2.getVal());
 			}
 			
 			cABox += result.size();
@@ -148,7 +152,7 @@ public class SimilarityJoin {
 		// close NT file
 		writer.finish();
 		
-		System.out.println("Triples added after similarity join: TBox="+cTBox+", ABox="+cABox);
+		logger.info("Triples added after similarity join: TBox="+cTBox+", ABox="+cABox);
 		
 		// computing closure on similarity joins
 		PelletReasoner.closure(BASE + "/model-sim.nt", BASE + "/model-sim-fwc.nt");
@@ -175,8 +179,8 @@ public class SimilarityJoin {
 				zTree.add(rship);
 		}
 		
-//		System.out.println("wTree = " + wTree);
-//		System.out.println("zTree = " + zTree);
+		logger.trace("wTree = " + wTree);
+		logger.trace("zTree = " + zTree);
 		
 		// forall x : (x, rel, w) . add (x, extRel, z)
 		for(String rship : wTree) {
@@ -186,16 +190,16 @@ public class SimilarityJoin {
 			String extRelURI = similarCompositePropertyURI(thr, rel);
 			Node extRelNode = NodeFactory.createURI(extRelURI);
 			String extRelName = map.add(extRelURI, Type.RELATION);
-//			System.out.println(rel + " => "+extRelURI + " => "+extRelName);
+			logger.trace(rel + " => "+extRelURI + " => "+extRelName);
 			
 			map.addRelationship(extRelName, subj, z);
-//			System.out.println(extRelName + "#"+ subj +"#"+ z);
+			logger.trace(extRelName + "#"+ subj +"#"+ z);
 			
 			// add composite-relation triple
 			Triple t = new Triple(NodeFactory.createURI(map.getURI(subj)),
 					extRelNode,
 					zNode);
-//			System.out.println(t);
+			logger.trace(t);
 			writer.triple(t);
 			
 		}
@@ -208,16 +212,16 @@ public class SimilarityJoin {
 			String extRelURI = similarCompositePropertyURI(thr, rel);
 			Node extRelNode = NodeFactory.createURI(extRelURI);
 			String extRelName = map.add(extRelURI, Type.RELATION);
-//			System.out.println(rel + " => "+extRelURI + " => "+extRelName);
+			logger.trace(rel + " => "+extRelURI + " => "+extRelName);
 			
 			map.addRelationship(extRelName, subj, w);
-//			System.out.println(extRelName + "#"+ subj +"#"+ w);
+			logger.trace(extRelName + "#"+ subj +"#"+ w);
 			
 			// add composite-relation triple
 			Triple t = new Triple(NodeFactory.createURI(map.getURI(subj)),
 					extRelNode,
 					wNode);
-//			System.out.println(t);
+			logger.trace(t);
 			writer.triple(t);
 			
 		}

@@ -12,10 +12,5 @@ public class PrettyRandom {
 			r = String.valueOf(Math.random()).substring(2);
 		return r.substring(0, digits);
 	}
-
 	
-	public static void main(String[] args) {
-		for(int i=0; i<10; i++)
-			System.out.println(get(6));
-	}
 }

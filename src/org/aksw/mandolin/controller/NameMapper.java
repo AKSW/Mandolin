@@ -3,7 +3,8 @@ package org.aksw.mandolin.controller;
 import java.util.HashMap;
 import java.util.TreeSet;
 
-import org.supercsv.cellprocessor.ParseBigDecimal;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -13,6 +14,8 @@ import com.hp.hpl.jena.vocabulary.RDF;
  *
  */
 public class NameMapper {
+	
+	private final static Logger logger = LogManager.getLogger(NameMapper.class);
 	
 	private HashMap<String, String> mlnToUri = new HashMap<>();
 	private HashMap<String, String> uriToMln = new HashMap<>();
@@ -69,14 +72,14 @@ public class NameMapper {
 		}
 		// for comodity, the first element is always rdf:type
 		RDF_TYPE_NAME = this.add(RDF.type.getURI(), Type.RELATION);
-		System.out.println("Alias for rdf:type is " + RDF_TYPE_NAME);
+		logger.debug("Alias for rdf:type is " + RDF_TYPE_NAME);
 		// same for owl:Thing
 		OWL_THING_NAME = this.add(OWL.Thing.getURI(), Type.CLASS);
-		System.out.println("Alias for owl:Thing is " + OWL_THING_NAME);
+		logger.debug("Alias for owl:Thing is " + OWL_THING_NAME);
 		
 		this.aimURI = aimURI;
 		AIM_NAME = this.add(aimURI, Type.RELATION);
-		System.out.println("Alias for AIM ("+aimURI+") is " + AIM_NAME);
+		logger.debug("Alias for AIM ("+aimURI+") is " + AIM_NAME);
 	}
 	
 	/**
@@ -92,7 +95,7 @@ public class NameMapper {
 		if(entName.startsWith(Type.RELATION.name()))
 			entName = relationToEntityForm(entName);
 		
-		System.out.println("ENTCLASS: "+entName+", "+className);
+		logger.trace("ENTCLASS: "+entName+", "+className);
 		entClasses.add(entName + "#" + className);
 		entClasses.add(entName + "#" + OWL_THING_NAME);
 		// add an rdf:type relationship
@@ -126,14 +129,14 @@ public class NameMapper {
 
 	public String entityToRelationForm(String relName) {
 		String idr = String.valueOf(Integer.parseInt(relName.substring(ProbKBData.ENT_LENGTH)) + cDelta);
-		System.out.println(relName+" => "+idr);
+		logger.trace(relName+" => "+idr);
 		relName = Type.RELATION.toString() + idr;
 		return relName;
 	}
 
 	public String relationToEntityForm(String relName) {
 		String idr = String.valueOf(Integer.parseInt(relName.substring(ProbKBData.REL_LENGTH)) + cDelta);
-		System.out.println(relName+" => "+idr);
+		logger.trace(relName+" => "+idr);
 		relName = Type.ENTITY.toString() + idr;
 		return relName;
 	}
@@ -192,8 +195,7 @@ public class NameMapper {
 	
 	public void pretty() {
 		for(String key : mlnToUri.keySet())
-//			if(listByType.get(Type.PROPERTY).contains(key)) // TODO remove me!
-			System.out.println(key + "\t" + mlnToUri.get(key));
+			logger.trace(key + "\t" + mlnToUri.get(key));
 	}
 
 	/**
@@ -218,7 +220,7 @@ public class NameMapper {
 	}
 
 	public void setCollisionDelta(int cDelta) {
-		System.out.println("Collision delta: "+cDelta);
+		logger.debug("Collision delta: "+cDelta);
 		this.cDelta = cDelta;
 	}
 

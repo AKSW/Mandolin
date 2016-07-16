@@ -8,6 +8,8 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
@@ -21,6 +23,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class Validator {
 
+	private final static Logger logger = LogManager.getLogger(Validator.class);
+	
 	/**
 	 * @param base
 	 * @param input
@@ -78,7 +82,7 @@ public class Validator {
 										node.getLiteral().toString().substring(0, 4) + "^^" + XSD.gYear);
 								triple = new Triple(triple.getSubject(), triple.getPredicate(), 
 										newNode);
-//								System.out.println("Bad-formed literal: "+node+" - Using: "+newNode);
+								logger.warn("Bad-formed literal: "+node+" - Using: "+newNode);
 							}
 						}
 					}

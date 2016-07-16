@@ -14,6 +14,7 @@ import com.hp.hpl.jena.sparql.core.Quad;
  */
 public class Evaluation {
 	
+	
 	private String psetPath, hsetPath;
 	
 	private int tp, fp, fn;

@@ -1,9 +1,10 @@
 package org.aksw.mandolin.rulemining;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javatools.administrative.Announce;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javatools.parsers.NumberFormatter;
 import amie.mining.AMIE;
 import amie.rules.Rule;
@@ -13,6 +14,8 @@ import amie.rules.Rule;
  *
  */
 public class AmieHandler {
+	
+	private final static Logger logger = LogManager.getLogger(AmieHandler.class);
 	
 	public static enum MiningStrategy {
 		HEAD_COVERAGE, SUPPORT;
@@ -40,7 +43,7 @@ public class AmieHandler {
 			throw new RuntimeException("MiningStrategy does not exist: " + ms.name());
 		}
 		
-		Announce.doing("Starting the mining phase");
+		logger.info("Starting the mining phase");
 
 		long time = System.currentTimeMillis();
 
@@ -49,14 +52,14 @@ public class AmieHandler {
 		if (!miner.isRealTime()) {
 			Rule.printRuleHeaders();
 			for (Rule rule : rules) {
-				System.out.println(rule.getFullRuleString());
+				logger.info(rule.getFullRuleString());
 			}
 		}
 
 		long miningTime = System.currentTimeMillis() - time;
-		System.out.println("Mining done in "
+		logger.info("Mining done in "
 				+ NumberFormatter.formatMS(miningTime));
-		System.out.println(rules.size() + " rules mined.");
+		logger.info(rules.size() + " rules mined.");
 
 	}
 

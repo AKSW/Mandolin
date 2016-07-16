@@ -7,6 +7,8 @@ import java.util.Collection;
 
 import org.aksw.mandolin.controller.ProbKBData;
 import org.aksw.mandolin.controller.NameMapper.Type;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.googlecode.rockit.app.solver.pojo.Clause;
 import com.googlecode.rockit.app.solver.pojo.Literal;
@@ -21,6 +23,8 @@ import com.googlecode.rockit.javaAPI.HerbrandUniverse;
  */
 public class Factors {
 
+	private final static Logger logger = LogManager.getLogger(Factors.class);
+	
 	private static Factors instance = null;
 
 	private ArrayList<String> consistentStartingPoints;
@@ -82,10 +86,10 @@ public class Factors {
 			e.printStackTrace();
 		}
 
-		System.out.println("EVIDENCE SIZE = "+evidence.size());
-//		System.out.println("EVIDENCE");
+		logger.info("EVIDENCE SIZE = "+evidence.size());
+//		logger.debug("EVIDENCE");
 //		for (Literal l : evidence)
-//			System.out.println(l);
+//			logger.debug(l);
 
 	}
 
@@ -130,7 +134,7 @@ public class Factors {
 					
 					Clause clause = new Clause(rs.getDouble("weight"), lit, hard);
 					clauses.add(clause);
-//					System.out.println(clause);
+					logger.trace(clause);
 
 				}
 			} catch (SQLException e) {
@@ -138,7 +142,7 @@ public class Factors {
 			}
 		}
 
-		System.out.println(clauses.size() + " clauses collected.");
+		logger.info(clauses.size() + " clauses collected.");
 	}
 
 	public ArrayList<String> getConsistentStartingPoints() {

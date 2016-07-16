@@ -7,6 +7,8 @@ import java.util.Collection;
 import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.googlecode.rockit.app.Parameters;
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSLiteral;
@@ -24,6 +26,8 @@ import com.googlecode.rockit.parser.SyntaxReader;
  */
 public abstract class RockitGibbsSampling {
 
+	private final static Logger logger = LogManager.getLogger(RockitGibbsSampling.class);
+	
 	protected static SyntaxReader reader;
 	
 	protected NameMapper map;
@@ -43,7 +47,7 @@ public abstract class RockitGibbsSampling {
 		try {
 			Parameters.readPropertyFile();
 		} catch (ReadOrWriteToFileException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		Parameters.USE_CUTTING_PLANE_AGGREGATION = false;
 		Parameters.USE_CUTTING_PLANE_INFERENCE = false;

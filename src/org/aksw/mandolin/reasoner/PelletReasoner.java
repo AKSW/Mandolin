@@ -9,6 +9,8 @@ import org.aksw.mandolin.util.Timer;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 
 import com.hp.hpl.jena.graph.Node;
@@ -35,6 +37,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class PelletReasoner {
 
+	private final static Logger logger = LogManager.getLogger(PelletReasoner.class);
+	
 	public static void main(String[] args) {
 		testThis();
 //		 run("eval/0001");
@@ -56,21 +60,22 @@ public class PelletReasoner {
 		String path = System.getProperty("user.dir");
 		RDFDataMgr.read(infModel, "file://" + path + "/" + base + "/model.nt");
 
-		System.out.println("Model size = " + ontModel.size());
+		logger.info("Model size = " + ontModel.size());
 
 		ValidityReport report = infModel.validate();
 		printIterator(report.getReports(), "Validation Results");
 
-		System.out.println("Inferred model size = " + infModel.size());
+		logger.info("Inferred model size = " + infModel.size());
 
 		infModel.enterCriticalSection(Lock.READ);
 
 		try {
 			RDFDataMgr.write(new FileOutputStream(new File(base
 					+ "/model-fwc.nt")), infModel, Lang.NT);
-			System.out.println("Model generated.");
+			logger.info("Model generated.");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.fatal(e.getMessage());
+			throw new RuntimeException("Necessary file model-fwc.nt was not generated.");
 		} finally {
 			infModel.leaveCriticalSection();
 		}
@@ -89,21 +94,22 @@ public class PelletReasoner {
 		String path = System.getProperty("user.dir");
 		RDFDataMgr.read(infModel, "file://" + path + "/" + input);
 
-		System.out.println("Model = "+input+", size = " + ontModel.size());
+		logger.info("Model = "+input+", size = " + ontModel.size());
 
 		ValidityReport report = infModel.validate();
 		printIterator(report.getReports(), "Validation Results");
 
-		System.out.println("Inferred model size = " + infModel.size());
+		logger.info("Inferred model size = " + infModel.size());
 
 		infModel.enterCriticalSection(Lock.READ);
 
 		try {
 			RDFDataMgr.write(new FileOutputStream(new File(output)), 
 					infModel, Lang.NT);
-			System.out.println("Model generated at "+output);
+			logger.info("Model generated at "+output);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.fatal(e.getMessage());
+			throw new RuntimeException("Necessary file "+output+" was not generated.");
 		} finally {
 			infModel.leaveCriticalSection();
 		}
@@ -166,7 +172,7 @@ public class PelletReasoner {
 										+ "^^" + XSD.gYear);
 								triple = new Triple(triple.getSubject(),
 										triple.getPredicate(), newNode);
-//								System.out.println("Bad-formed literal: "
+//								logger.warn("Bad-formed literal: "
 //										+ node + " - Using: " + newNode);
 							}
 						}
@@ -189,47 +195,49 @@ public class PelletReasoner {
 
 		t.lap();
 
-		System.out.println("Model size = " + ontModel.size());
+		logger.info("Model size = " + ontModel.size());
 
 		ValidityReport report = infModel.validate();
 		printIterator(report.getReports(), "Validation Results");
 
-		System.out.println("Inferred model size = " + infModel.size());
+		logger.info("Inferred model size = " + infModel.size());
 
 		infModel.enterCriticalSection(Lock.READ);
 
+		String f = "tmp/test-this.nt";
 		try {
-			RDFDataMgr.write(new FileOutputStream(new File("tmp/test-this.nt")),
+			RDFDataMgr.write(new FileOutputStream(new File(f)),
 					infModel, Lang.NT);
-			System.out.println("Model generated.");
+			logger.info("Model generated.");
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.fatal(e.getMessage());
+			throw new RuntimeException("Necessary file "+f+" was not generated.");
 		} finally {
 			infModel.leaveCriticalSection();
 		}
 
 		t.lap();
 
-		System.out.println("Reasoner init (ms): " + t.getLapMillis(0));
-		System.out.println("Model load (ms): " + t.getLapMillis(1));
-		System.out.println("Model load (ms/triple): " + t.getLapMillis(1)
+		logger.info("Reasoner init (ms): " + t.getLapMillis(0));
+		logger.info("Model load (ms): " + t.getLapMillis(1));
+		logger.info("Model load (ms/triple): " + t.getLapMillis(1)
 				/ infModel.size());
-		System.out.println("Validation (ms): " + t.getLapMillis(2));
-		System.out.println("Save inferred model (ms): " + t.getLapMillis(3));
+		logger.info("Validation (ms): " + t.getLapMillis(2));
+		logger.info("Save inferred model (ms): " + t.getLapMillis(3));
 		printIterator(report.getReports(), "Validation Results");
 
 	}
 
 	private static void printIterator(Iterator<?> i, String header) {
-		System.out.println(header);
+		logger.info(header);
 
 		if (i.hasNext()) {
 			while (i.hasNext())
-				System.out.println(i.next());
+				logger.info(i.next());
 		} else
-			System.out.println("<Nothing to say.>");
+			logger.info("<Nothing to say.>");
 
-		System.out.println();
+		logger.info("");
 	}
 
 }

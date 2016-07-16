@@ -1,6 +1,7 @@
 package org.aksw.mandolin;
 
 import java.io.File;
+import java.util.Scanner;
 
 import org.aksw.mandolin.controller.Classes;
 import org.aksw.mandolin.controller.Evidence;
@@ -15,6 +16,7 @@ import org.aksw.mandolin.reasoner.PelletReasoner;
 import org.aksw.mandolin.rulemining.RDFToTSV;
 import org.aksw.mandolin.rulemining.RuleMiner;
 import org.aksw.mandolin.util.PostgreNotStartedException;
+import org.aksw.mandolin.util.SetUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,15 +64,13 @@ public class Mandolin {
 
 	private NameMapper map;
 	
-	private boolean isVerbose = true;
-	
 	/**
 	 * Use demo values.
 	 */
 	public Mandolin() {
 		super();
 
-		this.workspace = "eval/0001";
+		this.workspace = "eval/0001inf";
 		this.inputPaths = new String[] { 
 				"datasets/AKSW-one-out.nt",
 //				"datasets/DBLPL3S-10-one-out.nt",
@@ -78,13 +78,13 @@ public class Mandolin {
 //				"linksets/DBLPL3S-LinkedACM-10.nt",
 		};
 //		this.aimRelation = OWL.sameAs.getURI();
-		this.aimRelation = "http://mandolin.aksw.org/example/topic";
+		this.aimRelation = "http://mandolin.aksw.org/example/topic"; //"http://dbpedia.org/ontology/influenced";
 		this.thrMin = 95;
 		this.thrStep = 10;
 		this.thrMax = 95;
 		this.enableOnt = false;
 		this.enableFwc = false;
-		this.enableSim = true;
+		this.enableSim = false;
 
 		map = new NameMapper(aimRelation);
 		
@@ -123,7 +123,7 @@ public class Mandolin {
 	 */
 	public void run() throws Exception {
 
-		System.out.println("Mandolin started!");
+		logger.info("Mandolin started!");
 		printInfo();
 
 		// create working directory
@@ -149,12 +149,12 @@ public class Mandolin {
 		else
 			Evidence.build(map, workspace);
 
-		if(isVerbose)
+		if(logger.isTraceEnabled())
 			map.pretty();
 
-		System.out.println("# entClasses: " + map.getEntClasses().size());
-		System.out.println("# relClasses: " + map.getRelClasses().size());
-		System.out.println("# relationships: " + map.getRelationships().size());
+		logger.info("# entClasses: " + map.getEntClasses().size());
+		logger.info("# relClasses: " + map.getRelClasses().size());
+		logger.info("# relationships: " + map.getRelationships().size());
 
 		// map -> KB description csv
 		ProbKBData.buildCSV(map, workspace);
@@ -174,11 +174,29 @@ public class Mandolin {
 		
 		for(int th=THETA_MIN; th<=THETA_MAX; th+=1) {
 			double theta = th / 10.0;
-			System.out.println("\ntheta = "+theta);
-			pset.saveLinkset(map, theta, workspace + "/output_" + theta + ".nt");
+			logger.info("theta = "+theta);
+			
+			// get set of predicted (just outputted) links
+			String knowledge = workspace + "/model-fwc.nt";
+			String predicted = workspace + "/output_" + theta + ".nt";
+			pset.saveLinkset(map, theta, predicted);
+			
+			// compute set of discovered (emergent) links
+			String discovered = workspace + "/discovered_" + theta + ".nt";
+			SetUtils.minus(predicted, knowledge, discovered);
+			logger.debug("+++ DISCOVERED +++");
+			Scanner in = new Scanner(new File(discovered));
+			int size = 0;
+			while(in.hasNextLine()) {
+				logger.debug(in.nextLine());
+				size++;
+			}
+			in.close();
+			logger.info("Discovered triples size: "+size);
 		}
+		
 
-		System.out.println("Mandolin done.");
+		logger.info("Mandolin done.");
 
 	}
 
@@ -186,14 +204,14 @@ public class Mandolin {
 	 * 
 	 */
 	private void printInfo() {
-		System.out.println("BASE = "+workspace);
-		System.out.println("INPUT_PATHS:");
+		logger.info("BASE = "+workspace);
+		logger.info("INPUT_PATHS:");
 		for(String ip : inputPaths)
-			System.out.println("\t" + ip);
-		System.out.println("ONTO_IMPORT = "+enableOnt);
-		System.out.println("FORWARD_CHAIN = "+enableFwc);
-		System.out.println("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
-		System.out.println();
+			logger.info("\t" + ip);
+		logger.info("AIM_RELATION = "+aimRelation);
+		logger.info("ONTO_IMPORT = "+enableOnt);
+		logger.info("FORWARD_CHAIN = "+enableFwc);
+		logger.info("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
 	}
 
 
@@ -201,14 +219,6 @@ public class Mandolin {
 		return map;
 	}
 	
-	public void setVerbose(boolean v) {
-		this.isVerbose = v;
-	}
-	
-	public boolean isVerbose() {
-		return this.isVerbose;
-	}
-
 	public static void main(String[] args) throws Exception {
 
 		try {

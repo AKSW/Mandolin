@@ -7,6 +7,8 @@ import java.util.Collection;
 import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.model.PredictionLiteral;
 import org.aksw.mandolin.model.PredictionSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.googlecode.rockit.app.solver.pojo.Clause;
 import com.googlecode.rockit.app.solver.pojo.Literal;
@@ -24,12 +26,14 @@ import com.hp.hpl.jena.vocabulary.OWL;
  */
 public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 
+	private final static Logger logger = LogManager.getLogger(ProbKBToRockitGibbsSampling.class);
+	
 	public static void main(String[] args) {
 
 		PredictionSet ps = new ProbKBToRockitGibbsSampling(
 				new NameMapper(OWL.sameAs.getURI())).infer();
 		for (PredictionLiteral lit : ps)
-			System.out.println(lit);
+			logger.info(lit);
 
 	}
 
@@ -59,7 +63,7 @@ public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 		// [Prop2|2db|h0e]
 		Collection<Literal> evidence = factors.getEvidence();
 
-		System.out.println(evidence);
+		logger.debug("Evidence: "+evidence);
 
 		// call Gibbs sampler
 		PredictionSet ps = null;

@@ -10,6 +10,8 @@ import javatools.datatypes.ByteString;
 
 import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.controller.ProbKBData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import amie.rules.Rule;
 
@@ -22,6 +24,8 @@ import com.opencsv.CSVWriter;
  *
  */
 public class RuleDriver {
+	
+	private final static Logger logger = LogManager.getLogger(RuleDriver.class);
 	
 	private NameMapper map;
 	private String base;
@@ -43,8 +47,8 @@ public class RuleDriver {
 		
 		int size = rule.getBody().size();
 		if(size == 0) {
-			System.out.println("size = 0");
-			return;
+			logger.fatal("Rules size = 0");
+			throw new RuntimeException("Mandolin cannot continue without MLN rules!");
 		}
 
 		if (size == 1) { // call one or two
@@ -114,7 +118,7 @@ public class RuleDriver {
 	 * @throws IOException 
 	 */
 	private void addTypeOne(String pHead, String pBody, double weight) {
-		System.out.println("Adding type one: "+pHead+", "+pBody+", "+weight);
+		logger.trace("Adding type one: "+pHead+", "+pBody+", "+weight);
 		String headName = map.getName(pHead).substring(ProbKBData.REL_LENGTH);
 		String bodyName = map.getName(pBody).substring(ProbKBData.REL_LENGTH); 
 		String str[] = {
@@ -135,7 +139,7 @@ public class RuleDriver {
 	 * @param weight
 	 */
 	private void addTypeTwo(String pHead, String pBody, double weight) {
-		System.out.println("Adding type two: "+pHead+", "+pBody+", "+weight);
+		logger.trace("Adding type two: "+pHead+", "+pBody+", "+weight);
 		String str[] = {
 				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
 				map.getName(pBody).substring(ProbKBData.REL_LENGTH),
@@ -156,7 +160,7 @@ public class RuleDriver {
 	 */
 	private void addTypeThree(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		System.out.println("Adding type three: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		logger.trace("Adding type three: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
 		String str[] = {
 				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
 				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
@@ -178,7 +182,7 @@ public class RuleDriver {
 	 */
 	private void addTypeFour(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		System.out.println("Adding type four: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		logger.trace("Adding type four: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
 		String str[] = {
 				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
 				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
@@ -200,7 +204,7 @@ public class RuleDriver {
 	 */
 	private void addTypeFive(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		System.out.println("Adding type five: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		logger.trace("Adding type five: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
 		String str[] = {
 				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
 				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
@@ -222,7 +226,7 @@ public class RuleDriver {
 	 */
 	private void addTypeSix(String pHead, String pBodyQ, String pBodyR,
 			double weight) {
-		System.out.println("Adding type six: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
+		logger.trace("Adding type six: "+pHead+", "+pBodyQ+", "+pBodyR+", "+weight);
 		String str[] = {
 				map.getName(pHead).substring(ProbKBData.REL_LENGTH),
 				map.getName(pBodyQ).substring(ProbKBData.REL_LENGTH),
@@ -236,7 +240,7 @@ public class RuleDriver {
 	}
 
 	public void buildCSV() {
-		// TODO Auto-generated method stub
+		
 		for(String key : csvContent.keySet()) {
 			CSVWriter writer = null;
 			try {
@@ -245,8 +249,8 @@ public class RuleDriver {
 					writer.writeNext(line);
 				writer.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
+				// XXX RuntimeException?
 			}			
 		}
 	}

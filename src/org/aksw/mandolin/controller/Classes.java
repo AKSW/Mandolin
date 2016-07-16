@@ -4,6 +4,8 @@ import org.aksw.mandolin.controller.NameMapper.Type;
 import org.aksw.mandolin.util.URIHandler;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
@@ -16,6 +18,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *
  */
 public class Classes {
+	
+	private final static Logger logger = LogManager.getLogger(Classes.class);
 	
 	private final static Cache size = new Cache();
 	
@@ -95,6 +99,7 @@ public class Classes {
 
 		RDFDataMgr.parse(dataStream, BASE + "/model-fwc.nt");
 		
+		logger.info("Adding owl:Thing type to {} nodes.", nodes.set.size());
 		for(String s : nodes.set)
 			map.addEntClass(map.toName(s), map.getOwlThingName());
 		

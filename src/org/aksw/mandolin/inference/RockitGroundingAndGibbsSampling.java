@@ -7,6 +7,8 @@ import java.util.Collection;
 
 import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.model.PredictionSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.googlecode.rockit.app.solver.StandardSolver;
 import com.googlecode.rockit.app.solver.pojo.Clause;
@@ -29,6 +31,8 @@ import com.hp.hpl.jena.vocabulary.OWL;
  */
 public class RockitGroundingAndGibbsSampling extends RockitGibbsSampling {
 
+	private final static Logger logger = LogManager.getLogger(RockitGroundingAndGibbsSampling.class);
+	
 	/**
 	 * MLN file.
 	 */
@@ -72,21 +76,21 @@ public class RockitGroundingAndGibbsSampling extends RockitGibbsSampling {
 			model = reader.getModel(input, groundings);
 
 			// standard grounding...
-			System.out.println("Input: " + this.input);
+			logger.info("Input: " + this.input);
 			StandardSolver solver = new StandardSolver(model);
 			// ground MLN and retrieve Clauses
 			ArrayList<String> consistentStartingPoints = solver.solve();
-			System.out.println("+++ STARTING POINTS +++");
+			logger.info("+++ STARTING POINTS +++");
 			for (String s : consistentStartingPoints)
-				System.out.println(s);
+				logger.info(s);
 			ArrayList<Clause> clauses = solver.getAllClauses();
-			System.out.println("+++ CLAUSES +++");
+			logger.info("+++ CLAUSES +++");
 			for (Clause c : clauses)
-				System.out.println(c);
+				logger.info(c);
 			Collection<Literal> evidence = solver.getEvidenceAxioms();
-			System.out.println("+++ EVIDENCE +++");
+			logger.info("+++ EVIDENCE +++");
 			for (Literal l : evidence)
-				System.out.println(l);
+				logger.info(l);
 			solver = null; // free memory
 
 			// call Gibbs sampler

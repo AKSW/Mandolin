@@ -15,6 +15,8 @@ import org.aksw.mandolin.controller.NameMapper.Type;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
@@ -26,6 +28,8 @@ import com.hp.hpl.jena.graph.Triple;
 public class PredictionSet extends TreeSet<PredictionLiteral> implements
 		Serializable {
 
+	private final static Logger logger = LogManager.getLogger(PredictionSet.class);
+	
 	/**
 	 * 
 	 */
@@ -38,7 +42,7 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 
 	public PredictionSet(String aim) {
 		this.aim = aim;
-		System.out.println("Created prediction set with aim: " + aim);
+		logger.info("Created prediction set with aim: " + aim);
 	}
 
 	public String getAim() {
@@ -51,9 +55,9 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 			oos = new ObjectOutputStream(new FileOutputStream(path));
 			oos.writeObject(this);
 			oos.close();
-			System.out.println("Predictions saved to " + path);
+			logger.info("Predictions saved to " + path);
 		} catch (IOException e) {
-			System.out.println("Cannot save " + this.toString() + ": "
+			logger.warn("Cannot save " + this.toString() + ": "
 					+ e.getMessage());
 		}
 	}
@@ -79,11 +83,10 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 			if(lit.getProb() < min)
 				min = lit.getProb();
 		}
-		System.out.println("max = "+max+", min = "+min);
 		double delta = max - min;
+		logger.debug("Normalization extrema: max = "+max+", min = "+min+", delta = "+delta);
 
-//		int inf = 0;
-		System.out.println("+++ INFERRED +++");
+		logger.info("Inferred triples size: "+this.size());
 		for (PredictionLiteral lit : this) {
 			
 			// filter only aim relation from pset
@@ -95,8 +98,7 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 			double relprob = (lit.getProb() - min) / delta;
 				
 			if (relprob >= theta) {
-				String prob = String.valueOf(lit.getProb());
-				System.out.println(lit + " (" + relprob + ")");
+				logger.debug(lit + " (" + relprob + ")");
 				String s = map.getURI(lit.getX());
 				if(s == null) {
 					int a = NameMapper.parse(lit.getX());
@@ -108,7 +110,7 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 				try {
 					new URI(s);
 				} catch (URISyntaxException e) {
-					System.out.println("WARNING: A predicted triple has a subject "
+					logger.debug("A predicted triple has a subject "
 							+ "(" + s + ") which is not an URI. Skipping triple...");
 					continue;
 				}
@@ -121,7 +123,9 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 				}
 				Triple t = new Triple(NodeFactory.createURI(s),
 						NodeFactory.createURI(p), NodeFactory.createURI(o));
-				System.out.println(prob + "\t" + t);
+				
+				logger.debug(lit.getProb() + "\t" + t);
+				
 				writer.triple(t);
 			}
 		}

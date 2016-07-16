@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.aksw.mandolin.controller.NameMapper.Type;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.opencsv.CSVWriter;
 
@@ -16,6 +18,8 @@ import com.opencsv.CSVWriter;
  *
  */
 public class ProbKBData {
+	
+	private final static Logger logger = LogManager.getLogger(ProbKBData.class);
 	
 	public final static int ENT_LENGTH = Type.ENTITY.name().length();
 	public final static int CLS_LENGTH = Type.CLASS.name().length();
@@ -131,7 +135,7 @@ public class ProbKBData {
 				entries.put(rel, obj);
 			}
 			obj[isDomain ? 1 : 2] = cl;
-			System.out.println((isDomain ? "domain" : "range") + " => " + Arrays.toString(obj));
+			logger.trace((isDomain ? "domain" : "range") + " => " + Arrays.toString(obj));
 			
 		}
 		

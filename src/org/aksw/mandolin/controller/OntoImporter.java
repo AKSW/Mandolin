@@ -14,6 +14,8 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.rdf.model.Model;
@@ -38,6 +40,8 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  *
  */
 public class OntoImporter {
+	
+	private final static Logger logger = LogManager.getLogger(OntoImporter.class);
 	
 	private static final Lang[] LANG_ATTEMPTS = {Lang.RDFXML, Lang.TTL, Lang.NT};
 
@@ -114,12 +118,12 @@ public class OntoImporter {
 		for(String path : paths)
 			RDFDataMgr.parse(dataStream, path);
 		
-		System.out.println("# classes collected = "+classes.set.size());
-		System.out.println("# properties collected = "+properties.set.size());
+		logger.info("# classes collected = "+classes.set.size());
+		logger.info("# properties collected = "+properties.set.size());
 		
 		// ontology importer
 		for(String uri : classes.set) {
-			System.out.println("Crawling <"+uri+">...");
+			logger.trace("Crawling <"+uri+">...");
 			Model model = ModelFactory.createDefaultModel();
 			// visit URIs in classes and properties
 			String path = BASE + "/temp-file-" + PrettyRandom.get(6) + "";
@@ -127,27 +131,27 @@ public class OntoImporter {
 			try {
 				FileUtils.copyURLToFile(new URL(uri), file);
 			} catch (IOException e) {
-				System.out.println("Cannot download <"+uri+">.");
+				logger.warn("Cannot download <"+uri+">.");
 				continue;
 			}
-			System.out.println("Saved to "+path+".");
+			logger.trace("Saved to "+path+".");
 			for(Lang lang : LANG_ATTEMPTS) {
 				try {
-					System.out.println("Trying with "+lang);
+					logger.trace("Trying with "+lang);
 					RDFDataMgr.read(model, path, lang);
 					break;
 				} catch (RiotException e) {
-					System.out.println("Cannot interpret <"+uri+"> using "+lang+".");
+					logger.warn("Cannot interpret <"+uri+"> using "+lang+".");
 				}
 			}
-			System.out.println("\t# statements: "+model.size());
+			logger.trace("# statements: "+model.size());
 			StmtIterator list = model.listStatements();
 			// append NT files to model...
 			while(list.hasNext()) {
 				// save wanted part of RDF files
 				Statement stmt = list.next();
 				
-				System.out.println("\t"+stmt);
+				logger.trace(stmt);
 				
 				boolean imprt = stmt.getPredicate().getURI().equals(uri);
 				
@@ -162,7 +166,7 @@ public class OntoImporter {
 				
 				if(imprt) {
 					Triple t = stmt.asTriple();
-					System.out.println("\t"+t);
+					logger.trace(t);
 					writer.triple(t);
 				}
 			}

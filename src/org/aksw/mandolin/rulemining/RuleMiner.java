@@ -2,6 +2,8 @@ package org.aksw.mandolin.rulemining;
 
 import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.rulemining.AmieHandler.MiningStrategy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
@@ -15,6 +17,8 @@ import amie.rules.Rule;
  *
  */
 public class RuleMiner {
+	
+	private final static Logger logger = LogManager.getLogger(RuleMiner.class);
 
 	public static void run(NameMapper map, String base) throws Exception {
 		
@@ -39,7 +43,7 @@ public class RuleMiner {
 						break;
 					}
 				if(skip) {
-					System.out.println("Skipping upper-ontology rule...");
+					logger.trace("Skipping upper-ontology rule...");
 					continue;
 				}
 			}
@@ -54,7 +58,7 @@ public class RuleMiner {
 					bstr += b + ",";
 				str += bstr + " | ";
 			}
-			System.out.println(rule.getHeadRelation() + "\t" + str + "\t" + rule.getPcaConfidence());
+			logger.trace(rule.getHeadRelation() + "\t" + str + "\t" + rule.getPcaConfidence());
 		}
 		
 		// make CSVs

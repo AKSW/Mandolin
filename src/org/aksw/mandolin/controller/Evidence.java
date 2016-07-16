@@ -13,6 +13,8 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.Triple;
@@ -27,6 +29,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
  */
 public class Evidence {
 
+	private final static Logger logger = LogManager.getLogger(Evidence.class);
+	
 	/**
 	 * @param map
 	 * @param SRC_PATH
@@ -53,8 +57,8 @@ public class Evidence {
 		try {
 			output = new FileOutputStream(new File(BASE + "/model-sim-temp.nt"));
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return;
+			logger.fatal(e.getMessage());
+			throw new RuntimeException("File " + BASE + "/model-sim-temp.nt not found!");
 		}
 		
 		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);
@@ -253,7 +257,7 @@ public class Evidence {
 //								.getObject().getLiteral().toString(true), arg0
 //								.getObject().getLiteral().getValue().toString());
 						ComparableLiteral lit = new ComparableLiteral(o, o);
-						System.out.println(lit.getVal());
+						logger.trace(lit.getVal());
 						setOfStrings.add(lit);
 					}
 					

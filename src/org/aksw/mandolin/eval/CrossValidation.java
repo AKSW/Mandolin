@@ -5,15 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeSet;
 
 import org.aksw.mandolin.Mandolin;
 import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.reasoner.PelletReasoner;
+import org.aksw.mandolin.util.SetUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
@@ -26,6 +28,8 @@ import com.hp.hpl.jena.vocabulary.XSD;
  *
  */
 public class CrossValidation {
+	
+	private final static Logger logger = LogManager.getLogger(CrossValidation.class);
 	
 	public static final int N_FOLDS = 10;
 	
@@ -84,7 +88,7 @@ public class CrossValidation {
 		// announce
 		String cvType = reverseCV ? "reverse " : "";
 		cvType += N_FOLDS + "-fold Cross-Validation";
-		System.out.println("Starting " + cvType + "...");
+		logger.info("Starting " + cvType + "...");
 		
 		// create folders
 		String setPath = workspace + SET_PATH_SUFFIX;
@@ -95,12 +99,15 @@ public class CrossValidation {
 		new File(foldPath).mkdirs();
 		
 		// divide aim relations (setP) and base dataset (setM) from original dataset (setD)
+		logger.info("Dividing aim relations from original dataset...");
 		divide(setPath, inputPaths, aimRelation);
 		
 		// partition aim relations into N_FOLDS parts
+		logger.info("Partitioning aim relations...");
 		partition(setPath, partitionPath);
 		
 		// create training/test sets, appending setM
+		logger.info("Creating training/test sets...");
 		fold(setPath, partitionPath, foldPath);
 		
 		HashMap<Double, ArrayList<Double>> f1s = new HashMap<>();
@@ -113,10 +120,9 @@ public class CrossValidation {
 		String setD = setPath + "/setD.nt";
 		
 		// for each fold, launch Mandolin
-//		outer: 
 		for(int i=0; i<N_FOLDS; i++) {
 			
-			System.out.println("\n============= FOLD "+i+" =============\n");
+			logger.info("============= FOLD "+i+" =============");
 			
 			String runPath = workspace + RUN_PATH_SUFFIX + i;
 			String trainingPath = foldPath + "/training" + i + ".nt";
@@ -130,7 +136,7 @@ public class CrossValidation {
 				// TODO better code style, please
 				
 				double theta = th / 10.0;
-				System.out.println("\ntheta = "+theta);
+				logger.info("theta = "+theta);
 				// set of generated links
 				String pG = runPath + "/output_" + theta + ".nt";
 //				// set of hidden links
@@ -139,228 +145,36 @@ public class CrossValidation {
 				// trivial knowledge = (M union P_K)*
 				String triv = runPath + "/triv_"+theta+".nt";
 				String muPk = runPath + "/temp_MuPk_"+theta+".nt";
-				union(setM, trainingPath, muPk);
+				SetUtils.union(setM, trainingPath, muPk);
 				PelletReasoner.closure(muPk, triv);
 				
 				// building setR
 				String setR = runPath + "/setR.nt";
 				String muPkuPg = runPath + "/temp_MuPkuPg_"+theta+".nt";
-				union(muPk, pG, muPkuPg);
+				SetUtils.union(muPk, pG, muPkuPg);
 				String allPred = runPath + "/temp_allPred_"+theta+".nt";
 				PelletReasoner.closure(muPkuPg, allPred);
-				minus(allPred, triv, setR);
+				SetUtils.minus(allPred, triv, setR);
 				
 				// building setE
 				String setE = runPath + "/setE.nt";
 				String allExp = runPath + "/temp_allExp_"+theta+".nt";
 				PelletReasoner.closure(setD, allExp);
 				String allExpAim = runPath + "/temp_allExpAim_"+theta+".nt";
-				keepOnly(aimRelation, allExp, allExpAim);
-				minus(allExpAim, triv, setE);
+				SetUtils.keepOnly(aimRelation, allExp, allExpAim);
+				SetUtils.minus(allExpAim, triv, setE);
 				
 				// evaluation: predicted vs expected links
 				Evaluation eval = new Evaluation(setR, setE);
 				eval.run();
 				f1s.get(theta).add(eval.getF1());
 				
-				// XXX
-//				break outer;
 			}
 		}
 		
 		for(Double theta : f1s.keySet())
-			System.out.println("\ntheta = "+theta+"\tf1 = "+f1s.get(theta));
+			logger.info("theta = "+theta+"\tf1 = "+f1s.get(theta));
 		
-		
-	}
-
-	private static void keepOnly(String relation, String in,
-			String out) {
-
-		final FileOutputStream output;
-		try {
-			output = new FileOutputStream(new File(out));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		final StreamRDF writer = StreamRDFWriter.getWriterStream(output, Lang.NT);		
-		
-		StreamRDF dataStream = new StreamRDF() {
-
-			@Override
-			public void start() {
-				writer.start();
-			}
-
-			@Override
-			public void quad(Quad quad) {
-			}
-
-			@Override
-			public void base(String base) {
-			}
-
-			@Override
-			public void prefix(String prefix, String iri) {
-			}
-
-			@Override
-			public void finish() {
-				writer.finish();
-			}
-			
-			@Override
-			public void triple(Triple triple) {
-				if(triple.getPredicate().getURI().equals(relation))
-					writer.triple(triple);
-			}
-			
-		};
-		
-		RDFDataMgr.parse(dataStream, in);		
-	}
-
-	/**
-	 * Set difference.
-	 * 
-	 * @param setA
-	 * @param setB
-	 * @param output
-	 */
-	private static void minus(String setA, String setB, String output) {
-		
-		TreeSet<String> setBindex = new TreeSet<>();
-		StreamRDF bStream = new StreamRDF() {
-
-			@Override
-			public void start() {
-			}
-
-			@Override
-			public void triple(Triple triple) {
-				// XXX check that URIs are written in the same way
-				setBindex.add(triple.toString());
-			}
-
-			@Override
-			public void quad(Quad quad) {
-			}
-
-			@Override
-			public void base(String base) {
-			}
-
-			@Override
-			public void prefix(String prefix, String iri) {
-			}
-
-			@Override
-			public void finish() {
-			}
-			
-		};
-		RDFDataMgr.parse(bStream, setB);
-		
-		final FileOutputStream out;
-		final StreamRDF outStream;
-		try {
-			out = new FileOutputStream(new File(output));
-			outStream = StreamRDFWriter.getWriterStream(out, Lang.NT);
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-			return;
-		}
-		
-		outStream.start();
-		
-		StreamRDF aStream = new StreamRDF() {
-
-			@Override
-			public void start() {
-			}
-
-			@Override
-			public void triple(Triple triple) {
-				if(!setBindex.contains(triple.toString()))
-					outStream.triple(triple);
-			}
-			@Override
-			public void quad(Quad quad) {
-			}
-
-			@Override
-			public void base(String base) {
-			}
-
-			@Override
-			public void prefix(String prefix, String iri) {
-			}
-
-			@Override
-			public void finish() {
-			}
-			
-		};
-		RDFDataMgr.parse(aStream, setA);
-		
-		outStream.finish();
-		
-	}
-
-	/**
-	 * @param setA
-	 * @param setB
-	 * @param output
-	 */
-	private static void union(String setA, String setB, String output) {
-		
-		final FileOutputStream out;
-		final StreamRDF outStream;
-		try {
-			out = new FileOutputStream(new File(output));
-			outStream = StreamRDFWriter.getWriterStream(out, Lang.NT);
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-			return;
-		}
-		
-		outStream.start();
-		
-		StreamRDF dataStream = new StreamRDF() {
-
-			@Override
-			public void start() {
-			}
-
-			@Override
-			public void triple(Triple triple) {
-				outStream.triple(triple);
-			}
-
-			@Override
-			public void quad(Quad quad) {
-			}
-
-			@Override
-			public void base(String base) {
-			}
-
-			@Override
-			public void prefix(String prefix, String iri) {
-			}
-
-			@Override
-			public void finish() {
-			}
-			
-		};
-		
-		RDFDataMgr.parse(dataStream, setA);
-		RDFDataMgr.parse(dataStream, setB);
-		
-		outStream.finish();
 		
 	}
 
@@ -379,7 +193,7 @@ public class CrossValidation {
 				out[i] = StreamRDFWriter.getWriterStream(output[i], Lang.NT);
 				out[i].start();
 			} catch (FileNotFoundException e) {
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage());
 				return;
 			}
 			
@@ -391,7 +205,7 @@ public class CrossValidation {
 				
 				if(i != j) {
 					
-					System.out.println("Adding partition "+j+" to fold "+i);
+					logger.debug("Adding partition "+j+" to fold "+i);
 				
 					final int I = i;
 					
@@ -468,7 +282,7 @@ public class CrossValidation {
 		
 		for(int i=0; i<N_FOLDS; i++) {
 			out[i].finish();
-			System.out.println("File "+foldPath + "/training" + i + ".nt created.");
+			logger.debug("File "+foldPath + "/training" + i + ".nt created.");
 		}
 
 	}
@@ -487,7 +301,7 @@ public class CrossValidation {
 				out[i] = StreamRDFWriter.getWriterStream(output[i], Lang.NT);
 				out[i].start();
 			} catch (FileNotFoundException e) {
-				System.out.println(e.getMessage());
+				logger.error(e.getMessage());
 				return;
 			}
 		}
@@ -528,7 +342,7 @@ public class CrossValidation {
 		
 		for(int i=0; i<N_FOLDS; i++) {
 			out[i].finish();
-			System.out.println("File "+partitionPath + "/" + i + ".nt created.");
+			logger.debug("File "+partitionPath + "/" + i + ".nt created.");
 		}
 		
 	}
@@ -549,7 +363,7 @@ public class CrossValidation {
 			setM = new FileOutputStream(new File(workspace + "/setM.nt"));
 			setD = new FileOutputStream(new File(workspace + "/setD.nt"));
 		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
+			logger.error(e.getMessage());
 			return;
 		}
 		
@@ -625,12 +439,12 @@ public class CrossValidation {
 			RDFDataMgr.parse(dataStream, path);
 		
 		setPw.finish();
-		System.out.println("File "+workspace + "/setP.nt created.\n"
+		logger.debug("File "+workspace + "/setP.nt created.\n"
 				+"Property <"+aimRelation+"> was found in "+count.count+" statements.");
 		setMw.finish();
-		System.out.println("File "+workspace + "/setM.nt created.");
+		logger.debug("File "+workspace + "/setM.nt created.");
 		setDw.finish();
-		System.out.println("File "+workspace + "/setD.nt created.");
+		logger.debug("File "+workspace + "/setD.nt created.");
 
 	}
 

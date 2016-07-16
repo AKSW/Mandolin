@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class Shell {
 
-	private final static Logger LOGGER = LogManager.getLogger(Shell.class.getName());
+	private final static Logger logger = LogManager.getLogger(Shell.class);
 
 	/**
 	 * Execute a command which expects an output.
@@ -34,7 +34,7 @@ public class Shell {
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				if (show)
-					LOGGER.info(line);
+					logger.debug(line);
 				sb.append(line + "\n");
 			}
 		} catch (Exception e) {
@@ -57,9 +57,9 @@ public class Shell {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LOGGER.info("Streamed:");
+		logger.debug("Streamed:");
 		String output = execute("ls -l", true);
-		LOGGER.info("\nBuffered:\n" + output);
+		logger.debug("\nBuffered:\n" + output);
 	}
 
 }
