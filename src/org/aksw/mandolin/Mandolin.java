@@ -1,6 +1,7 @@
 package org.aksw.mandolin;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import org.aksw.mandolin.controller.Classes;
@@ -220,10 +221,19 @@ public class Mandolin {
 	}
 	
 	public static void main(String[] args) throws Exception {
+		
+		logger.info("Mandolin initialized with args = {}", Arrays.toString(args));
 
 		try {
 			
-			new Mandolin().run();
+			if(args.length == 0) {
+				new Mandolin().run();
+			} else {
+				new Mandolin(args[0], args[1], args[2], Integer.parseInt(args[3]), 
+						Integer.parseInt(args[4]), Integer.parseInt(args[5]), 
+						Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]),
+						Boolean.parseBoolean(args[8])).run();
+			}
 			
 		// TODO handle all exceptions
 		} catch (PostgreNotStartedException e) {
