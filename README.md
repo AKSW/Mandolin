@@ -32,9 +32,19 @@ Update file `mandolin.properties` with the host parameters. Mind the missing `/`
 
 ## Usage
 
+Initialize database, once for all.
+
 ```bash
-java -Xmx8g -jar ...
+sh pgsql-init.sh
 ```
+
+### Run Mandolin test
+
+```bash
+java -Xmx8g -jar plain eval/mandolin-test src/test/resources/AKSW-one-out.nt http://mandolin.aksw.org/example/topic 95 10 95 false false false
+```
+
+Discovered links can be found at `./eval/mandolin-test/discovered_*.nt`, where `*` is a threshold.
 
 ## Q&A
 
