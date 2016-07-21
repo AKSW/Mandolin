@@ -8,6 +8,7 @@ Mandolin
 * Java 1.8
 * Maven
 * PostgreSQL 9.4.x - [Linux binaries](http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb)
+* Gurobi solver
 * Unzip
 
 ## Binaries
