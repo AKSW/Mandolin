@@ -1,0 +1,7 @@
+<http://mandolin.aksw.org/example/Edgard> <http://mandolin.aksw.org/example/supervisor> <http://mandolin.aksw.org/example/Soeren> .
+<http://mandolin.aksw.org/example/Tommaso> <http://mandolin.aksw.org/example/supervisor> <http://mandolin.aksw.org/example/Axel> .
+<http://mandolin.aksw.org/example/Kleanthi> <http://mandolin.aksw.org/example/supervisor> <http://mandolin.aksw.org/example/Axel> .
+<http://mandolin.aksw.org/example/Edgard> <http://mandolin.aksw.org/example/topic> <http://mandolin.aksw.org/example/QuestionAnswering> .
+<http://mandolin.aksw.org/example/Soeren> <http://mandolin.aksw.org/example/topic> <http://mandolin.aksw.org/example/QuestionAnswering> .
+<http://mandolin.aksw.org/example/Kleanthi> <http://mandolin.aksw.org/example/topic> <http://mandolin.aksw.org/example/LinkDiscovery> .
+<http://mandolin.aksw.org/example/Axel> <http://mandolin.aksw.org/example/topic> <http://mandolin.aksw.org/example/LinkDiscovery> .

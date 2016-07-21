@@ -212,6 +212,7 @@ public class Mandolin {
 		logger.info("AIM_RELATION = "+aimRelation);
 		logger.info("ONTO_IMPORT = "+enableOnt);
 		logger.info("FORWARD_CHAIN = "+enableFwc);
+		logger.info("SIMILARITIES = "+enableSim);
 		logger.info("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
 	}
 

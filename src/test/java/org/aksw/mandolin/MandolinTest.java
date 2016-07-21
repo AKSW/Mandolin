@@ -13,18 +13,18 @@ public class MandolinTest {
 	@Test
 	public void mandolin() {
 
-		String args = "eval/0001aksw datasets/AKSW-one-out.nt "
+		String theArgs = "eval/mandolin-test AKSW-one-out.nt "
 				+ "http://mandolin.aksw.org/example/topic 95 10 95 "
 				+ "false false false";
 
-		String[] argsw = args.split(" ");
+		String[] theArgsArray = theArgs.split(" ");
 
 		try {
-			Mandolin.main(argsw);
+			Mandolin.main(theArgsArray);
 		} catch (Exception e) {
 			fail();
 		}
-
+		
 	}
 
 }
