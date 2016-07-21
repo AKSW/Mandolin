@@ -32,13 +32,25 @@ Update file `mandolin.properties` with the host parameters. Mind the missing `/`
 
 ## Usage
 
-Initialize database, once for all.
+### Initialize database
+
+To be called once for all. If the directory `./pgsql/db/` exists, skip this step.
 
 ```bash
 sh pgsql-init.sh
+sh pgsql-start.sh
+sh pgsql-create.sh
 ```
 
 ### Run Mandolin test
+
+If the database was not started before, run:
+
+```bash
+sh pgsql-start.sh
+```
+
+then, run:
 
 ```bash
 java -Xmx8g -jar plain eval/mandolin-test src/test/resources/AKSW-one-out.nt http://mandolin.aksw.org/example/topic 95 10 95 false false false
