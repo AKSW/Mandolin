@@ -27,14 +27,6 @@ export MAVEN_OPTS=-Xss2m
 mvn clean compile assembly:single
 ```
 
-Import and install private libraries:
-
-```bash
-wget [...zip]
-unzip [...zip]
-sh install-libs.sh
-```
-
 Update file `mandolin.properties` with the host parameters. Mind the missing `/` at the end of the paths.
 
 ## Usage

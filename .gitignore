@@ -25,4 +25,5 @@ pgsql/db/
 
 lib/
 lib-install.sh
+mandolin-lib.zip
 compile.sh
