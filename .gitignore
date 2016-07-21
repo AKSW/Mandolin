@@ -14,7 +14,7 @@ logs/
 publications-*/
 old/
 tmp/
-eval/
+/eval/
 !src/org/aksw/mandolin/eval
 pgsql/db/
 
@@ -23,7 +23,4 @@ pgsql/db/
 *.lp
 *.mps
 
-lib/
-lib-install.sh
-mandolin-lib.zip
 compile.sh
