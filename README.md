@@ -25,12 +25,10 @@ Clone and compile project:
 git clone https://github.com/mommi84/Mandolin.git
 cd Mandolin
 export MAVEN_OPTS=-Xss2m
-mvn clean compile assembly:single
+mvn clean package
 ```
 
 Update file `mandolin.properties` with the host parameters. Mind the missing `/` at the end of the paths.
-
-## Usage
 
 ### Initialize database
 
@@ -42,7 +40,7 @@ sh pgsql-start.sh
 sh pgsql-create.sh
 ```
 
-### Run Mandolin test
+## Usage
 
 If the database was not started before, run:
 
@@ -53,7 +51,7 @@ sh pgsql-start.sh
 then, run:
 
 ```bash
-java -Xmx8g -jar plain eval/mandolin-test src/test/resources/AKSW-one-out.nt http://mandolin.aksw.org/example/topic 95 10 95 false false false
+java -Xmx8g -jar target/Mandolin-VERSION-jar-with-dependencies.jar plain eval/mandolin-test src/test/resources/AKSW-one-out.nt http://mandolin.aksw.org/example/topic 95 10 95 false false false
 ```
 
 Discovered links can be found at `./eval/mandolin-test/discovered_*.nt`, where `*` is a threshold.
