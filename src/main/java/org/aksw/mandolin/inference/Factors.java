@@ -62,11 +62,12 @@ public class Factors {
 	}
 
 	private void buildEvidence(String aimName) {
+		
 		evidence = new ArrayList<>();
 		consistentStartingPoints = new ArrayList<>();
 
 		ResultSet rs;
-		if(aimName.equals("*")) {
+		if(aimName == null) {
 			rs = db.evidence();
 		} else {
 			int aimNumber = Integer.parseInt(aimName
