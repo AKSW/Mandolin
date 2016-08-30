@@ -61,6 +61,11 @@ public class Mandolin {
 	 */
 	private boolean enableSim;
 
+	/*
+	 * Force support method in rule mining.
+	 */
+	private boolean support = false;
+	
 	// -------------------------------------------------------------------------
 
 	private NameMapper map;
@@ -137,7 +142,7 @@ public class Mandolin {
 		// model-fwc.nt -> model.tsv
 		RDFToTSV.run(workspace);
 		// model.tsv -> MLN csv
-		RuleMiner.run(map, workspace);
+		RuleMiner.run(map, workspace, support);
 
 		// csv -> Postgre factors
 		Grounding.ground(workspace);
@@ -188,6 +193,7 @@ public class Mandolin {
 		logger.info("FORWARD_CHAIN = "+enableFwc);
 		logger.info("SIMILARITIES = "+enableSim);
 		logger.info("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
+		logger.info("FORCE_SUPPORT = "+support);
 	}
 
 
@@ -198,18 +204,54 @@ public class Mandolin {
 	public static void main(String[] args) throws Exception {
 		
 		logger.info("Mandolin initialized with args = {}", Arrays.toString(args));
+		
+		String output = null, input = null, aim = "false", 
+				onto = "false", fwc = "false", support = "false";
+		String[] simVal = {"-1", "-1", "-1"};
+		
+		for(int i=0; i<args.length; i+=2) {
+			switch(args[i]) {
+			case "--output":
+				output = args[i+1];
+				break;
+			case "--input":
+				input = args[i+1];
+				break;
+			case "--aim":
+				aim = args[i+1];
+				break;
+			case "--sim":
+				simVal = args[i+1].split(",");
+				break;
+			case "--onto":
+				onto = args[i+1];
+				break;
+			case "--fwc":
+				fwc = args[i+1];
+				break;
+			case "--support":
+				support = args[i+1];
+				break;
+			}
+		}
 
 		try {
 			
-			new Mandolin(args[0], args[1], args[2], Integer.parseInt(args[3]), 
-					Integer.parseInt(args[4]), Integer.parseInt(args[5]), 
-					Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]),
-					Boolean.parseBoolean(args[8])).run();
+			Mandolin m = new Mandolin(output, input, aim, Integer.parseInt(simVal[0]), 
+					Integer.parseInt(simVal[1]), Integer.parseInt(simVal[2]), 
+					Boolean.parseBoolean(onto), Boolean.parseBoolean(fwc),
+					!simVal[0].equals("-1"));
+			m.setForceSupport(Boolean.parseBoolean(support));
+			m.run();
 			
 		// TODO handle all exceptions
 		} catch (PostgreNotStartedException e) {
 			logger.fatal("Mandolin exited with errors (-1).");
 		}
 
+	}
+
+	public void setForceSupport(boolean support) {
+		this.support = support;
 	}
 }

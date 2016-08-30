@@ -20,12 +20,17 @@ public class RuleMiner {
 	
 	private final static Logger logger = LogManager.getLogger(RuleMiner.class);
 
-	public static void run(NameMapper map, String base) throws Exception {
+	public static void run(NameMapper map, String base, boolean support) throws Exception {
 		
 		AmieHandler h = new AmieHandler(base + "/model.tsv");
 		
-		h.run(MiningStrategy.HEAD_COVERAGE);
-		if(h.getRules().isEmpty()) {
+		if(!support)  {
+			h.run(MiningStrategy.HEAD_COVERAGE);
+			if(h.getRules().isEmpty())
+				support = true;
+		}
+		
+		if(support) {
 			h.run(MiningStrategy.SUPPORT);
 			if(h.getRules().isEmpty())
 				throw new RuntimeException("Mandolin halts: 0 rules mined.");

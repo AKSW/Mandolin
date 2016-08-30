@@ -13,9 +13,8 @@ public class MandolinTest {
 	@Test
 	public void aimRelation() throws Exception {
 
-		String theArgs = "eval/mandolin-test AKSW-one-out.nt "
-				+ "http://mandolin.aksw.org/example/topic 95 10 95 "
-				+ "false false false";
+		String theArgs = "--output eval/mandolin-test --input AKSW-one-out.nt "
+				+ "--aim http://mandolin.aksw.org/example/topic";
 		
 		run(theArgs);
 		
@@ -24,8 +23,8 @@ public class MandolinTest {
 	@Test
 	public void aimAnything() throws Exception {
 
-		String theArgs = "eval/mandolin-test AKSW-one-out.nt "
-				+ "* 95 10 95 false false false";
+		String theArgs = "--output eval/mandolin-test --input AKSW-one-out.nt "
+				+ "--aim *";
 
 		run(theArgs);
 				
