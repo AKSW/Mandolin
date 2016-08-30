@@ -111,12 +111,23 @@ public class PostgreDB {
 	}
 
 	public ResultSet evidence(int aimNumber) {
+		
+		ResultSet rs = null;
+		try {
+			 rs = st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
+					 + aimNumber + ";");
+
+		} catch (SQLException ex) {
+			logger.warn(ex.getMessage(), ex);
+		}
+		return rs;
+		
+	}
+	
+	public ResultSet evidence() {
 
 		ResultSet rs = null;
 		try {
-			// rs =
-			// st.executeQuery("select rel, ent1, ent2 from probkb.relationships where rel = "
-			// + aimNumber + ";");
 			rs = st.executeQuery("select rel, ent1, ent2 from probkb.extractions;");
 
 		} catch (SQLException ex) {

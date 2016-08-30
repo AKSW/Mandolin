@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.sparql.core.Quad;
+import com.hp.hpl.jena.vocabulary.OWL;
+import com.hp.hpl.jena.vocabulary.RDF;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -83,12 +85,12 @@ public class SetUtils {
 	
 			@Override
 			public void triple(Triple triple) {
-				boolean b = true;
-				if(!setBindex.contains(triple.toString())) {
+				boolean trivial = triple.getPredicate().hasURI(RDF.type.getURI()) 
+						&& triple.getObject().hasURI(OWL.Thing.getURI());
+				boolean known = setBindex.contains(triple.toString());
+				if(!known && !trivial) // save discovered triple
 					outStream.triple(triple);
-					b = false;
-				}
-				logger.trace("\t" + b + "\t" + triple.toString());
+				logger.trace("\tknown=" + known + "\ttrivial=" + trivial + "\t" + triple.toString());
 			}
 			@Override
 			public void quad(Quad quad) {

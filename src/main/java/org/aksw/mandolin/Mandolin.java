@@ -66,32 +66,6 @@ public class Mandolin {
 	private NameMapper map;
 	
 	/**
-	 * Use demo values.
-	 */
-	public Mandolin() {
-		super();
-
-		this.workspace = "eval/0001inf";
-		this.inputPaths = new String[] { 
-				"datasets/AKSW-one-out.nt",
-//				"datasets/DBLPL3S-10-one-out.nt",
-//				"datasets/LinkedACM-10.nt", 
-//				"linksets/DBLPL3S-LinkedACM-10.nt",
-		};
-//		this.aimRelation = OWL.sameAs.getURI();
-		this.aimRelation = "http://mandolin.aksw.org/example/topic"; //"http://dbpedia.org/ontology/influenced";
-		this.thrMin = 95;
-		this.thrStep = 10;
-		this.thrMax = 95;
-		this.enableOnt = false;
-		this.enableFwc = false;
-		this.enableSim = false;
-
-		map = new NameMapper(aimRelation);
-		
-	}
-
-	/**
 	 * @param workspace workspace path
 	 * @param csInputPaths comma-separated input paths
 	 * @param aimRelation aim relation URI
@@ -227,14 +201,10 @@ public class Mandolin {
 
 		try {
 			
-			if(args.length == 0) {
-				new Mandolin().run();
-			} else {
-				new Mandolin(args[0], args[1], args[2], Integer.parseInt(args[3]), 
-						Integer.parseInt(args[4]), Integer.parseInt(args[5]), 
-						Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]),
-						Boolean.parseBoolean(args[8])).run();
-			}
+			new Mandolin(args[0], args[1], args[2], Integer.parseInt(args[3]), 
+					Integer.parseInt(args[4]), Integer.parseInt(args[5]), 
+					Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]),
+					Boolean.parseBoolean(args[8])).run();
 			
 		// TODO handle all exceptions
 		} catch (PostgreNotStartedException e) {

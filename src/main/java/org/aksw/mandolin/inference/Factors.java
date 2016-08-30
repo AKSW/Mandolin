@@ -65,10 +65,15 @@ public class Factors {
 		evidence = new ArrayList<>();
 		consistentStartingPoints = new ArrayList<>();
 
-		int aimNumber = Integer.parseInt(aimName
+		ResultSet rs;
+		if(aimName.equals("*")) {
+			rs = db.evidence();
+		} else {
+			int aimNumber = Integer.parseInt(aimName
 				.substring(ProbKBData.REL_LENGTH));
+			rs = db.evidence(aimNumber);
+		}
 		
-		ResultSet rs = db.evidence(aimNumber);
 		try {
 			while (rs.next()) {
 				String a1 = u.getKey(Type.ENTITY.name() + rs.getInt("ent1"));

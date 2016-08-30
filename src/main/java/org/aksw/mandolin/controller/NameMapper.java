@@ -78,8 +78,10 @@ public class NameMapper {
 		logger.debug("Alias for owl:Thing is " + OWL_THING_NAME);
 		
 		this.aimURI = aimURI;
-		AIM_NAME = this.add(aimURI, Type.RELATION);
-		logger.debug("Alias for AIM ("+aimURI+") is " + AIM_NAME);
+		if(!aimURI.equals("*")) {
+			AIM_NAME = this.add(aimURI, Type.RELATION);
+			logger.debug("Alias for AIM ("+aimURI+") is " + AIM_NAME);
+		}
 	}
 	
 	/**

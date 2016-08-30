@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.shared.JenaException;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -91,7 +92,7 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 			
 			// filter only aim relation from pset
 			String p = map.getURI(lit.getP());
-			if (!p.equals(aim))
+			if (!p.equals(aim) && !aim.equals("*"))
 				continue;
 			
 			// relative value for probability
@@ -111,7 +112,10 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 					new URI(s);
 				} catch (URISyntaxException e) {
 					logger.debug("A predicted triple has a subject "
-							+ "(" + s + ") which is not an URI. Skipping triple...");
+							+ "(" + s + ") which is not a URI. Skipping triple...");
+					continue;
+				} catch (NullPointerException e) {
+					logger.debug("Error on lit.X="+lit.getX()+ " lit.Y="+lit.getY());
 					continue;
 				}
 				
@@ -121,8 +125,14 @@ public class PredictionSet extends TreeSet<PredictionLiteral> implements
 					String str = String.valueOf(-b);
 					o = map.getURI(Type.CLASS.name() + str);
 				}
-				Triple t = new Triple(NodeFactory.createURI(s),
-						NodeFactory.createURI(p), NodeFactory.createURI(o));
+				Triple t;
+				try {
+					t = new Triple(NodeFactory.createURI(s),
+							NodeFactory.createURI(p), NodeFactory.createURI(o));
+				} catch (JenaException e) {
+					logger.debug("Some of the following is not a URI: s="+s+", p="+p+", o="+o);
+					continue;
+				}
 				
 				logger.debug(lit.getProb() + "\t" + t);
 				
