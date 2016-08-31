@@ -57,20 +57,18 @@ public class PostgreDB {
 	 */
 	public ResultSet factors(int n) {
 
-		ResultSet factors = null;
-
 		try {
 
 			switch (n) {
 			case 1:
 				// one...
-				factors = st
+				return st
 						.executeQuery("select rs1.rel as r1, rs1.ent1 as a1, rs1.ent2 as b1, "
 								+ "f.weight from probkb.relationships as rs1, probkb.factors as f "
 								+ "where f.id1 = rs1.id and f.id2 is null and f.id3 is null;");
 			case 2:
 				// two...
-				factors = st
+				return st
 						.executeQuery("select rs1.rel as r1, rs1.ent1 as a1, rs1.ent2 as b1, "
 								+ "rs2.rel as r2, rs2.ent1 as a2, rs2.ent2 as b2, "
 								+ "f.weight from probkb.relationships as rs1, "
@@ -78,7 +76,7 @@ public class PostgreDB {
 								+ "where f.id1 = rs1.id and f.id2 = rs2.id and f.id3 is null;");
 			case 3:
 				// three...
-				factors = st
+				return st
 						.executeQuery("select rs1.rel as r1, rs1.ent1 as a1, rs1.ent2 as b1, "
 								+ "rs2.rel as r2, rs2.ent1 as a2, rs2.ent2 as b2, "
 								+ "rs3.rel as r3, rs3.ent1 as a3, rs3.ent2 as b3, "
@@ -91,7 +89,7 @@ public class PostgreDB {
 			logger.warn(ex.getMessage(), ex);
 		}
 
-		return factors;
+		return null;
 
 	}
 

@@ -104,6 +104,8 @@ public class Factors {
 		clauses = new ArrayList<>();
 
 		for (int i = 1; i <= 3; i++) {
+			
+			logger.debug("Selecting type "+i+" factors...");
 			ResultSet rs = db.factors(i);
 			try {
 				while (rs.next()) {
@@ -146,9 +148,12 @@ public class Factors {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			
+			logger.debug(clauses.size() + " clauses collected until type "+i+".");
 		}
 
 		logger.info(clauses.size() + " clauses collected.");
+
 	}
 
 	public ArrayList<String> getConsistentStartingPoints() {
