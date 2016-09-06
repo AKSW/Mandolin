@@ -62,10 +62,10 @@ public class Mandolin {
 	private boolean enableSim;
 
 	/*
-	 * Force support method in rule mining.
+	 * Threshold for head-coverage method in rule mining. If null, support method is used.
 	 */
-	private boolean support = false;
-	
+	private Double mining;
+
 	// -------------------------------------------------------------------------
 
 	private NameMapper map;
@@ -142,7 +142,7 @@ public class Mandolin {
 		// model-fwc.nt -> model.tsv
 		RDFToTSV.run(workspace);
 		// model.tsv -> MLN csv
-		RuleMiner.run(map, workspace, support);
+		RuleMiner.run(map, workspace, mining);
 
 		// csv -> Postgre factors
 		Grounding.ground(workspace);
@@ -193,7 +193,7 @@ public class Mandolin {
 		logger.info("FORWARD_CHAIN = "+enableFwc);
 		logger.info("SIMILARITIES = "+enableSim);
 		logger.info("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
-		logger.info("FORCE_SUPPORT = "+support);
+		logger.info("MINING_THR = "+mining);
 	}
 
 
@@ -206,7 +206,7 @@ public class Mandolin {
 		logger.info("Mandolin initialized with args = {}", Arrays.toString(args));
 		
 		String output = null, input = null, aim = "false", 
-				onto = "false", fwc = "false", support = "false";
+				onto = "false", fwc = "false", mining = "0.01";
 		String[] simVal = {"-1", "-1", "-1"};
 		
 		for(int i=0; i<args.length; i+=2) {
@@ -229,8 +229,8 @@ public class Mandolin {
 			case "--fwc":
 				fwc = args[i+1];
 				break;
-			case "--support":
-				support = args[i+1];
+			case "--mining":
+				mining = args[i+1];
 				break;
 			}
 		}
@@ -241,7 +241,7 @@ public class Mandolin {
 					Integer.parseInt(simVal[1]), Integer.parseInt(simVal[2]), 
 					Boolean.parseBoolean(onto), Boolean.parseBoolean(fwc),
 					!simVal[0].equals("-1"));
-			m.setForceSupport(Boolean.parseBoolean(support));
+			m.setMining(mining);
 			m.run();
 			
 		// TODO handle all exceptions
@@ -251,7 +251,14 @@ public class Mandolin {
 
 	}
 
-	public void setForceSupport(boolean support) {
-		this.support = support;
+	public void setMining(String mining) {
+		switch(mining) {
+		case "support":
+			this.mining = null;
+			break;
+		default:
+			this.mining = Double.parseDouble(mining);
+			break;
+		}
 	}
 }

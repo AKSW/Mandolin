@@ -20,11 +20,14 @@ public class RuleMiner {
 	
 	private final static Logger logger = LogManager.getLogger(RuleMiner.class);
 
-	public static void run(NameMapper map, String base, boolean support) throws Exception {
+	public static void run(NameMapper map, String base, Double mining) throws Exception {
+		
+		boolean support = (mining == null);
 		
 		AmieHandler h = new AmieHandler(base + "/model.tsv");
 		
 		if(!support)  {
+			h.setMiningThr(mining);
 			h.run(MiningStrategy.HEAD_COVERAGE);
 			if(h.getRules().isEmpty())
 				support = true;

@@ -23,6 +23,7 @@ public class AmieHandler {
 
 	private String ontology;
 	private List<Rule> rules = null;
+	private Double miningThr = 0.01;
 
 	public AmieHandler(String ontology) {
 		super();
@@ -34,7 +35,7 @@ public class AmieHandler {
 		AMIE miner;
 		switch(ms) {
 		case HEAD_COVERAGE:
-			miner =	AMIE.getInstance(new String[] { ontology });
+			miner =	AMIE.getInstance(new String[] { ontology, "-minhc", String.valueOf(miningThr) });
 			break;
 		case SUPPORT:
 			miner =	AMIE.getInstance(new String[] { ontology, "-pm", "support", "-mins", "0" });
@@ -65,6 +66,10 @@ public class AmieHandler {
 
 	public List<Rule> getRules() {
 		return rules;
+	}
+
+	public void setMiningThr(Double mining) {
+		this.miningThr = mining;
 	}
 
 }
