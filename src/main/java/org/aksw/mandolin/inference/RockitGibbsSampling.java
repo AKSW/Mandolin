@@ -56,7 +56,7 @@ public abstract class RockitGibbsSampling {
 	
 	}
 
-	public abstract PredictionSet infer();
+	public abstract PredictionSet infer(Integer samples);
 
 	/**
 	 * Gibbs Sampling by RockIt.
@@ -70,13 +70,13 @@ public abstract class RockitGibbsSampling {
 	 */
 	public PredictionSet gibbsSampling(
 			ArrayList<String> consistentStartingPoints,
-			ArrayList<Clause> clauses, Collection<Literal> evidence)
+			ArrayList<Clause> clauses, Collection<Literal> evidence, Integer sampling)
 			throws SQLException, SolveException, ParseException {
 
 		PredictionSet ps = new PredictionSet(map.getAim());
 
 		gibbsSampler = new GIBBSSampler();
-		int iter = iterations(clauses.size() + evidence.size());
+		int iter = iterations(clauses.size() + evidence.size(), sampling);
 		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(iter,
 				clauses, evidence, consistentStartingPoints);
 
@@ -88,24 +88,28 @@ public abstract class RockitGibbsSampling {
 
 	/**
 	 * Get number of iterations.
+	 * @param sampling 
 	 * 
 	 * @param i
 	 * @return
 	 */
-	private int iterations(int literals) {
+	private int iterations(int literals, Integer sampling) {
+		
 		
 		int iterations;
 		
 		long iter = (long) literals * 1000;
 		
-		if(iter >= Integer.MAX_VALUE) // overflow
+		if(sampling != null) // pre-assigned 
+			iterations = sampling;
+		else if(iter >= Integer.MAX_VALUE) // overflow
 			iterations = MAX_ITERATIONS;
 		else if(iter >= MAX_ITERATIONS) // not overflow, but still too high
 			iterations = MAX_ITERATIONS;
 		else
 			iterations = (int) iter; // acceptable value
 		
-		logger.info("literals={}, supposed_iter={}, iterations={}", literals, iter, iterations);
+		logger.info("literals={}, supposed_iter={}, actual_iter={}", literals, iter, iterations);
 		return iterations;
 		
 	}

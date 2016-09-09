@@ -31,22 +31,22 @@ public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 	public static void main(String[] args) {
 
 		PredictionSet ps = new ProbKBToRockitGibbsSampling(
-				new NameMapper(OWL.sameAs.getURI())).infer();
+				new NameMapper(OWL.sameAs.getURI())).infer(null);
 		for (PredictionLiteral lit : ps)
 			logger.info(lit);
 
 	}
 
 	public ProbKBToRockitGibbsSampling(NameMapper map) {
-		super(map);
+		super(map);			
 	}
 
 	/**
 	 * Call ProbKB for grounding and preprocess its input for Gibbs sampling by
 	 * RockIt.
 	 */
-	public PredictionSet infer() {
-
+	public PredictionSet infer(Integer sampling) {
+		
 		Factors factors = Factors.getInstance();
 		factors.preprocess(map.getAimName());
 
@@ -68,7 +68,7 @@ public class ProbKBToRockitGibbsSampling extends RockitGibbsSampling {
 		// call Gibbs sampler
 		PredictionSet ps = null;
 		try {
-			ps = gibbsSampling(consistentStartingPoints, clauses, evidence);
+			ps = gibbsSampling(consistentStartingPoints, clauses, evidence, sampling);
 		} catch (SQLException | SolveException | ParseException e) {
 			e.printStackTrace();
 		}

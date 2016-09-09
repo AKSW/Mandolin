@@ -69,6 +69,11 @@ public class Mandolin {
 	// -------------------------------------------------------------------------
 
 	private NameMapper map;
+
+	/**
+	 * Iteration for the Gibbs sampling.
+	 */
+	private Integer sampling;
 	
 	/**
 	 * @param workspace workspace path
@@ -148,7 +153,7 @@ public class Mandolin {
 		Grounding.ground(workspace);
 
 		// Postgre factors -> predictions
-		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer();
+		PredictionSet pset = new ProbKBToRockitGibbsSampling(map).infer(sampling);
 
 		pset.saveTo(workspace + "/predictions.dat");
 		
@@ -206,7 +211,7 @@ public class Mandolin {
 		logger.info("Mandolin initialized with args = {}", Arrays.toString(args));
 		
 		String output = null, input = null, aim = "false", 
-				onto = "false", fwc = "false", mining = "0.01";
+				onto = "false", fwc = "false", mining = null, sampling = null;
 		String[] simVal = {"-1", "-1", "-1"};
 		
 		for(int i=0; i<args.length; i+=2) {
@@ -232,6 +237,9 @@ public class Mandolin {
 			case "--mining":
 				mining = args[i+1];
 				break;
+			case "--sampling":
+				sampling = args[i+1];
+				break;
 			}
 		}
 
@@ -241,7 +249,10 @@ public class Mandolin {
 					Integer.parseInt(simVal[1]), Integer.parseInt(simVal[2]), 
 					Boolean.parseBoolean(onto), Boolean.parseBoolean(fwc),
 					!simVal[0].equals("-1"));
-			m.setMining(mining);
+			if(mining != null)
+				m.setMining(mining);
+			if(sampling != null)
+				m.setSampling(sampling);
 			m.run();
 			
 		// TODO handle all exceptions
@@ -249,6 +260,10 @@ public class Mandolin {
 			logger.fatal("Mandolin exited with errors (-1).");
 		}
 
+	}
+
+	public void setSampling(String sampling) {
+		this.sampling = Integer.parseInt(sampling);
 	}
 
 	public void setMining(String mining) {

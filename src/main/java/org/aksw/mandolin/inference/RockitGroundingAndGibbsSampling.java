@@ -51,7 +51,7 @@ public class RockitGroundingAndGibbsSampling extends RockitGibbsSampling {
 		// launch test
 		new RockitGroundingAndGibbsSampling(new NameMapper(
 				OWL.sameAs.getURI()), "eval/11_publi-mln/prog.mln",
-				"eval/11_publi-mln/evidence.db").infer();
+				"eval/11_publi-mln/evidence.db").infer(null);
 
 	}
 
@@ -68,7 +68,7 @@ public class RockitGroundingAndGibbsSampling extends RockitGibbsSampling {
 	/**
 	 * Call RockIt for both standard grounding and Gibbs-sampling inference.
 	 */
-	public PredictionSet infer() {
+	public PredictionSet infer(Integer samples) {
 
 		PredictionSet ps = null;
 
@@ -94,7 +94,7 @@ public class RockitGroundingAndGibbsSampling extends RockitGibbsSampling {
 			solver = null; // free memory
 
 			// call Gibbs sampler
-			ps = gibbsSampling(consistentStartingPoints, clauses, evidence);
+			ps = gibbsSampling(consistentStartingPoints, clauses, evidence, samples);
 
 		} catch (ParseException | IOException | SQLException | SolveException e) {
 			e.printStackTrace();
