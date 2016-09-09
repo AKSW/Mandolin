@@ -94,10 +94,19 @@ public abstract class RockitGibbsSampling {
 	 */
 	private int iterations(int literals) {
 		
-		int iter = literals * 1000;
-		if(iter <= MAX_ITERATIONS)
-			return iter;
-		return MAX_ITERATIONS;
+		int iterations;
+		
+		long iter = (long) literals * 1000;
+		
+		if(iter >= Integer.MAX_VALUE) // overflow
+			iterations = MAX_ITERATIONS;
+		else if(iter >= MAX_ITERATIONS) // not overflow, but still too high
+			iterations = MAX_ITERATIONS;
+		else
+			iterations = (int) iter; // acceptable value
+		
+		logger.info("literals={}, supposed_iter={}, iterations={}", literals, iter, iterations);
+		return iterations;
 		
 	}
 
