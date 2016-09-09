@@ -32,8 +32,8 @@ public class PredictionLiteral implements Comparable<PredictionLiteral>, Seriali
 		this.prob = prob;
 	}
 
-	public PredictionLiteral(GIBBSLiteral l) {
-		this(l.getName(), l.return_my_probability(ProbKBToRockitGibbsSampling.ITERATIONS));
+	public PredictionLiteral(GIBBSLiteral l, int iter) {
+		this(l.getName(), l.return_my_probability(iter));
 	}
 
 	public String getP() {

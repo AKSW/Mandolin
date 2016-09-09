@@ -34,9 +34,10 @@ public abstract class RockitGibbsSampling {
 
 	// Sampling only
 	/**
-	 * The number of iterations for sampling.
+	 * The maximum number of iterations for sampling.
 	 */
-	public static final int ITERATIONS = -1;
+	public static final int MAX_ITERATIONS = 10000000;
+	
 	protected GIBBSSampler gibbsSampler;
 
 	protected RockitGibbsSampling(NameMapper map) {
@@ -75,13 +76,29 @@ public abstract class RockitGibbsSampling {
 		PredictionSet ps = new PredictionSet(map.getAim());
 
 		gibbsSampler = new GIBBSSampler();
-		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(ITERATIONS,
+		int iter = iterations(clauses.size() + evidence.size());
+		ArrayList<GIBBSLiteral> gibbsOutput = gibbsSampler.sample(iter,
 				clauses, evidence, consistentStartingPoints);
 
 		for (GIBBSLiteral l : gibbsOutput)
-			ps.add(new PredictionLiteral(l));
+			ps.add(new PredictionLiteral(l, iter));
 
 		return ps;
+	}
+
+	/**
+	 * Get number of iterations.
+	 * 
+	 * @param i
+	 * @return
+	 */
+	private int iterations(int literals) {
+		
+		int iter = literals * 1000;
+		if(iter <= MAX_ITERATIONS)
+			return iter;
+		return MAX_ITERATIONS;
+		
 	}
 
 }
