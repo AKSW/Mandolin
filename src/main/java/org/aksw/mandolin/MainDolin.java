@@ -2,8 +2,9 @@ package org.aksw.mandolin;
 
 import java.util.Arrays;
 
-import org.aksw.mandolin.eval.Benchmark;
+import org.aksw.mandolin.eval.HitsAtK;
 import org.aksw.mandolin.eval.CrossValidation;
+import org.aksw.mandolin.eval.MeanRankCalc;
 
 /**
  * Main controller for Mandolin.
@@ -21,8 +22,9 @@ public class MainDolin {
 		case "plain":
 			Mandolin.main(argsw);
 			break;
-		case "benchmark":
-			Benchmark.main(argsw);
+		case "eval":
+			HitsAtK.main(argsw);
+			MeanRankCalc.main(argsw);
 			break;
 		case "cv":
 			CrossValidation.main(argsw);

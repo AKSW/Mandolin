@@ -199,6 +199,7 @@ public class Mandolin {
 		logger.info("SIMILARITIES = "+enableSim);
 		logger.info("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
 		logger.info("MINING_THR = "+mining);
+		logger.info("SAMPLING_ITER = "+sampling);
 	}
 
 
