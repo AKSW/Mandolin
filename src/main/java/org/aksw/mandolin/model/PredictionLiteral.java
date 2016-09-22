@@ -2,8 +2,6 @@ package org.aksw.mandolin.model;
 
 import java.io.Serializable;
 
-import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
-
 import com.googlecode.rockit.app.sampler.gibbs.GIBBSLiteral;
 import com.googlecode.rockit.javaAPI.HerbrandUniverse;
 

@@ -12,7 +12,7 @@ import com.hp.hpl.jena.sparql.core.Quad;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class Evaluation {
+public class FMeasureEvaluation {
 	
 	
 	private String psetPath, hsetPath;
@@ -20,7 +20,7 @@ public class Evaluation {
 	private int tp, fp, fn;
 	private double pre, rec, f1;
 
-	public Evaluation(String psetPath, String hsetPath) {
+	public FMeasureEvaluation(String psetPath, String hsetPath) {
 		super();
 		this.psetPath = psetPath;
 		this.hsetPath = hsetPath;
@@ -133,7 +133,7 @@ public class Evaluation {
 	}
 
 	public static void main(String[] args) {
-		new Evaluation("/Users/tom/PhD/srl/Mandolin/eval/0002/cv/run0/output_1.0.nt", 
+		new FMeasureEvaluation("/Users/tom/PhD/srl/Mandolin/eval/0002/cv/run0/output_1.0.nt", 
 				"/Users/tom/PhD/srl/Mandolin/eval/0002/cv/partitions/0.nt").run();
 	}
 

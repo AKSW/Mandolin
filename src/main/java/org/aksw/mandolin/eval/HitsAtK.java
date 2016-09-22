@@ -49,6 +49,12 @@ public class HitsAtK {
 		String output = args[1];
 
 		HitsAtK b = new HitsAtK(testSet, output);
+		
+		b.start();
+		
+	}
+	
+	public void start() throws FileNotFoundException {
 
 		DecimalFormat df = new DecimalFormat("0.0");
 
@@ -57,7 +63,7 @@ public class HitsAtK {
 		pw.println("threshold\thitsMax\thitsMin");
 		for (int i = 1; i <= 10; i++) {
 			String thr = String.valueOf(df.format((double) i / 10.0));
-			Cache c = b.run("/discovered_" + thr
+			Cache c = run("/discovered_" + thr
 					+ ".nt");
 			pw.println(thr+"\t"+c.hitsMax+"\t"+c.hitsMin);
 		}

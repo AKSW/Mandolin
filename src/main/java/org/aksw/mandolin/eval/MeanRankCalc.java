@@ -27,19 +27,28 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  *
  */
 public class MeanRankCalc {
-
+	
+	private String testSet, output; 
 
 	public static void main(String[] args) throws IOException {
 		
 		String testSet = args[0];
 		String output = args[1];
 		
-		partitionData(output);
-		meanRank(testSet, output);
+		MeanRankCalc mr = new MeanRankCalc(testSet, output);
+	
+		mr.partitionData();
+		mr.start();
 		
 	}
 	
-	public static void meanRank(String testSet, String output) throws FileNotFoundException {
+	public MeanRankCalc(String testSet, String output) {
+		super();
+		this.testSet = testSet;
+		this.output = output;
+	}
+	
+	public double start() throws FileNotFoundException {
 		
 		Scanner in = new Scanner(new File(output + "/entities.csv"));
 		int entities = 0;
@@ -156,11 +165,13 @@ public class MeanRankCalc {
 		int sum = 0;
 		for(Integer i : ranks)
 			sum += i;
-		System.out.println("\nMeanRank = "+(double) sum / (double) ranks.size());
+		double mr = (double) sum / (double) ranks.size();
+		System.out.println("\nMeanRank = "+mr);
 		
+		return mr;
 	}
 
-	public static void partitionData(String output) throws IOException {
+	public void partitionData() throws IOException {
 		
 		System.out.println("Partitioning data...");
 		

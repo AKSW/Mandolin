@@ -165,7 +165,7 @@ public class CrossValidation {
 				SetUtils.minus(allExpAim, triv, setE);
 				
 				// evaluation: predicted vs expected links
-				Evaluation eval = new Evaluation(setR, setE);
+				FMeasureEvaluation eval = new FMeasureEvaluation(setR, setE);
 				eval.run();
 				f1s.get(theta).add(eval.getF1());
 				
