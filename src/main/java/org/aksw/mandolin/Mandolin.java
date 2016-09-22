@@ -34,7 +34,7 @@ public class Mandolin {
 
 	private final static Logger logger = LogManager.getLogger(Mandolin.class);
 	
-	private static final int THETA_MIN = 1;
+	private static final int THETA_MIN = 0;
 	private static final int THETA_MAX = 10;
 	// input datasets
 	private String[] inputPaths;
