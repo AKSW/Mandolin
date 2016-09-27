@@ -29,6 +29,16 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 public class MeanRankCalc {
 	
 	private String testSet, output; 
+	
+	private int minThr = 1;
+
+	public int getMinThr() {
+		return minThr;
+	}
+
+	public void setMinThr(int minThr) {
+		this.minThr = minThr;
+	}
 
 	public static void main(String[] args) throws IOException {
 		
@@ -63,10 +73,10 @@ public class MeanRankCalc {
 		
 		DecimalFormat df = new DecimalFormat("0.0");
 		
-		// load 10 models in descending order
-		final Model[] m = new Model[10];
+		// load N=max-min+1 models in descending order
+		final Model[] m = new Model[10 - minThr + 1];
 		for(int i=m.length; i>=1; i--) {
-			String thr = String.valueOf(df.format((double) i / 10.0));
+			String thr = String.valueOf(df.format((double) (i+minThr-1) / 10.0));
 			String discovered = output + "/ranked_" + thr + ".nt";
 			System.out.println("Loading model "+i+"...");
 			m[m.length-i] = RDFDataMgr.loadModel(discovered);
@@ -176,7 +186,7 @@ public class MeanRankCalc {
 		System.out.println("Partitioning data...");
 		
 		DecimalFormat df = new DecimalFormat("0.0");
-		for (int i = 1; i <= 9; i++) {
+		for (int i = minThr; i <= 9; i++) {
 			String thrA = String.valueOf(df.format((double) i / 10.0));
 			String thrB = String.valueOf(df.format((double) (i+1) / 10.0));
 			System.out.println(thrA+","+thrB);

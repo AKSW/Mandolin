@@ -14,11 +14,11 @@ public class LinkPredictionEvaluation {
 		// benchmark/wn18/wordnet-mlj12-test.nt eval/wn18_09_1m_v
 		
 		final String REF = "benchmark/wn18/wordnet-mlj12-test.nt";
-		final String BASE = "eval/wn18_08_???m_v";
+		final String BASE = "eval/wn18_01_???m_va";
 		
 		ArrayList<Double> meanranks = new ArrayList<>();
 		
-		for(int i=1; i<=6; i++) {
+		for(int i=1; i<=1; i++) {
 			
 			// dirty hack
 			if(i==6) i = 10;
@@ -27,9 +27,11 @@ public class LinkPredictionEvaluation {
 			String output = BASE.replace("???", String.valueOf(i));
 			
 			HitsAtK hk = new HitsAtK(testSet, output);
+			hk.setMinThr(0);
 			hk.start();
 		
 			MeanRankCalc mr = new MeanRankCalc(testSet, output);
+			mr.setMinThr(0);
 			mr.partitionData();
 			meanranks.add(mr.start());
 			

@@ -31,6 +31,8 @@ public class HitsAtK {
 	 * The 'K' value in Hits@K.
 	 */
 	protected static final int K = 10;
+	
+	private int minThr = 1;
 
 	// protected static final boolean TEST_OUTPUTS = false;
 
@@ -61,7 +63,7 @@ public class HitsAtK {
 		PrintWriter pw = new PrintWriter(new File(output.substring(output
 				.lastIndexOf('/') + 1) + "_hits_at_10.csv"));
 		pw.println("threshold\thitsMax\thitsMin");
-		for (int i = 1; i <= 10; i++) {
+		for (int i = minThr; i <= 10; i++) {
 			String thr = String.valueOf(df.format((double) i / 10.0));
 			Cache c = run("/discovered_" + thr
 					+ ".nt");
@@ -74,6 +76,14 @@ public class HitsAtK {
 		// b.run("/output_" + String.valueOf(df.format((double) i / 10.0))
 		// + ".nt");
 
+	}
+
+	public int getMinThr() {
+		return minThr;
+	}
+
+	public void setMinThr(int minThr) {
+		this.minThr = minThr;
 	}
 
 	private Cache run(String format) {
