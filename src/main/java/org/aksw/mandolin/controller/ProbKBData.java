@@ -95,6 +95,13 @@ public class ProbKBData {
 			// entity_id+"|"+class_id
 			String id1 = arr[0].substring(ENT_LENGTH);
 			String id2 = arr[1].substring(CLS_LENGTH);
+			// TODO find a fix for these relationships
+			try {
+				Integer.parseInt(id1);
+				Integer.parseInt(id2);
+			} catch(NumberFormatException e) {
+				continue;
+			}
 			writer.writeNext(new String[] {id1, id2});
 		}
 		
@@ -141,8 +148,17 @@ public class ProbKBData {
 		
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(base + "/relClasses.csv"))); 
 		
-		for(String entry : entries.keySet())
-			writer.writeNext(entries.get(entry));
+		for(String entry : entries.keySet()) {
+			String[] obj = entries.get(entry);
+			// TODO find a fix for these relationships
+			try {
+				for(String o : obj)
+					Integer.parseInt(o);
+			} catch(NumberFormatException e) {
+				continue;
+			}
+			writer.writeNext(obj);
+		}
 		
 		writer.close();
 		
@@ -167,6 +183,15 @@ public class ProbKBData {
 //				id1 = String.valueOf(Integer.parseInt(arr[0].substring(ENT_LENGTH)) + 10000);
 //				System.out.println("rel = "+id1);
 //			}
+			
+			// TODO find a fix for these relationships
+			try {
+				Integer.parseInt(id1);
+				Integer.parseInt(id2);
+				Integer.parseInt(id3);
+			} catch(NumberFormatException e) {
+				continue;
+			}
 			
 			writer.writeNext(new String[] {id1, id2, id3, "1.0", "http://"});
 		}
