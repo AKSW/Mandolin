@@ -275,13 +275,17 @@ public class Evidence {
 	}
 
 	private static String parse(Node obj) {
-		if(obj.isURI())
-			return obj.getURI();
-		if(obj.isLiteral())
-			return obj.getLiteralValue().toString();
-		if(obj.isBlank())
-			return obj.getBlankNodeLabel();
-		else return null;
+		try {
+			if(obj.isURI())
+				return obj.getURI();
+			if(obj.isLiteral())
+				return obj.getLiteralValue().toString();
+			if(obj.isBlank())
+				return obj.getBlankNodeLabel();
+		} catch(Exception e) {
+			logger.warn("Cannot parse node: "+obj);
+		}
+		return null;
 	}
 }
 
