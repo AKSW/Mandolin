@@ -46,10 +46,6 @@ public class RuleDriver {
 	public void process(Rule rule) throws IOException {
 		
 		int size = rule.getBody().size();
-		if(size == 0) {
-			logger.fatal("Rules size = 0");
-			throw new RuntimeException("Mandolin cannot continue without MLN rules!");
-		}
 
 		if (size == 1) { // call one or two
 

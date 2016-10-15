@@ -65,6 +65,11 @@ public class Mandolin {
 	 * Threshold for head-coverage method in rule mining. If null, support method is used.
 	 */
 	private Double mining;
+	
+	/**
+	 * Maximum number of rules to mine.
+	 */
+	private Integer maxRules;
 
 	// -------------------------------------------------------------------------
 
@@ -147,7 +152,7 @@ public class Mandolin {
 		// model-fwc.nt -> model.tsv
 		RDFToTSV.run(workspace);
 		// model.tsv -> MLN csv
-		RuleMiner.run(map, workspace, mining);
+		RuleMiner.run(map, workspace, mining, maxRules);
 
 		// csv -> Postgre factors
 		Grounding.ground(workspace);
@@ -211,7 +216,7 @@ public class Mandolin {
 		
 		logger.info("Mandolin initialized with args = {}", Arrays.toString(args));
 		
-		String output = null, input = null, aim = "false", 
+		String output = null, input = null, aim = "false", rules = null, 
 				onto = "false", fwc = "false", mining = null, sampling = null;
 		String[] simVal = {"-1", "-1", "-1"};
 		
@@ -238,6 +243,9 @@ public class Mandolin {
 			case "--mining":
 				mining = args[i+1];
 				break;
+			case "--rules":
+				rules = args[i+1];
+				break;
 			case "--sampling":
 				sampling = args[i+1];
 				break;
@@ -252,6 +260,8 @@ public class Mandolin {
 					!simVal[0].equals("-1"));
 			if(mining != null)
 				m.setMining(mining);
+			if(rules != null)
+				m.setMaxRules(rules);
 			if(sampling != null)
 				m.setSampling(sampling);
 			m.run();
@@ -259,8 +269,13 @@ public class Mandolin {
 		// TODO handle all exceptions
 		} catch (PostgreNotStartedException e) {
 			logger.fatal("Mandolin exited with errors (-1).");
+			throw new RuntimeException();
 		}
 
+	}
+
+	public void setMaxRules(String rules) {
+		this.maxRules = Integer.parseInt(rules);
 	}
 
 	public void setSampling(String sampling) {
