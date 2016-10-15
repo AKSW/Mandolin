@@ -1,25 +1,24 @@
 package org.aksw.mandolin.rulemining;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import javatools.datatypes.ByteString;
 
 import org.aksw.mandolin.controller.NameMapper;
 import org.aksw.mandolin.rulemining.AmieHandler.MiningStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import amie.rules.Rule;
+
 import com.hp.hpl.jena.vocabulary.OWL;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-
-import javatools.datatypes.ByteString;
-import amie.rules.Rule;
 
 /**
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
@@ -101,7 +100,7 @@ public class RuleMiner {
 					continue;
 				}
 			}
-			
+						
 			// send rule to driver
 			driver.process(rule);
 			// print rule information
@@ -124,7 +123,7 @@ public class RuleMiner {
 				bstr += b + ",";
 			str += bstr + " | ";
 		}
-		logger.trace(rule.getHeadRelation() + "\t" + str + "\t" + rule.getPcaConfidence());		
+		logger.info(rule.getHeadRelation() + "\t" + str + "\t" + rule.getPcaConfidence());		
 	}
 
 	/**
