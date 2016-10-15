@@ -92,7 +92,7 @@ public class MeanRankCalc {
 			public void start() {				
 			}
 
-			private boolean check(Model mdl, MRCache cache, Triple triple, boolean forward) {
+			private Integer check(Model mdl, MRCache cache, Triple triple, boolean forward) {
 				
 				Resource s = ResourceFactory.createResource(triple.getSubject()
 						.getURI());
@@ -114,17 +114,18 @@ public class MeanRankCalc {
 					// if triple is found
 					if (res.getURI().equals(uri)) {
 						// rank[triple] = x + 1
-						System.out.println(triple+"  >>>  "+(cache.x+1));
+						int rank = cache.x+1;
+						System.out.println(triple+"  >>>  "+rank);
 						ranks.add(cache.x + 1);
 						// next triple
-						return true;
+						return rank;
 					}
 					y++;
 				}
 				// add up to rank value
 				cache.x += y;
 
-				return false;
+				return null;
 			}
 
 			@Override
@@ -137,9 +138,15 @@ public class MeanRankCalc {
 					
 					Model model = m[i];
 					
-//					check(model, triple, false);
-					if(check(model, cache, triple, true)) {
+					Integer rank = check(model, cache, triple, true);
+					if(rank != null) {
 						System.out.println("\ttriple found in model #"+(m.length-i));
+						if(rank <= 1)
+							cache.hitsAt1++;
+						if(rank <= 3)
+							cache.hitsAt3++;
+						if(rank <= 10)
+							cache.hitsAt10++;
 						return;
 					}
 			
@@ -171,12 +178,19 @@ public class MeanRankCalc {
 		// stream test set
 		RDFDataMgr.parse(dataStream, testSet);
 		
+		System.out.println("\n=== RAW SETTING === "+output.substring(output.lastIndexOf('/')+1));
 		// compute mean rank
 		int sum = 0;
 		for(Integer i : ranks)
-			sum += i;
+			sum += 1.0 / i;
 		double mr = (double) sum / (double) ranks.size();
-		System.out.println("\nMeanRank = "+mr);
+		System.out.println("\nMeanReciprocalRank = "+mr);
+		double h1 = (double) cache.hitsAt1 * 100 / (double) ranks.size();
+		double h3 = (double) cache.hitsAt3 * 100 / (double) ranks.size();
+		double h10 = (double) cache.hitsAt10 * 100 / (double) ranks.size();
+		System.out.println("\nHits@1  = "+h1);
+		System.out.println("Hits@3  = "+h3);
+		System.out.println("Hits@10 = "+h10);
 		
 		return mr;
 	}
@@ -219,4 +233,7 @@ public class MeanRankCalc {
 
 class MRCache {
 	int x;
+	int hitsAt1 = 0;
+	int hitsAt3 = 0;
+	int hitsAt10 = 0;
 }
