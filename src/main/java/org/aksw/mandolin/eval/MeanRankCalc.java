@@ -28,7 +28,9 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  */
 public class MeanRankCalc {
 	
-	private String testSet, output; 
+	private PrintWriter pw; 
+	
+	private String testSet, mandolinOut; 
 	
 	private int minThr = 1;
 
@@ -43,24 +45,26 @@ public class MeanRankCalc {
 	public static void main(String[] args) throws IOException {
 		
 		String testSet = args[0];
-		String output = args[1];
+		String mandolinOut = args[1];
 		
-		MeanRankCalc mr = new MeanRankCalc(testSet, output);
+		MeanRankCalc mr = new MeanRankCalc(testSet, mandolinOut);
 	
 		mr.partitionData();
 		mr.start();
 		
 	}
 	
-	public MeanRankCalc(String testSet, String output) {
+	public MeanRankCalc(String testSet, String mandolinOut) {
 		super();
 		this.testSet = testSet;
-		this.output = output;
+		this.mandolinOut = mandolinOut;
 	}
 	
 	public double start() throws FileNotFoundException {
 		
-		Scanner in = new Scanner(new File(output + "/entities.csv"));
+		pw = new PrintWriter(new File(mandolinOut + "/evaluation.csv"));
+		
+		Scanner in = new Scanner(new File(mandolinOut + "/entities.csv"));
 		int entities = 0;
 		while(in.hasNextLine()) {
 			in.nextLine();
@@ -77,7 +81,7 @@ public class MeanRankCalc {
 		final Model[] m = new Model[10 - minThr + 1];
 		for(int i=m.length; i>=1; i--) {
 			String thr = String.valueOf(df.format((double) (i+minThr-1) / 10.0));
-			String discovered = output + "/ranked_" + thr + ".nt";
+			String discovered = mandolinOut + "/ranked_" + thr + ".nt";
 			System.out.println("Loading model "+i+"...");
 			m[m.length-i] = RDFDataMgr.loadModel(discovered);
 		}
@@ -178,19 +182,29 @@ public class MeanRankCalc {
 		// stream test set
 		RDFDataMgr.parse(dataStream, testSet);
 		
-		System.out.println("\n=== RAW SETTING === "+output.substring(output.lastIndexOf('/')+1));
+		System.out.println("\n=== FILTERED SETTING === "+mandolinOut.substring(mandolinOut.lastIndexOf('/')+1));
 		// compute mean rank
-		int sum = 0;
-		for(Integer i : ranks)
-			sum += 1.0 / i;
+		int sum = 0, sumR = 0;
+		System.out.println(ranks);
+		for(Integer i : ranks) {
+			sum += i;
+			sumR += 1.0 / i;
+		}
+		
 		double mr = (double) sum / (double) ranks.size();
-		System.out.println("\nMeanReciprocalRank = "+mr);
+		double mrr = (double) sumR / (double) ranks.size();
+		System.out.println("\nMeanRank = "+mr);
+		System.out.println("\nMRR = "+mrr);
+		
 		double h1 = (double) cache.hitsAt1 * 100 / (double) ranks.size();
 		double h3 = (double) cache.hitsAt3 * 100 / (double) ranks.size();
 		double h10 = (double) cache.hitsAt10 * 100 / (double) ranks.size();
 		System.out.println("\nHits@1  = "+h1);
 		System.out.println("Hits@3  = "+h3);
 		System.out.println("Hits@10 = "+h10);
+		
+		pw.println(mandolinOut + "," + mrr + "," + h1 + "," + h3 + "," + h10);
+		pw.close();
 		
 		return mr;
 	}
@@ -204,9 +218,14 @@ public class MeanRankCalc {
 			String thrA = String.valueOf(df.format((double) i / 10.0));
 			String thrB = String.valueOf(df.format((double) (i+1) / 10.0));
 			System.out.println(thrA+","+thrB);
-			String outA = output + "/discovered_" + thrA + ".nt";
-			String outB = output + "/discovered_" + thrB + ".nt";
-			String ranked = output + "/ranked_" + thrA + ".nt";
+			String outA = mandolinOut + "/discovered_" + thrA + ".nt";
+			String outB = mandolinOut + "/discovered_" + thrB + ".nt";
+			String ranked = mandolinOut + "/ranked_" + thrA + ".nt";
+			
+			if(new File(ranked).exists()) {
+				System.out.println("Partitions exist. Skipping...");
+				return;
+			}
 
 			Scanner inB = new Scanner(new File(outB));
 			TreeSet<String> indexB = new TreeSet<>();
@@ -224,7 +243,7 @@ public class MeanRankCalc {
 			pw.close();
 			inA.close();
 		}
-		FileUtils.copyFile(new File(output + "/discovered_1.0.nt"), new File(output + "/ranked_1.0.nt"));
+		FileUtils.copyFile(new File(mandolinOut + "/discovered_1.0.nt"), new File(mandolinOut + "/ranked_1.0.nt"));
 
 
 	}

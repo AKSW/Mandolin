@@ -22,9 +22,12 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
  * Benchmark evaluation (FB15K, WN18) using training + validation + test
  * datasets.
  * 
+ * @deprecated Use LinkPredictionEvaluation.
+ * 
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
+@Deprecated()
 public class HitsAtK {
 
 	/**

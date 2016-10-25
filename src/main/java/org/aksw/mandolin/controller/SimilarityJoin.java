@@ -109,6 +109,10 @@ public class SimilarityJoin {
 		for (int thr = THR_MIN; thr <= THR_MAX; thr += THR_STEP) {
 			
 			String rel = similarToURI(thr);
+			if(rel == null)
+				continue;
+			if(rel.isEmpty())
+				continue;
 			Node relNode = NodeFactory.createURI(rel);
 			
 			writer.triple(new Triple(relNode, RDF.type.asNode(), OWL.SymmetricProperty.asNode()));
