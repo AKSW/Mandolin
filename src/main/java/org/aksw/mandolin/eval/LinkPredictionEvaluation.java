@@ -17,7 +17,7 @@ public class LinkPredictionEvaluation {
 	/**
 	 * Experiment code = Second parameter.
 	 */
-	final static String EXP_CODE = "08_???m_va";
+	final static String EXP_CODE = "09_???m_v";
 	
 	/**
 	 * @param args
@@ -30,7 +30,7 @@ public class LinkPredictionEvaluation {
 		
 		ArrayList<Double> meanranks = new ArrayList<>();
 		
-		for(int i=1; i<=6; i++) {
+		for(int i=1; i<=5; i++) {
 			
 			// dirty hack
 			if(i==6) i = 10;

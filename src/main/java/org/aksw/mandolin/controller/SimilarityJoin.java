@@ -3,6 +3,7 @@ package org.aksw.mandolin.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import org.aksw.mandolin.model.Cache;
 import org.aksw.mandolin.model.ComparableLiteral;
 import org.aksw.mandolin.reasoner.PelletReasoner;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
@@ -159,7 +161,12 @@ public class SimilarityJoin {
 		logger.info("Triples added after similarity join: TBox="+cTBox+", ABox="+cABox);
 		
 		// computing closure on similarity joins
-		PelletReasoner.closure(BASE + "/model-sim.nt", BASE + "/model-sim-fwc.nt");
+//		PelletReasoner.closure(BASE + "/model-sim.nt", BASE + "/model-sim-fwc.nt");
+		try {
+			FileUtils.copyFile(new File(BASE + "/model-sim.nt"), new File(BASE + "/model-sim-fwc.nt"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
