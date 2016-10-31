@@ -9,6 +9,7 @@
 mappings/
 datasets/
 linksets/
+benchmark/
 logs/
 publications-*/
 tmp/
