@@ -6,14 +6,9 @@
 .project
 .settings/
 
-mappings/
-datasets/
-linksets/
-benchmark/
+data/
 logs/
-publications-*/
-tmp/
-/eval/
+eval/
 pgsql/db/
 
 .DS_Store
