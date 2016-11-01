@@ -1,12 +1,13 @@
 *~
-/bin/
-/target/
+bin/
+target/
 
 .classpath
 .project
 .settings/
 
 data/
+data.zip
 logs/
 eval/
 pgsql/db/

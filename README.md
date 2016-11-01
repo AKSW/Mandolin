@@ -7,15 +7,19 @@ Mandolin
 
 * Java 1.8+
 * Maven
-* PostgreSQL 9.4.x - [Linux binaries](http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb)
+* PostgreSQL 9.4.x - [Ubuntu/Debian binaries](http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb)
 * Gurobi solver - [Get academic license](http://www.gurobi.com/academia/academia-center)
 * Unzip
 
-## Binaries
+## Quick start
 
 * Download and decompress file [ZIPFILENAME]
-* Edit `mandolin.properties` with PostgreSQL paths
-* Run `sh mandolin-demo.sh`
+* Edit `mandolin.properties` with PostgreSQL settings.
+* Run `sh quickstart.sh`
+
+## Experiments
+
+* Run `sh demo.sh` for a quick test.
 
 ## Install from sources
 
@@ -24,8 +28,7 @@ Clone and compile project:
 ```bash
 git clone https://github.com/mommi84/Mandolin.git
 cd Mandolin
-export MAVEN_OPTS=-Xss2m
-mvn clean package
+sh compile.sh
 ```
 
 Update file `mandolin.properties` with the host parameters. Mind the missing `/` at the end of the paths.
