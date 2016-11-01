@@ -53,7 +53,7 @@ public class CrossValidation {
 	 */
 	public static final String RUN_PATH_SUFFIX = "/cv/run";
 
-	private static final int THETA_MIN = 1;
+	private static final int THETA_MIN = 0;
 
 	private static final int THETA_MAX = 10;
 	
