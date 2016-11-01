@@ -32,11 +32,21 @@ then
 	echo "pgsql_url=localhost" >> mandolin.properties
 else
 	echo "# GENERAL CONFIGURATION FOR MANDOLIN" > mandolin.properties
-	echo "pgsql_home=" >> mandolin.properties
-	echo "pgsql_username=" >> mandolin.properties
-	echo "pgsql_password=" >> mandolin.properties
-	echo "pgsql_url=localhost" >> mandolin.properties
-	echo "Please insert PostgreSQL settings into file 'mandolin.properties'."
+	read -p "PostgreSQL home? " pgdir
+	echo "pgsql_home="$pgdir >> mandolin.properties
+	read -p "PostgreSQL username? " puname
+	echo "pgsql_username="$puname >> mandolin.properties
+	read -sp "PostgreSQL password? " ppwd
+	echo "pgsql_password="$ppwd >> mandolin.properties
+	read -p "PostgreSQL host? " phost
+	echo "pgsql_url="$phost >> mandolin.properties
 fi
+
+echo "Initializing database..."
+cd pgsql && $pgdir/bin/initdb db -E utf8
+echo "Starting server..."
+$pgdir/bin/pg_ctl start -D db/
+echo "Creating DB..."
+$pgdir/bin/createdb probkb && cd ..
 
 echo "Done."

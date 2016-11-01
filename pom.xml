@@ -153,7 +153,7 @@
 		</dependency>
 	</dependencies>
 	<description>Markov Logic Networks for Discovering Links.</description>
-	<url>https://github.com/mommi84/Mandolin</url>
+	<url>http://mandolin.aksw.org/</url>
 	<inceptionYear>2014</inceptionYear>
 </project>
 
