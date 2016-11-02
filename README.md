@@ -13,66 +13,67 @@ Mandolin
 
 ## Quick start
 
-* Run `git clone https://github.com/mommi84/Mandolin.git` or download and decompress [master.zip](https://github.com/mommi84/Mandolin/archive/master.zip)
+* Download and decompress [Mandolin-0.4.0.zip](https://github.com/mommi84/Mandolin/..........) <-- this ZIP will contain all necessary files
 * Run `bash install.sh`
 
 ## Experiments
 
-* Run ``
-
-## Manual install
-
-Clone and compile project:
+* **TODO**
 
 ```bash
-git clone https://github.com/mommi84/Mandolin.git
-cd Mandolin
-export MAVEN_OPTS=-Xss4m
-mvn clean compile assembly:single
-```
-
-Get PostgreSQL 9.4.x - [Ubuntu/Debian binaries](http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb)
-Update file `mandolin.properties` with the host parameters. Mind the missing `/` at the end of the paths.
-
-### Initialize database
-
-To be called once for all. If the directory `./pgsql/db/` exists, skip this step.
-
-```bash
-sh pgsql-init.sh
-sh pgsql-start.sh
-sh pgsql-create.sh
-```
-
-## Usage
-
-If the database was not started before, run:
-
-```bash
-sh pgsql-start.sh
-```
-
-then, run:
-
-```bash
-java -Xmx8g -jar target/Mandolin-VERSION-jar-with-dependencies.jar plain eval/mandolin-test src/test/resources/AKSW-one-out.nt http://mandolin.aksw.org/example/topic 95 10 95 false false false
+java -Xmx1g -jar target/Mandolin-VERSION-jar-with-dependencies.jar plain 
 ```
 
 Discovered links can be found at `./eval/mandolin-test/discovered_*.nt`, where `*` is a threshold.
 
-## Q&A
+## Manual install
 
-### How to install PostgreSQL on Ubuntu without root access?
+* Clone project:
 
 ```bash
-wget http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb
-dpkg-deb -x postgresql-9.4.8-1-x64-bigsql.deb ~/postgres/
+git clone https://github.com/mommi84/Mandolin.git
+cd Mandolin
 ```
 
-Afterwards, update file `mandolin.properties` with:
+* Get PostgreSQL 9.4.x - [Ubuntu/Debian binaries](http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb)
 
+### Alternative 1
+
+* Launch `bash install.sh -c`
+
+### Alternative 2
+
+* Insert PostgreSQL setting parameters into a file `./mandolin.properties`. Example:
+
+```properties
+# GENERAL CONFIGURATION FOR MANDOLIN
+pgsql_home=/usr/local/Cellar/postgresql/9.4.1
+pgsql_username=tom
+pgsql_password=
+pgsql_url=localhost
 ```
-pgsql_home=/home/USER/postgres/opt/postgresql/pg94
+
+* Download [data](https://s3-eu-west-1.amazonaws.com/anonymous-folder/data.zip)
+
+* Compile project:
+
+```bash
+export MAVEN_OPTS=-Xss4m
+mvn clean compile assembly:single
+```
+
+## Database handler
+
+After using Mandolin, stop the DB instance with:
+
+```bash
+sh pgsql-stop.sh
+```
+
+The instance can be restarted with:
+
+```bash
+sh pgsql-start.sh
 ```
 
 ## License(s)
