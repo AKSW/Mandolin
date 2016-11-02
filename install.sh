@@ -22,11 +22,12 @@ then
     # do stuff
 	echo "Downloading PostgreSQL..."
 	wget -q http://oscg-downloads.s3.amazonaws.com/packages/postgresql-9.4.8-1-x64-bigsql.deb
-	pgdir=`pwd`"/postgres/"
-	echo "Installing PostgreSQL in "$pgdir
-	dpkg-deb -x postgresql-9.4.8-1-x64-bigsql.deb $pgdir && rm -rf postgresql-9.4.8-1-x64-bigsql.deb
+	pgdr=`pwd`"/postgres/"
+	echo "Installing PostgreSQL in "$pgdr
+	dpkg-deb -x postgresql-9.4.8-1-x64-bigsql.deb $pgdr && rm -rf postgresql-9.4.8-1-x64-bigsql.deb
+	pgdir=$pgdr"opt/postgresql/pg94" # changing to home
 	echo "# GENERAL CONFIGURATION FOR MANDOLIN" > mandolin.properties
-	echo "pgsql_home="$pgdir"opt/postgresql/pg94" >> mandolin.properties
+	echo "pgsql_home="$pgdir >> mandolin.properties
 	echo "pgsql_username="`whoami` >> mandolin.properties
 	echo "pgsql_password=" >> mandolin.properties
 	echo "pgsql_url=localhost" >> mandolin.properties
