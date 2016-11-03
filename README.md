@@ -18,13 +18,35 @@ Mandolin
 
 ## Experiments
 
-* **TODO**
+The following command will discover new links of any predicate (`--aim`) on the WordNet dataset (`--input`) with mining threshold 0.9 (`--mining`) and 1 million Gibbs sampling iterations (`--sampling`)
 
 ```bash
-java -Xmx1g -jar target/Mandolin-VERSION-jar-with-dependencies.jar plain 
+java -Xmx1g -jar target/Mandolin-0.4.0-jar-with-dependencies.jar plain --input data/benchmark/wn18/wordnet-mlj12-train.nt,data/benchmark/wn18/wordnet-mlj12-valid.nt --output eval/wn18 --mining 0.9 --sampling 1000000 --aim "*"
 ```
 
-Discovered links can be found at `./eval/mandolin-test/discovered_*.nt`, where `*` is a threshold.
+Discovered links can be found in the `--output` folder at `./eval/wn18/discovered_*.nt`, where `*` is the output threshold.
+
+### Basic documentation
+
+Parameter	Description	Example value
+
+`--input`	Comma-separated N-Triple files.	`data1.nt,data2.nt`
+
+`--output`	Workspace and output folder.	`eval/experiment1`
+
+`--aim`	Aim predicate. For all predicates use wildcard `*`.	`http://www.w3.org/2002/07/owl#sameAs`
+
+`--mining`	Rule mining threshold.	`0.9` (default: `0.1`)
+
+`--sampling`	Gibbs sampling iterations.	`1000000` (default: 100 x evidence size)
+
+`--rules`	Maximum number of rules.	`1500 (default: none)`
+
+`--sim`	Similarity among literals (min,step,max).	`0.8,0.1,0.9` (default: none)
+
+`--onto`	Enable ontology import.	`true` (default: `false`)
+
+`--fwc`	Enable forward-chain.	`true` (default: `false`)
 
 ## Manual install
 
