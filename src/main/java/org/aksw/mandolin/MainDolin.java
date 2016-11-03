@@ -3,7 +3,7 @@ package org.aksw.mandolin;
 import java.util.Arrays;
 
 import org.aksw.mandolin.eval.CrossValidation;
-import org.aksw.mandolin.eval.LinkPredictionEvaluation;
+import org.aksw.mandolin.eval.MeanRankCalc;
 
 /**
  * Main controller for Mandolin.
@@ -22,7 +22,7 @@ public class MainDolin {
 			Mandolin.main(argsw);
 			break;
 		case "eval":
-			LinkPredictionEvaluation.main(argsw);
+			MeanRankCalc.main(argsw);
 			break;
 		case "cv":
 			CrossValidation.main(argsw);

@@ -13,40 +13,71 @@ Mandolin
 
 ## Quick start
 
-* Download and decompress [Mandolin-0.4.0.zip](http://thesmartpuzzle.com/Mandolin-binaries-v0.4.0.zip) <-- this ZIP will contain all necessary files
+* Download and decompress [Mandolin v0.4.0-alpha](https://github.com/mommi84/Mandolin/releases/download/v0.4.0-alpha/mandolin-binaries-v0.4.0-alpha.zip)
 * Run `bash install.sh`
 
 ## Experiments
 
-The following command will discover new links of any predicate (`--aim`) on the WordNet dataset (`--input`) with mining threshold 0.9 (`--mining`) and 1 million Gibbs sampling iterations (`--sampling`)
+The following command will discover new links of any predicate (`--aim`) on the WordNet dataset (`--input`) with mining threshold 0.9 (`--mining`) and 1 million Gibbs sampling iterations (`--sampling`).
 
 ```bash
 java -Xmx1g -jar target/Mandolin-0.4.0-jar-with-dependencies.jar plain --input data/benchmark/wn18/wordnet-mlj12-train.nt,data/benchmark/wn18/wordnet-mlj12-valid.nt --output eval/wn18 --mining 0.9 --sampling 1000000 --aim "*"
 ```
 
-Discovered links can be found in the `--output` folder at `./eval/wn18/discovered_*.nt`, where `*` is the output threshold.
+Discovered links can be found in the `--output` folder at `./eval/wn18/discovered_X.nt`, where `X` is the output threshold.
+
+An excerpt of the discovered **rules and weights** for this execution.
+
+```text
+0.990517419		wn18:\_part\_of(b, a) => \_has\_part(a, b)
+```
+
+An excerpt of the discovered **links** for this execution:
+
+```text
+
+```
 
 ### Basic documentation
 
-Parameter	Description	Example value
+Mandolin can be launched as follows.
 
-`--input`	Comma-separated N-Triple files.	`data1.nt,data2.nt`
+```bash
+java -Xmx1g -jar target/Mandolin-0.4.0-jar-with-dependencies.jar <GOAL> <PARAMETERS>
+```
 
-`--output`	Workspace and output folder.	`eval/experiment1`
+#### Goals
 
-`--aim`	Aim predicate. For all predicates use wildcard `*`.	`http://www.w3.org/2002/07/owl#sameAs`
+**Goal**|**Description**
+:-----|:-----
+`plain`|Launch a plain Mandolin execution.
+`eval`|Evaluate MRR and hits@k.
 
-`--mining`	Rule mining threshold.	`0.9` (default: `0.1`)
+#### Plain execution
 
-`--sampling`	Gibbs sampling iterations.	`1000000` (default: 100 x evidence size)
+Parameters for `plain` goal:
 
-`--rules`	Maximum number of rules.	`1500 (default: none)`
+**Parameter**|**Description**|**Example value**
+:-----|:-----|:-----
+`--input`|Comma-separated N-Triple files.|`data1.nt,data2.nt`
+`--output`|Workspace and output folder.|`eval/experiment1`
+`--aim`|Aim predicate. For all predicates use wildcard `*`.|`http://www.w3.org/2002/07/owl#sameAs`
+`--mining`|Rule mining threshold.|`0.9` (default: `0.1`)
+`--sampling`|Gibbs sampling iterations.|`1000000` (default: 100 x evidence size)
+`--rules`|Maximum number of rules.|`1500` (default: none)
+`--sim`|Enable similarity among literals as `min,step,max`.|`0.8,0.1,0.9` (default: none)
+`--onto`|Enable ontology import.|`true` (default: `false`)
+`--fwc`|Enable forward-chain.|`true` (default: `false`)
 
-`--sim`	Similarity among literals (min,step,max).	`0.8,0.1,0.9` (default: none)
+#### Evaluation
 
-`--onto`	Enable ontology import.	`true` (default: `false`)
+The `eval` goal takes two parameters: the N-Triples file of the test set and Mandolin's output directory.
 
-`--fwc`	Enable forward-chain.	`true` (default: `false`)
+Example run:
+
+```bash
+java -Xmx1g -jar target/Mandolin-0.4.0-jar-with-dependencies.jar eval data/benchmark/wn18/wordnet-mlj12-test.nt eval/wn18
+```
 
 ## Manual install
 
