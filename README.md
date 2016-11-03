@@ -13,7 +13,7 @@ Mandolin
 
 ## Quick start
 
-* Download and decompress [Mandolin-0.4.0.zip](https://github.com/mommi84/Mandolin/..........) <-- this ZIP will contain all necessary files
+* Download and decompress [Mandolin-0.4.0.zip](http://thesmartpuzzle.com/Mandolin-binaries-v0.4.0.zip) <-- this ZIP will contain all necessary files
 * Run `bash install.sh`
 
 ## Experiments
