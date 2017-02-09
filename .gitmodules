@@ -1,0 +1,3 @@
+[submodule "horn-concerto"]
+	path = horn-concerto
+	url = https://github.com/mommi84/horn-concerto.git
