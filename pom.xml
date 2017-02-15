@@ -152,7 +152,7 @@
 			<version>1.2</version>
 		</dependency>
 	</dependencies>
-	<description>Markov Logic Networks for Discovering Links.</description>
+	<description>Markov Logic Networks for the Discovery of Links.</description>
 	<url>http://mandolin.aksw.org/</url>
 	<inceptionYear>2014</inceptionYear>
 </project>
