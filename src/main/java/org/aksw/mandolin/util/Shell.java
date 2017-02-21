@@ -25,7 +25,7 @@ public class Shell {
 		StringBuffer sb = new StringBuffer();
 		Process p;
 		try {
-			p = Runtime.getRuntime().exec(command);
+			p = Runtime.getRuntime().exec(command, null);
 			p.waitFor();
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -34,7 +34,7 @@ public class Shell {
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				if (show)
-					logger.debug(line);
+					logger.info(line);
 				sb.append(line + "\n");
 			}
 		} catch (Exception e) {
@@ -49,17 +49,25 @@ public class Shell {
 	 * @param command
 	 * @return
 	 */
-	public static String execute(String command) {
-		return execute(command, false);
+	public static void execute(String command) {
+		Process p;
+		try {
+			
+			p = Runtime.getRuntime().exec(command, null);
+			p.waitFor();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		logger.debug("Streamed:");
-		String output = execute("ls -l", true);
-		logger.debug("\nBuffered:\n" + output);
+		logger.info("Streamed:");
+		String output = execute("ls -l", false);
+		logger.info("\nBuffered:\n" + output);
 	}
 
 }

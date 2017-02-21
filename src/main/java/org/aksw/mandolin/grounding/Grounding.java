@@ -32,9 +32,10 @@ public class Grounding {
 		logger.info("Grounding...");
 		
 		String[] cmd = {
-		// Drop schema
+		// Run
 		Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
-				+ Bundle.getString("pgsql_url") + " -p 5432 -f "
+				+ Bundle.getString("pgsql_url") + " -p 5432 -U " 
+				+ Bundle.getString("pgsql_username") + " -f "
 				+ System.getProperty("user.dir") + "/pgsql/sql/run.sql", };
 		for (String c : cmd) {
 			logger.debug("> " + c);
@@ -46,7 +47,8 @@ public class Grounding {
 		String[] cmd = {
 				// Drop schema
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -U " 
+						+ Bundle.getString("pgsql_username") + " -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/drop.sql",
 //				// Create db
@@ -54,25 +56,29 @@ public class Grounding {
 //						+ Bundle.getString("pgsql_url") + " -p 5432",
 				// Create the probkb schema and tables.
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -U " 
+						+ Bundle.getString("pgsql_username") + " -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/create.sql",
 				// Create quality control procedures.
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -U " 
+						+ Bundle.getString("pgsql_username") + " -f "
 						+ System.getProperty("user.dir") + "/pgsql/sql/qc.sql",
 				// Load the files in CSV format.
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -U " 
+						+ Bundle.getString("pgsql_username") + " -f "
 						+ System.getProperty("user.dir") + "/" + base
 						+ "/load.sql",
 				// Create grounding procedures.
 				Bundle.getString("pgsql_home") + "/bin/psql probkb -h "
-						+ Bundle.getString("pgsql_url") + " -p 5432 -f "
+						+ Bundle.getString("pgsql_url") + " -p 5432 -U " 
+						+ Bundle.getString("pgsql_username") + " -f "
 						+ System.getProperty("user.dir")
 						+ "/pgsql/sql/ground.sql" };
 		for (String c : cmd) {
-			logger.debug("> " + c);
+			logger.info("> " + c);
 			Shell.execute(c, true);
 		}
 	}

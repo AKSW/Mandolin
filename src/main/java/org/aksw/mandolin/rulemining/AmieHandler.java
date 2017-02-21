@@ -13,7 +13,7 @@ import amie.rules.Rule;
  * @author Tommaso Soru <tsoru@informatik.uni-leipzig.de>
  *
  */
-public class AmieHandler {
+public class AmieHandler implements IHandler {
 	
 	private final static Logger logger = LogManager.getLogger(AmieHandler.class);
 	

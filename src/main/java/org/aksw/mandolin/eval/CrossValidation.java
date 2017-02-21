@@ -56,6 +56,11 @@ public class CrossValidation {
 	private static final int THETA_MIN = 0;
 
 	private static final int THETA_MAX = 10;
+
+	/**
+	 * XXX Use HC (Horn Concerto) as rule miner. 
+	 */
+	private static final String MINER = "HC";
 	
 	/**
 	 * @param args
@@ -127,7 +132,7 @@ public class CrossValidation {
 			String runPath = workspace + RUN_PATH_SUFFIX + i;
 			String trainingPath = foldPath + "/training" + i + ".nt";
 			
-			Mandolin m = new Mandolin(runPath, trainingPath, aimRelation, thrMin, thrStep, thrMax, enableOnt, enableFwc, enableSim);
+			Mandolin m = new Mandolin(runPath, trainingPath, aimRelation, MINER, thrMin, thrStep, thrMax, enableOnt, enableFwc, enableSim);
 			m.run();
 			
 			// each theta has different results

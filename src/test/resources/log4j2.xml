@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="TRACE" name="example-config">
+<Configuration status="INFO" name="example-config">
 	<Properties>
 		<Property name="PATTERN">%-5level %d [%t] %c:%M(%L): %m%n</Property>
 		<Property name="LOG_DIR">logs</Property>
@@ -16,7 +16,7 @@
 		</RollingFile>
 	</Appenders>
 	<Loggers>
-		<Root level="TRACE">
+		<Root level="INFO">
 			<AppenderRef ref="STDOUT" />
 			<AppenderRef ref="fileWriter" />
 		</Root>

@@ -28,6 +28,11 @@ public class RuleMiner {
 	
 	private final static Logger logger = LogManager.getLogger(RuleMiner.class);
 
+	public enum Miner {
+		AMIE,
+		HC;
+	}
+	
 	/**
 	 * @param map
 	 * @param base
@@ -35,11 +40,36 @@ public class RuleMiner {
 	 * @param maxRules
 	 * @throws Exception
 	 */
-	public static void run(NameMapper map, String base, Double mining, Integer maxRules) throws Exception {
+	public static void run(NameMapper map, String base, String minerName, Double mining, Integer maxRules) throws Exception {
+		
+		Miner miner = Miner.valueOf(minerName);
+		IHandler h = null;
+		switch(miner) {
+		case AMIE:
+			// model-fwc.nt -> model.tsv
+			RDFToTSV.run(base);
+			h = new AmieHandler(base + "/model.tsv");
+			runAmie((AmieHandler) h, map, base, mining, maxRules);
+			break;
+		case HC:
+			h = new HornConcertoHandler(base + "/model-fwc.nt");
+			runHC((HornConcertoHandler) h, map, base, mining);
+			break;
+		default:
+			throw new RuntimeException("Unknown miner name. Expected one of: AMIE, HC.");
+		}
+		
+	}
+	
+	private static void runHC(HornConcertoHandler h, NameMapper map, String base, Double mining) {
+		
+		h.run(map, base, mining);
+		
+	}
+
+	private static void runAmie(AmieHandler h, NameMapper map, String base, Double mining, Integer maxRules) throws Exception {
 		
 		boolean support = (mining == null);
-		
-		AmieHandler h = new AmieHandler(base + "/model.tsv");
 		
 		if(!support)  {
 			h.setMiningThr(mining);
@@ -79,7 +109,7 @@ public class RuleMiner {
 	        }
 		}
 		
-		RuleDriver driver = new RuleDriver(map, base);
+		AmieRuleDriver driver = new AmieRuleDriver(map, base);
 		
 		for(Rule rule : rules) {
 			

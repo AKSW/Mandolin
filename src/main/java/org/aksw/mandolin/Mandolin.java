@@ -14,15 +14,16 @@ import org.aksw.mandolin.grounding.Grounding;
 import org.aksw.mandolin.inference.ProbKBToRockitGibbsSampling;
 import org.aksw.mandolin.model.PredictionSet;
 import org.aksw.mandolin.reasoner.PelletReasoner;
-import org.aksw.mandolin.rulemining.RDFToTSV;
 import org.aksw.mandolin.rulemining.RuleMiner;
+import org.aksw.mandolin.util.MandolinException;
 import org.aksw.mandolin.util.PostgreNotStartedException;
 import org.aksw.mandolin.util.SetUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * The final pipeline for MANDOLIN, a scalable join of several
+ * The final pipeline for MANDOLIN, a scalable framework joining several
  * statistical-relational-learning algorithms to predict RDF links of any type
  * (i.e., triples) in one or more RDF datasets using rule mining of Horn
  * clauses, Markov Logic Networks, and Gibbs Sampling.
@@ -61,6 +62,11 @@ public class Mandolin {
 	 */
 	private boolean enableSim;
 
+	/**
+	 * Miner name (AMIE, HC).
+	 */
+	private String minerName;
+	
 	/*
 	 * Threshold for head-coverage method in rule mining. If null, support method is used.
 	 */
@@ -91,12 +97,13 @@ public class Mandolin {
 	 * @param enableFwc
 	 * @param enableSim
 	 */
-	public Mandolin(String workspace, String csInputPaths, String aimRelation, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean enableSim) {
+	public Mandolin(String workspace, String csInputPaths, String aimRelation, String minerName, int thrMin, int thrStep, int thrMax, boolean enableOnt, boolean enableFwc, boolean enableSim) {
 		super();
 		
 		this.workspace = workspace;
 		this.inputPaths = csInputPaths.split(",");
 		this.aimRelation = aimRelation;
+		this.minerName = minerName;
 		this.thrMin = thrMin;
 		this.thrStep = thrStep;
 		this.thrMax = thrMax;
@@ -117,7 +124,9 @@ public class Mandolin {
 		printInfo();
 
 		// create working directory
-		new File(workspace).mkdirs();
+		if(!new File(workspace).mkdirs()) {
+			throw new MandolinException("Workspace directory not empty: " + workspace, logger);
+		}
 		
 		if(enableOnt) {
 			// inputs -> model-tmp.nt
@@ -149,11 +158,9 @@ public class Mandolin {
 		// map -> KB description csv
 		ProbKBData.buildCSV(map, workspace);
 
-		// model-fwc.nt -> model.tsv
-		RDFToTSV.run(workspace);
 		// model.tsv -> MLN csv
-		RuleMiner.run(map, workspace, mining, maxRules);
-
+		RuleMiner.run(map, workspace, minerName, mining, maxRules);
+				
 		// csv -> Postgre factors
 		Grounding.ground(workspace);
 
@@ -203,6 +210,7 @@ public class Mandolin {
 		logger.info("FORWARD_CHAIN = "+enableFwc);
 		logger.info("SIMILARITIES = "+enableSim);
 		logger.info("THR = [min="+thrMin+", step="+thrStep+", max="+thrMax+"]");
+		logger.info("MINER = "+minerName);
 		logger.info("MINING_THR = "+mining);
 		logger.info("MAX_RULES = "+maxRules);
 		logger.info("SAMPLING_ITER = "+sampling);
@@ -215,10 +223,13 @@ public class Mandolin {
 	
 	public static void main(String[] args) throws Exception {
 		
+		// TODO remove me
+		FileUtils.deleteDirectory(new File("eval/mandolin-test"));
+		
 		logger.info("Mandolin initialized with args = {}", Arrays.toString(args));
 		
 		String output = null, input = null, aim = "false", rules = null, 
-				onto = "false", fwc = "false", mining = null, sampling = null;
+				onto = "false", fwc = "false", minerName = "HC", mining = null, sampling = null;
 		String[] simVal = {"-1", "-1", "-1"};
 		
 		for(int i=0; i<args.length; i+=2) {
@@ -241,6 +252,9 @@ public class Mandolin {
 			case "--fwc":
 				fwc = args[i+1];
 				break;
+			case "--miner":
+				minerName = args[i+1];
+				break;
 			case "--mining":
 				mining = args[i+1];
 				break;
@@ -255,7 +269,7 @@ public class Mandolin {
 
 		try {
 			
-			Mandolin m = new Mandolin(output, input, aim, Integer.parseInt(simVal[0]), 
+			Mandolin m = new Mandolin(output, input, aim, minerName, Integer.parseInt(simVal[0]), 
 					Integer.parseInt(simVal[1]), Integer.parseInt(simVal[2]), 
 					Boolean.parseBoolean(onto), Boolean.parseBoolean(fwc),
 					!simVal[0].equals("-1"));
