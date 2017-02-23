@@ -1,10 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.aksw.mandolin</groupId>
-	<artifactId>Mandolin</artifactId>
-	<version>0.4.0</version>
-	<name>Mandolin</name>
+	<groupId>mlnf</groupId>
+	<artifactId>MLNF</artifactId>
+	<name>MLNF</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -23,12 +22,15 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.aksw.mandolin.MainDolin</mainClass>
+							<mainClass>mlnf.MLNFMain</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<excludes>
+      					<exclude>**/*.java</exclude>
+				    </excludes>
 				</configuration>
 				<executions>
 					<execution>
@@ -152,8 +154,6 @@
 			<version>1.2</version>
 		</dependency>
 	</dependencies>
-	<description>Markov Logic Networks for the Discovery of Links.</description>
-	<url>http://mandolin.aksw.org/</url>
-	<inceptionYear>2014</inceptionYear>
+	<version>1.0.0-alpha</version>
 </project>
 

@@ -9,8 +9,8 @@
 		<Console name="STDOUT" target="SYSTEM_OUT">
 			<PatternLayout pattern="${PATTERN}" />
 		</Console>
-		<RollingFile name="fileWriter" fileName="${LOG_DIR}/mandolin.log"
-			filePattern="${ARCHIVE}/mandolin.log.%d{yyyy-MM-dd-hh-mm}.gz">
+		<RollingFile name="fileWriter" fileName="${LOG_DIR}/mlnf.log"
+			filePattern="${ARCHIVE}/mlnf.log.%d{yyyy-MM-dd-hh-mm}.gz">
 			<PatternLayout pattern="${PATTERN}" />
 			<TimeBasedTriggeringPolicy />
 		</RollingFile>
