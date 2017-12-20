@@ -3,7 +3,7 @@
 MANDOLIN
 ========
 
-*The best modules for Markov Logic Networks condensed in one framework.*
+*The best modules for Markov Logic Networks - rule mining, grounding, inference - condensed in one framework.*
 
 ## Requirements
 
@@ -15,7 +15,7 @@ MANDOLIN
 
 ## Quick start
 
-* Download and decompress [Mandolin v0.4.0-alpha](https://github.com/mommi84/Mandolin/releases/download/v0.4.0-alpha/mandolin-binaries-v0.4.0-alpha.zip)
+* Download and decompress [Mandolin v0.4.0-alpha](https://github.com/AKSW/Mandolin/releases/download/v0.4.0-alpha/mandolin-binaries-v0.4.0-alpha.zip)
 * Run `bash install.sh`
 
 ## Experiments
