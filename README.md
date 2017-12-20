@@ -3,7 +3,7 @@
 MANDOLIN
 ========
 
-*Markov Logic Networks for the Discovery of Links.*
+*The best modules for Markov Logic Networks condensed in one framework.*
 
 ## Requirements
 
@@ -133,6 +133,17 @@ The instance can be restarted with:
 
 ```bash
 sh pgsql-start.sh
+```
+
+## Citing
+
+```
+@article{soru2017mandolin,
+  title={Mandolin: A Knowledge Discovery Framework for the Web of Data},
+  author={Soru, Tommaso and Esteves, Diego and Marx, Edgard and Ngomo, Axel-Cyrille Ngonga},
+  journal={arXiv preprint arXiv:1711.01283},
+  year={2017}
+}
 ```
 
 ## License(s)
